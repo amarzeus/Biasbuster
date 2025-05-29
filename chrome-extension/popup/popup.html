@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biasbuster</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <header>
+            <h1>Biasbuster</h1>
+            <p class="tagline">Detect, understand, and mitigate media bias</p>
+        </header>
+        
+        <div class="main-content">
+            <div id="initial-view">
+                <button id="analyze-btn" class="primary-btn">Analyze This Page</button>
+                <div class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Analyzing article content...</p>
+                </div>
+                <div id="error-message" class="error-message hidden"></div>
+            </div>
+            
+            <div id="results-view" class="hidden">
+                <div class="summary-section">
+                    <h2>Analysis Results</h2>
+                    <div class="summary-box">
+                        <p id="main-topic"></p>
+                        <p id="bias-detected"></p>
+                        <p id="bias-summary"></p>
+                    </div>
+                </div>
+                
+                <div class="bias-instances-section">
+                    <h3>Detected Bias Instances</h3>
+                    <div id="bias-instances-list"></div>
+                </div>
+                
+                <div class="actions-section">
+                    <button id="toggle-highlights-btn" class="secondary-btn">Toggle Highlights</button>
+                    <button id="back-btn" class="text-btn">Back to Analysis</button>
+                </div>
+            </div>
+            
+            <div id="educational-view" class="hidden">
+                <h2>Educational Resources</h2>
+                <div id="educational-content"></div>
+                
+                <h3>Trusted Sources</h3>
+                <ul id="trusted-sources"></ul>
+                
+                <button id="back-to-results-btn" class="text-btn">Back to Results</button>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-links">
+                <a href="#" id="settings-link">Settings</a>
+                <a href="#" id="educational-link">Educational Resources</a>
+                <a href="#" id="feedback-link">Feedback</a>
+            </div>
+            <p class="version">v0.1.0</p>
+        </footer>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html> 

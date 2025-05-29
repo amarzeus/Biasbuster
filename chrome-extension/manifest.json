@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Biasbuster",
+  "version": "0.1.0",
+  "description": "Detect, explain, and mitigate bias in news articles in real-time.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:8080/*"
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_scripts/content.js"],
+      "css": ["content_scripts/highlighter.css"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["content_scripts/highlighter.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+} 

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biasbuster - Detect Media Bias in Real-Time</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Biasbuster is an AI-powered tool that detects, explains, and helps mitigate bias and misinformation in news articles in real time.">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Biasbuster</h1>
+            <p class="tagline">Detect, understand, and mitigate media bias in real-time</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Empower Your Critical Reading</h2>
+            <p>
+                Biasbuster uses advanced AI to analyze news articles for bias and misinformation, 
+                helping you become a more informed reader. Paste any article below to get started.
+            </p>
+        </section>
+
+        <section class="demo">
+            <h2>Try It Now</h2>
+            <div class="example-buttons">
+                <button id="load-example" class="secondary-btn">Load Example Article</button>
+            </div>
+            <div class="input-container">
+                <textarea id="article-text" placeholder="Paste a news article or text here..."></textarea>
+                <button id="analyze-btn">Analyze Text</button>
+            </div>
+            <div id="status" class="status"></div>
+            <div id="results" class="results-container hidden">
+                <div class="results-header">
+                    <h3>Analysis Results</h3>
+                    <div class="summary-box">
+                        <div id="main-topic"></div>
+                        <div id="bias-summary"></div>
+                    </div>
+                </div>
+                <div id="bias-instances" class="bias-instances"></div>
+                <div class="results-footer">
+                    <div class="sources-container">
+                        <h4>Trusted Sources</h4>
+                        <ul id="trusted-sources"></ul>
+                    </div>
+                    <div class="educational-container">
+                        <h4>Educational Content</h4>
+                        <div id="educational-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Real-time Analysis</h3>
+                    <p>Instantly analyze any news article for various types of bias and misinformation.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Detailed Explanations</h3>
+                    <p>Get clear explanations of why specific content may be biased or misleading.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Suggested Rewrites</h3>
+                    <p>See how biased statements could be rewritten in a more neutral, balanced way.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Educational Resources</h3>
+                    <p>Learn how to spot bias on your own with helpful tips and trusted sources.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Get the Chrome Extension</h2>
+            <p>Analyze articles as you browse with our free Chrome extension.</p>
+            <button class="cta-btn">Download Extension</button>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Biasbuster. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 

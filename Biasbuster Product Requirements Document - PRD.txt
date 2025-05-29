@@ -145,12 +145,12 @@ Appendix: Example API Output
   "BiasDetected": "yes",
   "BiasInstances": [
     {
-      "Sentence": "Amazon’s AI recruiting tool showed bias against women by penalizing resumes that included the word 'women’s.'",
+      "Sentence": "Amazon's AI recruiting tool showed bias against women by penalizing resumes that included the word 'women's.'",
       "BiasType": "Demographic Bias (gender bias)",
       "Explanation": "Highlights gender discrimination in AI recruiting, which can perpetuate workplace inequality.",
       "Severity": "2",
       "Justification": "Direct evidence of systemic bias with real consequences.",
-      "Mitigation": "Amazon’s AI recruiting tool was found to unfairly penalize resumes containing the word 'women’s,' revealing the need for more equitable algorithms."
+      "Mitigation": "Amazon's AI recruiting tool was found to unfairly penalize resumes containing the word 'women's,' revealing the need for more equitable algorithms."
     }
   ],
   "BiasSummary": "Highlights gender and racial bias in AI.",
