@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biasbuster - Detect Media Bias in Real-Time</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="description" content="Biasbuster is an AI-powered tool that detects, explains, and helps mitigate bias and misinformation in news articles in real time.">
 </head>
 <body>
@@ -42,16 +43,109 @@
                         <div id="bias-summary"></div>
                     </div>
                 </div>
-                <div id="bias-instances" class="bias-instances"></div>
-                <div class="results-footer">
-                    <div class="sources-container">
-                        <h4>Trusted Sources</h4>
-                        <ul id="trusted-sources"></ul>
+                
+                <div class="tab-navigation">
+                    <button class="view-tab active" data-target="visualization-tab">Bias Visualization</button>
+                    <button class="view-tab" data-target="analysis-tab">Detailed Analysis</button>
+                    <button class="view-tab" data-target="statistics-tab">Bias Statistics</button>
+                    <button class="view-tab" data-target="education-tab">Educational Resources</button>
+                </div>
+                
+                <div id="visualization-tab" class="tab-content">
+                    <h4>Interactive Bias Heat Map</h4>
+                    <p class="tab-description">
+                        This visualization highlights biased content in the text. 
+                        Hover over highlighted text to see details, or click to jump to the analysis.
+                    </p>
+                    <div id="bias-visualization"></div>
+                </div>
+                
+                <div id="analysis-tab" class="tab-content hidden">
+                    <h4>Bias Analysis</h4>
+                    <p class="tab-description">
+                        Detailed breakdown of each instance of bias detected in the text.
+                    </p>
+                    <div id="bias-instances" class="bias-instances"></div>
+                </div>
+                
+                <div id="statistics-tab" class="tab-content hidden">
+                    <h4>Bias Statistics</h4>
+                    <p class="tab-description">
+                        Statistical analysis of bias types and severity found in the text.
+                    </p>
+                    <div id="bias-statistics"></div>
+                </div>
+                
+                <div id="education-tab" class="tab-content hidden">
+                    <h4>Educational Resources</h4>
+                    <p class="tab-description">
+                        Learn more about bias types and how to identify them in media.
+                    </p>
+                    <div class="results-footer">
+                        <div class="sources-container">
+                            <h4>Trusted Sources</h4>
+                            <ul id="trusted-sources"></ul>
+                        </div>
+                        <div class="educational-container">
+                            <h4>Educational Content</h4>
+                            <div id="educational-content"></div>
+                        </div>
                     </div>
-                    <div class="educational-container">
-                        <h4>Educational Content</h4>
-                        <div id="educational-content"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="advanced-ai-features">
+            <h2>Advanced AI Technologies</h2>
+            <p>Biasbuster leverages cutting-edge AI and machine learning to provide the most accurate bias detection available.</p>
+            
+            <div class="ai-feature-grid">
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">
+                        <i class="fas fa-brain"></i>
                     </div>
+                    <h3 class="ai-feature-title">Deep Learning Bias Detection <span class="ai-badge">New</span></h3>
+                    <p>Our advanced neural networks have been trained on millions of articles to recognize subtle patterns of bias that traditional algorithms miss.</p>
+                </div>
+                
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="ai-feature-title">Real-time Visualization</h3>
+                    <p>Interactive heat maps highlight biased content directly in the text, making it easy to identify problematic statements at a glance.</p>
+                </div>
+                
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="ai-feature-title">NLP Sentiment Analysis <span class="ai-badge">AI</span></h3>
+                    <p>Advanced natural language processing analyzes emotional tone and sentiment to detect even the most subtly biased language.</p>
+                </div>
+                
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3 class="ai-feature-title">AI-Generated Rewrites</h3>
+                    <p>Our AI doesn't just detect bias—it suggests more balanced alternatives, helping writers create more objective content.</p>
+                </div>
+                
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3 class="ai-feature-title">Source Credibility Scoring <span class="ai-badge">New</span></h3>
+                    <p>Our AI evaluates source credibility based on factors including past accuracy, transparency, and expert reputation.</p>
+                </div>
+                
+                <div class="ai-feature-card">
+                    <div class="ai-feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="ai-feature-title">Adaptive Learning</h3>
+                    <p>Biasbuster gets smarter with every analysis, continuously improving its accuracy through user feedback and new data.</p>
                 </div>
             </div>
         </section>

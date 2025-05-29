@@ -1,132 +1,129 @@
 # Biasbuster
 
-Biasbuster is an AI-powered Chrome extension and web platform that detects, explains, and helps mitigate bias and misinformation in news articles in real time. It empowers users to read critically, promotes media literacy, and provides educational resources and actionable feedback for a more informed society.
+![Biasbuster Logo](chrome-extension/icons/icon128.png)
 
-## Key Features
+Biasbuster is an AI-powered tool that detects, explains, and helps mitigate bias and misinformation in news articles in real time.
 
-- **Real-time bias detection** in news articles
-- **Highlighting of biased sentences** and phrases  
-- **In-depth explanations** and unbiased rewrite suggestions
-- **Educational resources** to improve media literacy
-- **User feedback system** for continuous improvement
+## Features
 
-## Technical Components
+### Core Capabilities
+- 🔍 **Advanced Bias Detection**: Identify multiple types of bias including political, racial, gender, framing, selection, and more
+- 📊 **Bias Visualization**: Highlight biased content with an intuitive heat map showing bias intensity
+- 📝 **Bias Explanation**: Get detailed explanations of why specific text contains bias
+- ✏️ **Mitigation Suggestions**: Receive balanced rewording suggestions for biased content
+- 🎯 **Educational Resources**: Learn about different bias types and how to spot them
 
-- **Chrome extension** for real-time analysis while browsing
-- **Web platform** with demo capabilities
-- **Backend API** powered by advanced AI model
-- **Structured JSON analysis** of bias with actionable suggestions
+### Advanced AI/ML Features
+- 🧠 **Adaptive AI Model Selection**: Automatically selects the best AI model based on content complexity
+- 🌐 **Multilingual Analysis**: Detect and explain bias in multiple languages
+- 😀 **Sentiment Analysis**: Measure the emotional tone of content
+- ⚖️ **Source Credibility Scoring**: Evaluate the reliability of news sources
+- 📱 **Real-time Bias Detection**: Get bias alerts as you browse the web
+- 🔄 **Offline Analysis**: Basic bias detection even without internet connection
+
+## Project Components
+
+### MCP Server
+The Master Control Program (MCP) server processes article text and communicates with AI services.
+
+- RESTful API endpoints for bias analysis
+- Support for multiple AI service providers (OpenAI, Anthropic, Groq)
+- Rate limiting and request caching
+- Comprehensive error handling
+
+### Chrome Extension
+A browser extension that analyzes web pages for bias in real-time.
+
+- Content scripts for page analysis
+- Bias highlighting with severity indicators
+- Detailed bias explanation tooltips
+- Auto-analysis feature for passive bias detection
+- Settings for customizing analysis features
+
+### Web Platform
+A standalone web application that allows users to analyze text directly.
+
+- Interactive bias visualization dashboard
+- Statistical analysis of detected bias
+- Educational resources on media literacy
+- Example articles demonstrating various bias types
 
 ## Getting Started
 
 ### Prerequisites
-
-- Node.js (v14 or higher)
-- npm (v6 or higher)
+- Node.js 14 or higher
+- NPM 6 or higher
 
 ### Installation
 
 1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/biasbuster.git
-   cd biasbuster
-   ```
+```
+git clone https://github.com/yourusername/biasbuster.git
+cd biasbuster
+```
 
 2. Install dependencies:
-   ```
-   npm install
-   ```
+```
+npm install
+```
 
-3. Build the TypeScript code:
-   ```
-   npm run build
-   ```
+3. Start the server:
+- On Windows:
+```
+start-server.bat
+```
+- On macOS/Linux:
+```
+sh start-server.sh
+```
 
-4. Start the server:
-   ```
-   npm start
-   ```
+4. Access the web platform:
+```
+Open web-platform/index.html in your browser
+```
 
-   For development with auto-reload:
-   ```
-   npm run dev
-   ```
+5. Load the Chrome extension:
+```
+Open Chrome > Extensions > Load unpacked > Select chrome-extension folder
+```
 
-### Environment Variables
+## Environment Configuration
 
-Create a `.env` file in the root directory with the following variables:
+Create a `.env` file in the project root to configure API keys and settings:
 
 ```
+# AI Service Keys
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+GROQ_API_KEY=your_groq_key
+
+# Server Configuration
 PORT=8080
 CORS_ORIGIN=*
-AI_SERVICE=mock  # Options: mock, groq, openai, google
-GROQ_API_KEY=your_groq_api_key  # Only needed if AI_SERVICE=groq
-OPENAI_API_KEY=your_openai_api_key  # Only needed if AI_SERVICE=openai
-GOOGLE_API_KEY=your_google_api_key  # Only needed if AI_SERVICE=google
+DEFAULT_AI_MODEL=auto
 ```
 
-## Web Platform Usage
+## API Reference
 
-1. Open `web-platform/index.html` in your browser
-2. Enter or paste an article in the text area
-3. Click "Analyze" to detect bias
-4. Review the analysis results
+The Biasbuster API provides several endpoints:
 
-## Chrome Extension Installation
+- `POST /api/v1/analyze`: Analyze text for bias
+- `POST /api/v1/sentiment`: Analyze sentiment of text
+- `POST /api/v1/credibility`: Evaluate source credibility
+- `POST /api/v1/comprehensive`: Perform complete analysis (bias, sentiment, credibility)
+- `GET /api/v1/health`: Check server status
+- `GET /api/v1/models`: List available AI models
+- `GET /api/v1/version`: Get API version information
 
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable "Developer mode" in the top right
-3. Click "Load unpacked" and select the `chrome-extension` directory
-4. The Biasbuster icon should appear in your toolbar
+## Contributing
 
-## API Documentation
-
-### Endpoints
-
-- `GET /api/v1/health` - Health check endpoint
-- `POST /api/v1/analyze` - Analyze text for bias
-
-### Example Request
-
-```json
-{
-  "text": "Your article text here..."
-}
-```
-
-### Example Response
-
-```json
-{
-  "MainTopic": "Politics",
-  "BiasDetected": "yes",
-  "BiasInstances": [
-    {
-      "Sentence": "All politicians are corrupt and dishonest.",
-      "BiasType": "Generalization Bias",
-      "Explanation": "This statement makes an absolute claim about all politicians without evidence.",
-      "Severity": "2",
-      "Justification": "High severity due to absolute language and lack of nuance.",
-      "Mitigation": "Some politicians have been involved in corruption scandals, though many serve with integrity."
-    }
-  ],
-  "BiasSummary": "The article contains instances of generalization bias.",
-  "TrustedSources": [
-    "https://example.com/reliable-source-1",
-    "https://example.com/reliable-source-2"
-  ],
-  "EducationalContent": "Generalization bias occurs when broad claims are made about an entire group..."
-}
-```
-
-## Project Structure
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture information and [DEVELOPER.md](DEVELOPER.md) for development guidelines.
+Contributions to Biasbuster are welcome! Please review our contributing guidelines before submitting pull requests.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contributors
+## Acknowledgements
 
-- Biasbuster Team
+- This project was created as part of the Persist Ventures Startupathon challenge.
+- Thanks to the open source community for the amazing tools and libraries that made this project possible.
