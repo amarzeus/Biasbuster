@@ -28,7 +28,7 @@ Biasbuster is an AI-powered Chrome extension and web platform that detects, expl
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/biasbuster.git
+   git clone https://github.com/amarzeus/Biasbuster.git
    cd biasbuster
    ```
 
