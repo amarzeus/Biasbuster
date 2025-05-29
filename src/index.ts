@@ -2,6 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { analyzeBias } from './tools/analyzeBias';
+import { connectDB } from './config/database';
+import authRoutes from './routes/authRoutes';
+import analysisRoutes from './routes/analysisRoutes';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import MongoStore from 'connect-mongo';
+import mongoose from 'mongoose';
 
 // Load environment variables
 dotenv.config();
@@ -10,12 +19,41 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Connect to MongoDB
+if (process.env.NODE_ENV !== 'test') {
+  connectDB().catch(err => {
+    console.error('MongoDB connection error:', err);
+    // Continue even if DB connection fails, to allow offline mode
+  });
+}
+
 // Middleware
-app.use(express.json());
+app.use(helmet()); // Security headers
+app.use(express.json({ limit: '10mb' })); // Increased limit for larger articles
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser()); // Parse cookies
+app.use(morgan('dev')); // Logging
 app.use(cors({
   origin: process.env.CORS_ORIGIN === '*' ? '*' : process.env.CORS_ORIGIN?.split(','),
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Allow cookies to be sent
+}));
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'biasbuster-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/biasbuster',
+    touchAfter: 24 * 3600 // time period in seconds
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  }
 }));
 
 // Basic rate limiting middleware
@@ -56,6 +94,10 @@ function rateLimiter(req: express.Request, res: express.Response, next: express.
 // Apply rate limiting to all API endpoints
 app.use('/api', rateLimiter);
 
+// API Routes
+app.use('/api/v1/auth', authRoutes); // Authentication routes
+app.use('/api/v1/analyses', analysisRoutes); // Analysis history routes
+
 // Health check endpoint
 app.get('/api/v1/health', (req, res) => {
   const aiService = process.env.AI_SERVICE || 'mock';
@@ -77,8 +119,11 @@ app.get('/api/v1/health', (req, res) => {
       biasDetection: true,
       sentimentAnalysis: true,
       sourceCredibility: true,
-      multilingualSupport: true
-    }
+      multilingualSupport: true,
+      userAccounts: true,
+      analysisHistory: true
+    },
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
 });
 
@@ -288,8 +333,10 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   });
 });
 
-// Start server
+// Start the server
 app.listen(port, () => {
   console.log(`Biasbuster MCP server running on port ${port}`);
   console.log(`Health check available at: http://localhost:${port}/api/v1/health`);
+  console.log(`Authentication endpoint: http://localhost:${port}/api/v1/auth/signup`);
+  console.log(`Analysis history: http://localhost:${port}/api/v1/analyses/history`);
 }); 

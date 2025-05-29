@@ -3,188 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biasbuster - Detect Media Bias in Real-Time</title>
+    <title>Biasbuster - AI-Powered Media Literacy Tool</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../chrome-extension/icons/icon16.png" type="image/png">
     <meta name="description" content="Biasbuster is an AI-powered tool that detects, explains, and helps mitigate bias and misinformation in news articles in real time.">
 </head>
-<body>
+<body data-theme="light">
     <header>
         <div class="container">
-            <h1>Biasbuster</h1>
-            <p class="tagline">Detect, understand, and mitigate media bias in real-time</p>
+            <div class="logo">
+                <img src="../chrome-extension/icons/icon48.png" alt="Biasbuster Logo">
+                <div>
+                    <h1>Biasbuster</h1>
+                    <div class="tagline">AI-Powered Media Literacy Tool</div>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <a href="#" class="active">Home</a>
+                <a href="#demo">Demo</a>
+                <a href="https://github.com/amarzeus/Biasbuster" target="_blank">GitHub</a>
+                <a href="auth.html">Login</a>
+            </nav>
+            <div class="user-nav" id="user-nav">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div id="user-menu" class="hidden">
+                    <a href="auth.html" class="btn-login">Sign In</a>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="container">
         <section class="intro">
-            <h2>Empower Your Critical Reading</h2>
-            <p>
-                Biasbuster uses advanced AI to analyze news articles for bias and misinformation, 
-                helping you become a more informed reader. Paste any article below to get started.
-            </p>
+            <h2>Detect Media Bias with AI</h2>
+            <p>Biasbuster is an advanced tool that helps detect, explain, and mitigate bias in news articles and media content, empowering you to make more informed decisions.</p>
+            <div class="flex gap-2 justify-center">
+                <a href="#demo" class="btn primary-btn">Try the Demo</a>
+                <a href="auth.html" class="btn secondary-btn">Create Account</a>
+            </div>
         </section>
 
-        <section class="demo">
-            <h2>Try It Now</h2>
+        <section id="demo" class="demo">
+            <h3 class="mb-3">Try Biasbuster Now</h3>
+            <p class="mb-3">Paste a news article or any text below to analyze it for potential bias:</p>
+            
             <div class="example-buttons">
-                <button id="load-example" class="secondary-btn">Load Example Article</button>
+                <button id="example1-btn" class="secondary-btn">Load Example 1</button>
+                <button id="example2-btn" class="secondary-btn">Load Example 2</button>
+                <button id="example3-btn" class="secondary-btn">Load Example 3</button>
             </div>
+            
             <div class="input-container">
-                <textarea id="article-text" placeholder="Paste a news article or text here..."></textarea>
-                <button id="analyze-btn">Analyze Text</button>
+                <textarea id="article-text" placeholder="Paste news article or any text here to analyze for bias..."></textarea>
+                <div class="flex gap-2">
+                    <button id="analyze-btn">Analyze for Bias</button>
+                    <button id="clear-btn" class="secondary-btn">Clear</button>
+                </div>
             </div>
-            <div id="status" class="status"></div>
-            <div id="results" class="results-container hidden">
+            
+            <div id="status" class="status">Ready to analyze. Enter text above and click "Analyze for Bias".</div>
+            
+            <div id="results-container" class="results-container hidden">
                 <div class="results-header">
-                    <h3>Analysis Results</h3>
-                    <div class="summary-box">
-                        <div id="main-topic"></div>
-                        <div id="bias-summary"></div>
-                    </div>
+                    <h3>Bias Analysis Results</h3>
+                </div>
+                
+                <div class="summary-box">
+                    <div id="main-topic">Topic: <span></span></div>
+                    <div id="bias-summary"></div>
                 </div>
                 
                 <div class="tab-navigation">
-                    <button class="view-tab active" data-target="visualization-tab">Bias Visualization</button>
-                    <button class="view-tab" data-target="analysis-tab">Detailed Analysis</button>
-                    <button class="view-tab" data-target="statistics-tab">Bias Statistics</button>
-                    <button class="view-tab" data-target="education-tab">Educational Resources</button>
+                    <button class="view-tab active" data-tab="bias-tab">Bias Analysis</button>
+                    <button class="view-tab" data-tab="visual-tab">Visual Representation</button>
+                    <button class="view-tab" data-tab="sentiment-tab">Sentiment Analysis</button>
+                    <button class="view-tab" data-tab="suggestions-tab">Suggestions</button>
+                    <button class="view-tab" data-tab="credibility-tab">Source Credibility</button>
                 </div>
                 
-                <div id="visualization-tab" class="tab-content">
-                    <h4>Interactive Bias Heat Map</h4>
-                    <p class="tab-description">
-                        This visualization highlights biased content in the text. 
-                        Hover over highlighted text to see details, or click to jump to the analysis.
-                    </p>
-                    <div id="bias-visualization"></div>
-                </div>
-                
-                <div id="analysis-tab" class="tab-content hidden">
-                    <h4>Bias Analysis</h4>
-                    <p class="tab-description">
-                        Detailed breakdown of each instance of bias detected in the text.
-                    </p>
-                    <div id="bias-instances" class="bias-instances"></div>
-                </div>
-                
-                <div id="statistics-tab" class="tab-content hidden">
-                    <h4>Bias Statistics</h4>
-                    <p class="tab-description">
-                        Statistical analysis of bias types and severity found in the text.
-                    </p>
-                    <div id="bias-statistics"></div>
-                </div>
-                
-                <div id="education-tab" class="tab-content hidden">
-                    <h4>Educational Resources</h4>
-                    <p class="tab-description">
-                        Learn more about bias types and how to identify them in media.
-                    </p>
-                    <div class="results-footer">
-                        <div class="sources-container">
-                            <h4>Trusted Sources</h4>
-                            <ul id="trusted-sources"></ul>
-                        </div>
-                        <div class="educational-container">
-                            <h4>Educational Content</h4>
-                            <div id="educational-content"></div>
-                        </div>
+                <div class="tab-content">
+                    <div id="bias-tab" class="tab-pane active">
+                        <p class="tab-description">Detailed breakdown of bias detected in the content:</p>
+                        <div id="bias-details"></div>
+                    </div>
+                    
+                    <div id="visual-tab" class="tab-pane hidden">
+                        <p class="tab-description">Visual representation of bias distribution:</p>
+                        <div id="bias-visualization"></div>
+                    </div>
+                    
+                    <div id="sentiment-tab" class="tab-pane hidden">
+                        <p class="tab-description">Sentiment and emotional tone analysis:</p>
+                        <div id="sentiment-analysis"></div>
+                    </div>
+                    
+                    <div id="suggestions-tab" class="tab-pane hidden">
+                        <p class="tab-description">Suggestions for obtaining a more balanced perspective:</p>
+                        <div id="bias-suggestions"></div>
+                    </div>
+                    
+                    <div id="credibility-tab" class="tab-pane hidden">
+                        <p class="tab-description">Analysis of source credibility and fact-checking:</p>
+                        <div id="credibility-score"></div>
                     </div>
                 </div>
             </div>
         </section>
         
-        <section class="advanced-ai-features">
-            <h2>Advanced AI Technologies</h2>
-            <p>Biasbuster leverages cutting-edge AI and machine learning to provide the most accurate bias detection available.</p>
-            
-            <div class="ai-feature-grid">
-                <div class="ai-feature-card">
-                    <div class="ai-feature-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3 class="ai-feature-title">Deep Learning Bias Detection <span class="ai-badge">New</span></h3>
-                    <p>Our advanced neural networks have been trained on millions of articles to recognize subtle patterns of bias that traditional algorithms miss.</p>
-                </div>
-                
-                <div class="ai-feature-card">
-                    <div class="ai-feature-icon">
-                        <i class="fas fa-chart-pie"></i>
-                    </div>
-                    <h3 class="ai-feature-title">Real-time Visualization</h3>
-                    <p>Interactive heat maps highlight biased content directly in the text, making it easy to identify problematic statements at a glance.</p>
-                </div>
-                
-                <div class="ai-feature-card">
-                    <div class="ai-feature-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3 class="ai-feature-title">NLP Sentiment Analysis <span class="ai-badge">AI</span></h3>
-                    <p>Advanced natural language processing analyzes emotional tone and sentiment to detect even the most subtly biased language.</p>
-                </div>
-                
-                <div class="ai-feature-card">
-                    <div class="ai-feature-icon">
-                        <i class="fas fa-sync"></i>
-                    </div>
-                    <h3 class="ai-feature-title">AI-Generated Rewrites</h3>
-                    <p>Our AI doesn't just detect bias—it suggests more balanced alternatives, helping writers create more objective content.</p>
-                </div>
-                
-                <div class="ai-feature-card">
-                    <div class="ai-feature-icon">
-                        <i class="fas fa-database"></i>
-                    </div>
-                    <h3 class="ai-feature-title">Source Credibility Scoring <span class="ai-badge">New</span></h3>
-                    <p>Our AI evaluates source credibility based on factors including past accuracy, transparency, and expert reputation.</p>
-                </div>
-                
-                <div class="ai-feature-card">
-                    <div class="ai-feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="ai-feature-title">Adaptive Learning</h3>
-                    <p>Biasbuster gets smarter with every analysis, continuously improving its accuracy through user feedback and new data.</p>
-                </div>
-            </div>
-        </section>
-
         <section class="features">
-            <h2>Key Features</h2>
+            <h3 class="text-center mb-4">Key Features</h3>
+            
             <div class="feature-grid">
                 <div class="feature-card">
-                    <h3>Real-time Analysis</h3>
-                    <p>Instantly analyze any news article for various types of bias and misinformation.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h4>AI-Powered Bias Detection</h4>
+                    <p>Advanced algorithms analyze text for political, ideological, and other types of bias.</p>
                 </div>
+                
                 <div class="feature-card">
-                    <h3>Detailed Explanations</h3>
-                    <p>Get clear explanations of why specific content may be biased or misleading.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4>Visual Analysis</h4>
+                    <p>Clear visualization of bias using heatmaps and other visual indicators.</p>
                 </div>
+                
                 <div class="feature-card">
-                    <h3>Suggested Rewrites</h3>
-                    <p>See how biased statements could be rewritten in a more neutral, balanced way.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h4>Sentiment Analysis</h4>
+                    <p>Evaluate the emotional tone and sentiment patterns within content.</p>
                 </div>
+                
                 <div class="feature-card">
-                    <h3>Educational Resources</h3>
-                    <p>Learn how to spot bias on your own with helpful tips and trusted sources.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4>Source Credibility</h4>
+                    <p>Assess the reliability of sources based on multiple factors.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h4>Multilingual Support</h4>
+                    <p>Analyze content in multiple languages with automatic detection.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h4>Browser Extension</h4>
+                    <p>Analyze news articles directly in your browser with our Chrome extension.</p>
                 </div>
             </div>
-        </section>
-
-        <section class="cta">
-            <h2>Get the Chrome Extension</h2>
-            <p>Analyze articles as you browse with our free Chrome extension.</p>
-            <button class="cta-btn">Download Extension</button>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Biasbuster. All rights reserved.</p>
+            <div class="footer-container">
+                <div>
+                    <div class="footer-logo">
+                        <img src="../chrome-extension/icons/icon48.png" alt="Biasbuster Logo" width="40">
+                        <span style="font-size: 1.5rem; font-weight: 600; margin-left: 0.5rem;">Biasbuster</span>
+                    </div>
+                    <p class="footer-description">
+                        An AI-powered tool that helps detect, explain, and mitigate bias in news articles and media content.
+                    </p>
+                    <div class="social-links">
+                        <a href="https://github.com/amarzeus/" class="social-link" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/amarmahakal/" class="social-link" target="_blank">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://twitter.com/" class="social-link" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="#top">Home</a></li>
+                        <li><a href="#demo">Demo</a></li>
+                        <li><a href="#">Chrome Extension</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/amarzeus/Biasbuster" target="_blank">Documentation</a></li>
+                        <li><a href="https://github.com/amarzeus/Biasbuster/issues" target="_blank">Support</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="../docs/AI-MODELS.md" target="_blank">AI Models</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Support</h3>
+                    <p>If you find Biasbuster helpful, consider supporting the project:</p>
+                    <a href="https://buymeacoffee.com/amarmahakal" class="buy-coffee" target="_blank">
+                        <i class="fas fa-mug-hot"></i>
+                        Buy me a coffee
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div>Made with ❤️ by <a href="https://www.linkedin.com/in/amarmahakal/" target="_blank">Amar Kumar</a></div>
+                <div class="footer-nav">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
         </div>
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const icon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+        
+        // Update icon based on current theme
+        if (savedTheme === 'dark') {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Toggle icon
+            if (newTheme === 'dark') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Tab Switching
+        const tabBtns = document.querySelectorAll('.view-tab');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.add('hidden'));
+                
+                // Add active class to clicked tab
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.remove('hidden');
+            });
+        });
+        
+        // Check for logged in user
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userMenu = document.getElementById('user-menu');
+        
+        if (user) {
+            userMenu.innerHTML = `
+                <div class="user-info">
+                    <span>Welcome, ${user.name || user.email}</span>
+                    <button id="logout-btn" class="btn-logout">Logout</button>
+                </div>
+            `;
+            userMenu.classList.remove('hidden');
+            
+            // Add logout functionality
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('user');
+                window.location.reload();
+            });
+        } else {
+            userMenu.classList.remove('hidden');
+        }
+    </script>
 </body>
 </html> 

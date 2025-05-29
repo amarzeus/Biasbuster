@@ -579,7 +579,7 @@ async function callMockAI(
   if (options.includeSentiment) {
     sentimentAnalysis = {
       Overall: ["positive", "negative", "neutral"][Math.floor(Math.random() * 3)],
-      Score: (Math.random() * 2 - 1).toFixed(2), // -1 to 1
+      Score: parseFloat((Math.random() * 2 - 1).toFixed(2)), // Convert to number with parseFloat
       EmotionalTone: ["informative", "objective", "concerned", "alarming"].slice(0, Math.floor(Math.random() * 3) + 1)
     };
   }
