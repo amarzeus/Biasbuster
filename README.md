@@ -57,10 +57,10 @@ A standalone web application that allows users to analyze text directly.
 ### Installation
 
 1. Clone the repository:
-```
-git clone https://github.com/yourusername/biasbuster.git
-cd biasbuster
-```
+   ```
+   git clone https://github.com/amarzeus/Biasbuster.git
+   cd biasbuster
+   ```
 
 2. Install dependencies:
 ```
