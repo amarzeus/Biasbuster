@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Literacy Hub - Biasbuster</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <meta name="description" content="Enhance your AI literacy with Biasbuster's interactive lessons, quizzes, and real-world scenarios.">
+    <style>
+        .literacy-hero {
+            background: var(--gradient-primary);
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 40px;
+        }
+        
+        .literacy-hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .literacy-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .module-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .module-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .module-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+        
+        .module-content {
+            padding: 20px;
+        }
+        
+        .module-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            opacity: 0.8;
+        }
+        
+        .module-content p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+        
+        .topics-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .topics-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .topics-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .topics-list i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .module-footer {
+            padding: 15px 20px;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .module-footer .difficulty {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .difficulty.beginner {
+            background-color: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        .difficulty.intermediate {
+            background-color: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .difficulty.advanced {
+            background-color: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .interactive-section {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .quiz-card {
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+        }
+        
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .quiz-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(var(--primary-rgb), 0.05);
+        }
+        
+        .quiz-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(var(--primary-rgb), 0.1);
+        }
+        
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .resource-card {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: transform var(--transition-normal);
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .resource-image {
+            height: 150px;
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .resource-image i {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .resource-content {
+            padding: 15px;
+        }
+        
+        .resource-content h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+        }
+        
+        .resource-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .resource-link {
+            display: inline-block;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resource-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .fact-checking-tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .tool-card {
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .tool-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .tool-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+        }
+        
+        .tool-header h4 {
+            margin: 0;
+        }
+        
+        .tool-content {
+            padding: 20px;
+        }
+        
+        .tool-content p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+        
+        .tool-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tool-feature {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(var(--primary-color-rgb), 0.1);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .concept-map-container {
+            display: flex;
+            justify-content: center;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .concept-map-image {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .fact-checking-tools {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Biasbuster Logo">
+                <div>
+                    <h1>Biasbuster</h1>
+                    <div class="tagline">AI-Powered Media Literacy Tool</div>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="index.html#demo">Demo</a>
+                <a href="ai-literacy.html" class="active">AI Literacy Hub</a>
+                <a href="about.html">About</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="contact.html">Contact</a>
+                <a href="auth.html" class="btn-login-nav">Sign In</a>
+            </nav>
+            <div class="user-nav" id="user-nav">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div id="user-menu" class="hidden">
+                    <a href="auth.html" class="btn-login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="literacy-hero">
+            <h2>AI Literacy Hub</h2>
+            <p>Build your AI literacy skills with interactive lessons, quizzes, and real-world scenarios to help you navigate today's AI-powered media landscape.</p>
+            <a href="#modules" class="btn primary-btn">Explore Modules</a>
+        </div>
+        
+        <section id="modules">
+            <h3 class="mb-4">Learning Modules</h3>
+            <div class="module-grid">
+                <!-- Module 1: Engaging with AI -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <h3>Engaging with AI</h3>
+                        <div class="module-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <div class="module-content">
+                        <p>Learn to spot AI in your daily life and understand how it influences the information you consume.</p>
+                        <ul class="topics-list">
+                            <li><i class="fas fa-check-circle"></i> Identifying AI-generated content</li>
+                            <li><i class="fas fa-check-circle"></i> Understanding AI limitations</li>
+                            <li><i class="fas fa-check-circle"></i> Detecting hallucinations and biases</li>
+                            <li><i class="fas fa-check-circle"></i> Critical evaluation techniques</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <span class="difficulty beginner">Beginner</span>
+                        <a href="#quiz1" class="btn secondary-btn">Start Learning</a>
+                    </div>
+                </div>
+                
+                <!-- Module 2: Creating with AI -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <h3>Creating with AI</h3>
+                        <div class="module-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                    </div>
+                    <div class="module-content">
+                        <p>Explore ethical content co-creation with AI tools and understand responsible creation practices.</p>
+                        <ul class="topics-list">
+                            <li><i class="fas fa-check-circle"></i> Ethical considerations in AI creation</li>
+                            <li><i class="fas fa-check-circle"></i> Avoiding bias amplification</li>
+                            <li><i class="fas fa-check-circle"></i> Proper attribution and disclosure</li>
+                            <li><i class="fas fa-check-circle"></i> Creative collaboration techniques</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <span class="difficulty intermediate">Intermediate</span>
+                        <a href="#" class="btn secondary-btn">Start Learning</a>
+                    </div>
+                </div>
+                
+                <!-- Module 3: Managing AI's Actions -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <h3>Managing AI's Actions</h3>
+                        <div class="module-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                    </div>
+                    <div class="module-content">
+                        <p>Learn about oversight, privacy, and safety practices when working with AI systems.</p>
+                        <ul class="topics-list">
+                            <li><i class="fas fa-check-circle"></i> Privacy considerations and data usage</li>
+                            <li><i class="fas fa-check-circle"></i> Security best practices</li>
+                            <li><i class="fas fa-check-circle"></i> AI oversight and governance</li>
+                            <li><i class="fas fa-check-circle"></i> Managing automation risks</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <span class="difficulty intermediate">Intermediate</span>
+                        <a href="#" class="btn secondary-btn">Start Learning</a>
+                    </div>
+                </div>
+                
+                <!-- Module 4: Designing AI Solutions -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <h3>Designing AI Solutions</h3>
+                        <div class="module-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                    </div>
+                    <div class="module-content">
+                        <p>Understand how AI works and learn to build your own bias detector in our mini-lab.</p>
+                        <ul class="topics-list">
+                            <li><i class="fas fa-check-circle"></i> AI fundamentals and architecture</li>
+                            <li><i class="fas fa-check-circle"></i> Bias detection principles</li>
+                            <li><i class="fas fa-check-circle"></i> Build-your-own bias detector</li>
+                            <li><i class="fas fa-check-circle"></i> Responsible AI design</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <span class="difficulty advanced">Advanced</span>
+                        <a href="#" class="btn secondary-btn">Start Learning</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="quiz1" class="interactive-section">
+            <h3 class="mb-4 text-center">Interactive Quiz: Engaging with AI</h3>
+            <div class="quiz-container">
+                <div class="quiz-card">
+                    <div class="quiz-question">1. Which of the following is the most reliable indicator that content may have been AI-generated?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">A. It contains complex technical information</div>
+                        <div class="quiz-option">B. It has generic phrasing and lacks specific details</div>
+                        <div class="quiz-option">C. It includes many statistics and numbers</div>
+                        <div class="quiz-option">D. It was published on a major news website</div>
+                    </div>
+                </div>
+                
+                <div class="quiz-card">
+                    <div class="quiz-question">2. What is an "AI hallucination" in the context of content generation?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">A. When AI creates visually distorted images</div>
+                        <div class="quiz-option">B. When AI presents false information as if it were factual</div>
+                        <div class="quiz-option">C. When AI creates content that appears in dreams</div>
+                        <div class="quiz-option">D. When AI systems communicate with each other</div>
+                    </div>
+                </div>
+                
+                <div class="quiz-card">
+                    <div class="quiz-question">3. Which action is most recommended when encountering potential AI-generated news?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">A. Share it immediately if it seems important</div>
+                        <div class="quiz-option">B. Check if the same information appears on multiple reputable sources</div>
+                        <div class="quiz-option">C. Assume all news is AI-generated</div>
+                        <div class="quiz-option">D. Only trust news with many technical details</div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button id="check-answers" class="primary-btn">Check Answers</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="resources">
+            <h3 class="mb-4">Additional Resources</h3>
+            <div class="resource-list">
+                <div class="resource-card">
+                    <div class="resource-image">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h4>Media Literacy Guide</h4>
+                        <p>A comprehensive guide to evaluating media sources and content in the age of AI.</p>
+                        <a href="#" class="resource-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-image">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h4>Video Tutorials</h4>
+                        <p>Watch our series on detecting AI-generated content and deepfakes.</p>
+                        <a href="#" class="resource-link">Watch Videos <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-image">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h4>Fact-Checking Tools</h4>
+                        <p>Discover essential tools for verifying information and checking claims.</p>
+                        <a href="#fact-checking" class="resource-link">Explore Tools <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-image">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h4>Community Forum</h4>
+                        <p>Join discussions with other learners and share insights on AI literacy.</p>
+                        <a href="#" class="resource-link">Join Forum <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="fact-checking" class="interactive-section">
+            <h3 class="mb-4 text-center">Media Literacy Toolkit</h3>
+            <p class="text-center mb-4">Essential fact-checking tools and resources to help you verify information, detect bias, and evaluate media credibility.</p>
+            
+            <div class="fact-checking-tools">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <img src="https://www.snopes.com/tachyon/2019/06/favicon-32x32.png" alt="Snopes Logo" class="tool-logo">
+                        <h4>Snopes</h4>
+                    </div>
+                    <div class="tool-content">
+                        <p>One of the internet's oldest and most trusted fact-checking resources. Debunks misinformation, rumors, and urban legends.</p>
+                        <div class="tool-features">
+                            <span class="tool-feature"><i class="fas fa-check"></i> Political fact-checking</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> News verification</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Rumor debunking</span>
+                        </div>
+                        <a href="https://www.snopes.com/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn mt-3">Visit Snopes</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <img src="https://static.politifact.com/CACHE/images/static/favicons/favicon-32x32/0f01a8d2e7e99bb03130d2c12b9a93b6.png" alt="PolitiFact Logo" class="tool-logo">
+                        <h4>PolitiFact</h4>
+                    </div>
+                    <div class="tool-content">
+                        <p>Fact-checking focused on political claims and statements. Features the "Truth-O-Meter" rating system for accuracy evaluation.</p>
+                        <div class="tool-features">
+                            <span class="tool-feature"><i class="fas fa-check"></i> Political statements</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Accuracy ratings</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Context analysis</span>
+                        </div>
+                        <a href="https://www.politifact.com/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn mt-3">Visit PolitiFact</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <img src="https://cdn.factcheck.org/wp-content/themes/factcheck-2020/favicon/favicon-32x32.png" alt="FactCheck.org Logo" class="tool-logo">
+                        <h4>FactCheck.org</h4>
+                    </div>
+                    <div class="tool-content">
+                        <p>Monitors factual accuracy in politics and aims to reduce deception and confusion in U.S. politics. Provides in-depth analysis.</p>
+                        <div class="tool-features">
+                            <span class="tool-feature"><i class="fas fa-check"></i> Political claims</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Viral content</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Science checks</span>
+                        </div>
+                        <a href="https://www.factcheck.org/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn mt-3">Visit FactCheck.org</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <img src="https://assets.afp.com/builds/images/favicon-32x32.1c545a0a.png" alt="AFP Fact Check Logo" class="tool-logo">
+                        <h4>AFP Fact Check</h4>
+                    </div>
+                    <div class="tool-content">
+                        <p>Global fact-checking service from Agence France-Presse that covers misinformation in multiple languages and regions.</p>
+                        <div class="tool-features">
+                            <span class="tool-feature"><i class="fas fa-check"></i> International coverage</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Multilingual</span>
+                            <span class="tool-feature"><i class="fas fa-check"></i> Visual verification</span>
+                        </div>
+                        <a href="https://factcheck.afp.com/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn mt-3">Visit AFP Fact Check</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="interactive-concept-map mt-5">
+                <h4 class="text-center mb-4">Misinformation Detection Framework</h4>
+                <div class="concept-map-container">
+                    <img src="https://placehold.co/800x400" alt="Misinformation Detection Framework" class="concept-map-image">
+                </div>
+                <p class="text-center mt-3">A visual guide to identifying various types of misinformation, from deepfakes to AI hallucinations.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/logo.png" alt="Biasbuster Logo">
+                    <h3>Biasbuster</h3>
+                    <p>AI-Powered Media Literacy Tool</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="index.html">Home</a>
+                        <a href="pricing.html">Pricing</a>
+                        <a href="documentation.html">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <a href="about.html">About</a>
+                        <a href="contact.html">Contact</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Careers</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <a href="terms.html">Terms of Service</a>
+                        <a href="privacy.html">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Biasbuster. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            
+            themeToggle.addEventListener('click', () => {
+                if (body.getAttribute('data-theme') === 'light') {
+                    body.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    body.setAttribute('data-theme', 'light');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            const mainNav = document.getElementById('main-nav');
+            
+            mobileMenuToggle.addEventListener('click', () => {
+                mainNav.classList.add('mobile-active');
+            });
+            
+            mobileMenuClose.addEventListener('click', () => {
+                mainNav.classList.remove('mobile-active');
+            });
+            
+            // Quiz functionality
+            const quizOptions = document.querySelectorAll('.quiz-option');
+            
+            quizOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove selection from other options in the same question
+                    const questionDiv = option.closest('.quiz-card');
+                    const options = questionDiv.querySelectorAll('.quiz-option');
+                    
+                    options.forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Mark this option as selected
+                    option.classList.add('selected');
+                });
+            });
+            
+            // Check answers button
+            const checkAnswersBtn = document.getElementById('check-answers');
+            
+            if (checkAnswersBtn) {
+                checkAnswersBtn.addEventListener('click', () => {
+                    // Correct answers (index 0-based for each question)
+                    const correctAnswers = [1, 1, 1]; // B, B, B
+                    
+                    // Get all quiz cards
+                    const quizCards = document.querySelectorAll('.quiz-card');
+                    
+                    // Check each question
+                    quizCards.forEach((card, questionIndex) => {
+                        const options = card.querySelectorAll('.quiz-option');
+                        const selectedOption = card.querySelector('.quiz-option.selected');
+                        
+                        // Reset all options
+                        options.forEach((option, optionIndex) => {
+                            option.style.backgroundColor = '';
+                            option.style.borderColor = '';
+                            
+                            // Mark correct answer
+                            if (optionIndex === correctAnswers[questionIndex]) {
+                                option.style.backgroundColor = 'rgba(82, 196, 26, 0.1)';
+                                option.style.borderColor = '#52c41a';
+                            }
+                            
+                            // Mark incorrect selected answer
+                            if (selectedOption === option && optionIndex !== correctAnswers[questionIndex]) {
+                                option.style.backgroundColor = 'rgba(245, 34, 45, 0.1)';
+                                option.style.borderColor = '#f5222d';
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

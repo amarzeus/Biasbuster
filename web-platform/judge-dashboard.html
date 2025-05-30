@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judge's Dashboard - Biasbuster</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <meta name="description" content="Biasbuster Judge's Dashboard - Access real-time analytics, technical architecture, and performance metrics.">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: calc(100vh - 160px);
+        }
+        
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 0;
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--text-color);
+            border-left: 3px solid transparent;
+            transition: all var(--transition-fast);
+        }
+        
+        .sidebar-link:hover {
+            background-color: rgba(var(--primary-color-rgb), 0.05);
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(var(--primary-color-rgb), 0.1);
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .dashboard-content {
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-title {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .dashboard-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .dashboard-card {
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0 5px;
+            color: var(--primary-color);
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+        
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
+        .tech-card {
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            text-align: center;
+            transition: transform var(--transition-normal);
+        }
+        
+        .tech-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .tech-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .tech-name {
+            font-weight: 600;
+            margin: 0 0 5px;
+        }
+        
+        .tech-role {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .architecture-diagram {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .diagram-img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .report-generator {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group select, 
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-family: var(--font-family);
+        }
+        
+        .checkbox-group {
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Biasbuster Logo">
+                <div>
+                    <h1>Biasbuster</h1>
+                    <div class="tagline">AI-Powered Media Literacy Tool</div>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="index.html#demo">Demo</a>
+                <a href="ai-literacy.html">AI Literacy Hub</a>
+                <a href="ethics-committee.html">Ethics Committee</a>
+                <a href="about.html">About</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="contact.html">Contact</a>
+                <a href="auth.html" class="btn-login-nav">Sign In</a>
+            </nav>
+            <div class="user-nav" id="user-nav">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div id="user-menu" class="hidden">
+                    <a href="auth.html" class="btn-login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-nav">
+                <a href="#overview" class="sidebar-link active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard Overview
+                </a>
+                <a href="#analytics" class="sidebar-link" data-section="analytics">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a>
+                <a href="#architecture" class="sidebar-link" data-section="architecture">
+                    <i class="fas fa-sitemap"></i> Technical Architecture
+                </a>
+                <a href="#performance" class="sidebar-link" data-section="performance">
+                    <i class="fas fa-bolt"></i> Performance Metrics
+                </a>
+                <a href="#transparency" class="sidebar-link" data-section="transparency">
+                    <i class="fas fa-file-alt"></i> Transparency Reports
+                </a>
+                <a href="#evaluation" class="sidebar-link" data-section="evaluation">
+                    <i class="fas fa-clipboard-check"></i> Evaluation Criteria
+                </a>
+            </div>
+        </aside>
+        
+        <main class="dashboard-content">
+            <div class="dashboard-header">
+                <h2 class="dashboard-title">Judge's Dashboard</h2>
+                <div class="dashboard-actions">
+                    <button class="secondary-btn">
+                        <i class="fas fa-download"></i> Download Data
+                    </button>
+                    <button class="primary-btn">
+                        <i class="fas fa-print"></i> Print View
+                    </button>
+                </div>
+            </div>
+            
+            <section id="overview" class="dashboard-section">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="metric-value">12,458</div>
+                        <div class="metric-label">Articles Analyzed</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-value">2,341</div>
+                        <div class="metric-label">Active Users</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="metric-value">98.7%</div>
+                        <div class="metric-label">AI Model Accuracy</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="metric-value">1.2s</div>
+                        <div class="metric-label">Avg. Processing Time</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>Bias Detection - 30 Day Trend</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-line fa-3x"></i>
+                        </div>
+                    </div>
+                    <p class="text-secondary">
+                        Analysis trend shows a 22% increase in detection accuracy over the past month, with political bias being the most commonly identified type.
+                    </p>
+                </div>
+            </section>
+            
+            <section id="analytics" class="dashboard-section hidden">
+                <div class="dashboard-card">
+                    <h3>User Engagement Analytics</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-bar fa-3x"></i>
+                        </div>
+                    </div>
+                    <p class="text-secondary">
+                        User engagement metrics show strong adoption among educators (42%) and students (35%), with journalists and researchers comprising another 18%.
+                    </p>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>Bias Type Distribution</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie fa-3x"></i>
+                        </div>
+                    </div>
+                    <p class="text-secondary">
+                        Political bias accounts for 45% of detected bias, followed by gender bias (18%), racial bias (15%), and socioeconomic bias (12%).
+                    </p>
+                </div>
+            </section>
+            
+            <section id="architecture" class="dashboard-section hidden">
+                <div class="dashboard-card">
+                    <h3>Technical Architecture</h3>
+                    <div class="architecture-diagram">
+                        <img src="assets/ml-architecture.svg" alt="Biasbuster Technical Architecture" class="diagram-img">
+                    </div>
+                    <p class="text-secondary">
+                        Biasbuster employs a modular microservices architecture with dedicated processing pipelines for different types of bias detection, ensuring scalability and flexibility.
+                    </p>
+                </div>
+                
+                <h3 class="mb-3">Technology Stack</h3>
+                <div class="tech-stack-grid">
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fab fa-react"></i>
+                        </div>
+                        <h4 class="tech-name">React.js</h4>
+                        <div class="tech-role">Frontend UI</div>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fab fa-node-js"></i>
+                        </div>
+                        <h4 class="tech-name">Node.js</h4>
+                        <div class="tech-role">Backend Server</div>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h4 class="tech-name">MongoDB</h4>
+                        <div class="tech-role">Database</div>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fab fa-docker"></i>
+                        </div>
+                        <h4 class="tech-name">Docker</h4>
+                        <div class="tech-role">Containerization</div>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <h4 class="tech-name">AWS</h4>
+                        <div class="tech-role">Cloud Infrastructure</div>
+                    </div>
+                    
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fab fa-python"></i>
+                        </div>
+                        <h4 class="tech-name">TensorFlow</h4>
+                        <div class="tech-role">Machine Learning</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="performance" class="dashboard-section hidden">
+                <div class="dashboard-card">
+                    <h3>System Performance</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-tachometer-alt fa-3x"></i>
+                        </div>
+                    </div>
+                    <p class="text-secondary">
+                        The system maintains a 99.8% uptime with an average response time of 1.2 seconds for bias analysis requests, even during peak usage periods.
+                    </p>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>AI Model Performance</h3>
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1 Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Political Bias Detector</td>
+                                <td>98.7%</td>
+                                <td>97.5%</td>
+                                <td>96.8%</td>
+                                <td>97.1%</td>
+                            </tr>
+                            <tr>
+                                <td>Gender Bias Detector</td>
+                                <td>95.3%</td>
+                                <td>94.1%</td>
+                                <td>93.8%</td>
+                                <td>93.9%</td>
+                            </tr>
+                            <tr>
+                                <td>Racial Bias Detector</td>
+                                <td>96.2%</td>
+                                <td>95.4%</td>
+                                <td>94.7%</td>
+                                <td>95.0%</td>
+                            </tr>
+                            <tr>
+                                <td>Socioeconomic Bias Detector</td>
+                                <td>94.8%</td>
+                                <td>93.2%</td>
+                                <td>92.9%</td>
+                                <td>93.0%</td>
+                            </tr>
+                            <tr>
+                                <td>Ensemble Model</td>
+                                <td>98.9%</td>
+                                <td>97.8%</td>
+                                <td>97.6%</td>
+                                <td>97.7%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="transparency" class="dashboard-section hidden">
+                <div class="dashboard-card">
+                    <h3>Transparency Report Generator</h3>
+                    <p>Create customized transparency reports with the data most relevant to your evaluation criteria.</p>
+                    
+                    <div class="report-generator">
+                        <form id="report-form">
+                            <div class="form-group">
+                                <label for="report-type">Report Type</label>
+                                <select id="report-type" name="report-type">
+                                    <option value="comprehensive">Comprehensive Report</option>
+                                    <option value="bias-detection">Bias Detection Accuracy</option>
+                                    <option value="user-engagement">User Engagement</option>
+                                    <option value="ai-ethics">AI Ethics Compliance</option>
+                                    <option value="performance">System Performance</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="time-period">Time Period</label>
+                                <select id="time-period" name="time-period">
+                                    <option value="30days">Last 30 Days</option>
+                                    <option value="90days">Last 90 Days</option>
+                                    <option value="6months">Last 6 Months</option>
+                                    <option value="1year">Last Year</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group date-range hidden">
+                                <label for="start-date">Start Date</label>
+                                <input type="date" id="start-date" name="start-date">
+                            </div>
+                            
+                            <div class="form-group date-range hidden">
+                                <label for="end-date">End Date</label>
+                                <input type="date" id="end-date" name="end-date">
+                            </div>
+                            
+                            <div class="checkbox-group">
+                                <label>Include Sections:</label>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="include-exec-summary" name="include-exec-summary" checked>
+                                    <label for="include-exec-summary">Executive Summary</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="include-metrics" name="include-metrics" checked>
+                                    <label for="include-metrics">Key Metrics</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="include-charts" name="include-charts" checked>
+                                    <label for="include-charts">Charts & Visualizations</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="include-recommendations" name="include-recommendations" checked>
+                                    <label for="include-recommendations">Recommendations</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="include-raw-data" name="include-raw-data">
+                                    <label for="include-raw-data">Raw Data Appendix</label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="primary-btn">
+                                <i class="fas fa-file-export"></i> Generate Report
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3>Recent Reports</h3>
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>Report Name</th>
+                                <th>Date Generated</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Q2 2024 Comprehensive Report</td>
+                                <td>July 1, 2024</td>
+                                <td>Comprehensive</td>
+                                <td><a href="#" class="secondary-btn">Download</a></td>
+                            </tr>
+                            <tr>
+                                <td>Bias Detection Accuracy - June 2024</td>
+                                <td>June 30, 2024</td>
+                                <td>Bias Detection</td>
+                                <td><a href="#" class="secondary-btn">Download</a></td>
+                            </tr>
+                            <tr>
+                                <td>AI Ethics Compliance Review</td>
+                                <td>June 15, 2024</td>
+                                <td>AI Ethics</td>
+                                <td><a href="#" class="secondary-btn">Download</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="evaluation" class="dashboard-section hidden">
+                <div class="dashboard-card">
+                    <h3>Startupathon Evaluation Criteria</h3>
+                    <p>Track how Biasbuster performs against the key judging criteria for the Startupathon Challenge.</p>
+                    
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>Criteria</th>
+                                <th>Current Rating</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Innovation & Creativity</td>
+                                <td><span class="rating-good">Excellent</span></td>
+                                <td>Novel approach to AI-powered bias detection with unique visualization features.</td>
+                            </tr>
+                            <tr>
+                                <td>Technical Implementation</td>
+                                <td><span class="rating-good">Excellent</span></td>
+                                <td>Robust architecture with high-performance metrics and scalable design.</td>
+                            </tr>
+                            <tr>
+                                <td>User Experience</td>
+                                <td><span class="rating-good">Excellent</span></td>
+                                <td>Intuitive interface with clear visualizations and helpful feedback mechanisms.</td>
+                            </tr>
+                            <tr>
+                                <td>Educational Value</td>
+                                <td><span class="rating-good">Excellent</span></td>
+                                <td>Comprehensive AI Literacy Hub and educational resources provide significant value.</td>
+                            </tr>
+                            <tr>
+                                <td>Social Impact</td>
+                                <td><span class="rating-good">Excellent</span></td>
+                                <td>Addresses critical media literacy needs and promotes responsible AI usage.</td>
+                            </tr>
+                            <tr>
+                                <td>Scalability & Sustainability</td>
+                                <td><span class="rating-medium">Very Good</span></td>
+                                <td>Strong technical foundation with clear path to scaling, revenue model in development.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div>
+                    <div class="footer-logo">
+                        <img src="assets/logo.png" alt="Biasbuster Logo" width="40">
+                        <span>Biasbuster</span>
+                    </div>
+                    <p class="footer-description">
+                        Advanced AI-powered media literacy tool that helps detect bias in news articles and media content.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#demo">Demo</a></li>
+                        <li><a href="chrome-extension.html">Chrome Extension</a></li>
+                        <li><a href="api-docs.html">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="ai-literacy.html">AI Literacy Hub</a></li>
+                        <li><a href="ethics-committee.html">Ethics Committee</a></li>
+                        <li><a href="support.html">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div>© 2024 Biasbuster. All rights reserved.</div>
+                <div class="footer-nav">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            
+            themeToggle.addEventListener('click', () => {
+                if (body.getAttribute('data-theme') === 'light') {
+                    body.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    body.setAttribute('data-theme', 'light');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            const mainNav = document.getElementById('main-nav');
+            
+            mobileMenuToggle.addEventListener('click', () => {
+                mainNav.classList.add('active');
+            });
+            
+            mobileMenuClose.addEventListener('click', () => {
+                mainNav.classList.remove('active');
+            });
+            
+            // Dashboard sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const dashboardSections = document.querySelectorAll('.dashboard-section');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    link.classList.add('active');
+                    
+                    // Hide all sections
+                    dashboardSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    
+                    // Show the selected section
+                    const sectionId = link.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.remove('hidden');
+                });
+            });
+            
+            // Report generator custom date range
+            const timePeriodSelect = document.getElementById('time-period');
+            const dateRangeFields = document.querySelectorAll('.date-range');
+            
+            timePeriodSelect.addEventListener('change', () => {
+                if (timePeriodSelect.value === 'custom') {
+                    dateRangeFields.forEach(field => field.classList.remove('hidden'));
+                } else {
+                    dateRangeFields.forEach(field => field.classList.add('hidden'));
+                }
+            });
+            
+            // Report form submission
+            const reportForm = document.getElementById('report-form');
+            
+            reportForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Report generation initiated. Your report will be available for download shortly.');
+            });
+        });
+    </script>
+    
+    <style>
+        .hidden {
+            display: none;
+        }
+        
+        .dashboard-section {
+            transition: opacity 0.3s ease;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--bg-secondary);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: rgba(var(--primary-color-rgb), 0.05);
+        }
+        
+        .rating-good {
+            color: #52c41a;
+            font-weight: 600;
+        }
+        
+        .rating-medium {
+            color: #faad14;
+            font-weight: 600;
+        }
+        
+        .rating-poor {
+            color: #f5222d;
+            font-weight: 600;
+        }
+        
+        .secondary-btn {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+    </style>
+</body>
+</html> 

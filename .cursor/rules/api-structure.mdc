@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# API Structure and Endpoints
+
+Biasbuster's backend API provides bias analysis capabilities to the frontend and Chrome extension.
+
+## Core Endpoints
+
+- **POST /api/v1/analyze** - Analyzes text for bias
+  - Implementation: [src/controllers/analyzeController.js](mdc:src/controllers/analyzeController.js)
+  - Route definition: [src/routes/analyzeRoutes.js](mdc:src/routes/analyzeRoutes.js)
+
+- **GET /api/v1/health** - Health check endpoint
+  - Used by frontend to check if API is available
+
+- **POST /api/v1/perspectives** - Provides alternative perspectives on a topic
+  - Helps users understand different viewpoints
+
+## API Server Startup
+
+The API server can be started using:
+```
+npm start
+```
+or for development:
+```
+npm run dev
+```
+
+The server listens on port 8080 by default, configurable through environment variables.

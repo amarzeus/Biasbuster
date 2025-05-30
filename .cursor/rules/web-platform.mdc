@@ -1,0 +1,28 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Web Platform Components
+
+The web platform is the frontend interface for Biasbuster, providing users with interactive bias analysis capabilities.
+
+## Key Pages
+- [index.html](mdc:web-platform/index.html) - Main landing page and bias analysis tool
+- [ai-literacy.html](mdc:web-platform/ai-literacy.html) - AI Literacy Hub with educational resources
+- [ethics-committee.html](mdc:web-platform/ethics-committee.html) - Ethics & AI Committee Portal
+- [judge-dashboard.html](mdc:web-platform/judge-dashboard.html) - Dashboard for Startupathon judges
+
+## Core JavaScript
+- [script.js](mdc:web-platform/script.js) - Main application logic including:
+  - API integration
+  - Content analysis
+  - Result visualization
+  - Mock response generation for offline mode
+
+## Running the Web Platform
+The web platform can be started using Python's HTTP server:
+```
+cd web-platform && python -m http.server 8000
+```
+Then access the application at http://localhost:8000

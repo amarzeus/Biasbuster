@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { callAI, BiasBusterResponse } from '../services/aiService';
+import biasAnalysisService from '../services/biasAnalysisService';
 
 /**
  * Interface for bias analysis options
@@ -11,6 +12,14 @@ interface BiasAnalysisOptions {
   preferredModel?: string;
   language?: string;
   maxTokens?: number;
+  useLocalAnalysis?: boolean;  // Renamed from usePythonService
+  customBiasPatterns?: Array<{
+    id: string;
+    pattern: string;
+    biasType: string;
+    severity: string;
+    explanation: string;
+  }>;
 }
 
 /**
@@ -31,9 +40,59 @@ export async function analyzeBias(
       includeSentiment: true,
       includeCredibility: true,
       language: detectLanguage(text),
+      useLocalAnalysis: true, // Default to using local analysis
       ...options
     };
     
+    // Apply any custom bias patterns provided
+    if (analysisOptions.customBiasPatterns && analysisOptions.customBiasPatterns.length > 0) {
+      // First, reset to defaults to ensure clean state
+      biasAnalysisService.resetToDefaultPatterns();
+      
+      // Add each custom pattern
+      analysisOptions.customBiasPatterns.forEach(pattern => {
+        try {
+          const regex = new RegExp(pattern.pattern, 'i');
+          biasAnalysisService.addBiasPattern(
+            pattern.id,
+            regex,
+            pattern.biasType,
+            pattern.severity,
+            pattern.explanation
+          );
+        } catch (error) {
+          console.error(`Invalid regex pattern: ${pattern.pattern}`, error);
+        }
+      });
+    }
+    
+    // Use local analysis service first if enabled
+    if (analysisOptions.useLocalAnalysis) {
+      try {
+        const isHealthy = await biasAnalysisService.checkHealth();
+        if (isHealthy) {
+          console.log('Using local bias analysis service');
+          const analysisResult = await biasAnalysisService.analyzeBias(text);
+          
+          // Convert string BiasDetected to "yes" | "no" format
+          const normalizedResult = {
+            ...analysisResult,
+            BiasDetected: analysisResult.BiasDetected.toLowerCase() === 'yes' ? 'yes' as const : 'no' as const
+          };
+          
+          // Apply post-processing to enhance results
+          const enhancedResult = enhanceResults(normalizedResult, text);
+          return enhancedResult;
+        } else {
+          console.log('Local analysis service is not available, falling back to AI service');
+        }
+      } catch (error) {
+        console.error('Error using local analysis service:', error);
+        console.log('Falling back to AI service');
+      }
+    }
+    
+    // Fall back to AI service
     // Read prompt template
     const promptTemplate = await loadPromptTemplate();
     
@@ -67,23 +126,8 @@ export async function analyzeBias(
  */
 async function loadPromptTemplate(): Promise<string> {
   try {
-    const promptPath = path.join(__dirname, '../../prompts/biasbusterPrompt.txt');
-    
-    // Check if the file exists
-    if (!fs.existsSync(promptPath)) {
-      console.log('Prompt file not found at:', promptPath);
-      console.log('Attempting to find prompt.txt in root directory...');
-      
-      // Fallback to root prompt.txt
-      const rootPromptPath = path.join(__dirname, '../../prompt.txt');
-      if (fs.existsSync(rootPromptPath)) {
-        return fs.readFileSync(rootPromptPath, 'utf8');
-      }
-      
-      throw new Error('Could not find prompt file');
-    }
-    
-    return fs.readFileSync(promptPath, 'utf8');
+    const promptPath = path.join(process.cwd(), 'prompts', 'biasbusterPrompt.txt');
+    return await fs.promises.readFile(promptPath, 'utf8');
   } catch (error: any) {
     console.error('Error loading prompt template:', error);
     throw new Error(`Failed to load prompt template: ${error.message}`);
@@ -97,8 +141,7 @@ async function loadPromptTemplate(): Promise<string> {
  * @returns The complete prompt with the article inserted.
  */
 function insertArticleIntoPrompt(template: string, articleText: string): string {
-  // Replace the placeholder with the article text
-  return template.replace('[Insert article text here]', articleText);
+  return template.replace('{{ARTICLE_TEXT}}', articleText);
 }
 
 /**
@@ -154,13 +197,13 @@ function detectLanguage(text: string): string {
  * Enhance the analysis results with additional meta-information or post-processing
  */
 function enhanceResults(result: BiasBusterResponse, originalText: string): BiasBusterResponse {
-  // Add timestamp
+  // Add timestamp and visualization data if not present
   const enhancedResult = {
     ...result,
     _meta: {
       timestamp: new Date().toISOString(),
       textLength: originalText.length,
-      processedAt: 'Biasbuster MCP Server'
+      processedAt: 'Biasbuster Analysis Server'
     }
   };
   

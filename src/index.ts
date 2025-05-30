@@ -12,6 +12,8 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import MongoStore from 'connect-mongo';
 import mongoose from 'mongoose';
+import biasAnalysisService from './services/biasAnalysisService';
+import { initializeMcpServer } from './mcp';
 
 // Load environment variables
 dotenv.config();
@@ -123,7 +125,8 @@ app.get('/api/v1/health', (req, res) => {
       sourceCredibility: true,
       multilingualSupport: true,
       userAccounts: true,
-      analysisHistory: true
+      analysisHistory: true,
+      mcpServer: true
     },
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
@@ -326,6 +329,104 @@ app.get('/api/v1/version', (req, res) => {
   });
 });
 
+// Custom bias patterns endpoints
+app.get('/api/v1/bias-patterns', (req, res) => {
+  try {
+    // This is a simplified implementation - in production, you'd store user-specific patterns in a database
+    const patterns = Array.from(biasAnalysisService.getCustomPatterns() || []).map(([id, pattern]) => ({
+      id,
+      pattern: pattern.regex.toString().slice(1, -2), // Remove the /.../ from regex
+      biasType: pattern.biasType,
+      severity: pattern.severity,
+      explanation: pattern.explanation
+    }));
+    
+    res.json({ patterns });
+  } catch (error: any) {
+    console.error('Error fetching bias patterns:', error);
+    res.status(500).json({
+      error: 'Failed to fetch bias patterns',
+      message: error.message || 'An unexpected error occurred'
+    });
+  }
+});
+
+app.post('/api/v1/bias-patterns', (req, res) => {
+  try {
+    const { id, pattern, biasType, severity, explanation } = req.body;
+    
+    if (!id || !pattern || !biasType || !severity || !explanation) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        message: 'All fields (id, pattern, biasType, severity, explanation) are required'
+      });
+    }
+    
+    try {
+      const regex = new RegExp(pattern, 'i');
+      biasAnalysisService.addBiasPattern(id, regex, biasType, severity, explanation);
+      
+      res.status(201).json({
+        message: 'Bias pattern added successfully',
+        pattern: {
+          id,
+          pattern,
+          biasType,
+          severity,
+          explanation
+        }
+      });
+    } catch (regexError) {
+      return res.status(400).json({
+        error: 'Invalid regex pattern',
+        message: 'The provided pattern is not a valid regular expression'
+      });
+    }
+  } catch (error: any) {
+    console.error('Error adding bias pattern:', error);
+    res.status(500).json({
+      error: 'Failed to add bias pattern',
+      message: error.message || 'An unexpected error occurred'
+    });
+  }
+});
+
+app.delete('/api/v1/bias-patterns/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const success = biasAnalysisService.removeBiasPattern(id);
+    
+    if (success) {
+      res.json({ message: 'Bias pattern removed successfully' });
+    } else {
+      res.status(404).json({
+        error: 'Pattern not found',
+        message: `No bias pattern found with id: ${id}`
+      });
+    }
+  } catch (error: any) {
+    console.error('Error removing bias pattern:', error);
+    res.status(500).json({
+      error: 'Failed to remove bias pattern',
+      message: error.message || 'An unexpected error occurred'
+    });
+  }
+});
+
+app.post('/api/v1/bias-patterns/reset', (req, res) => {
+  try {
+    biasAnalysisService.resetToDefaultPatterns();
+    res.json({ message: 'Bias patterns reset to defaults successfully' });
+  } catch (error: any) {
+    console.error('Error resetting bias patterns:', error);
+    res.status(500).json({
+      error: 'Failed to reset bias patterns',
+      message: error.message || 'An unexpected error occurred'
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Unhandled error:', err);
@@ -337,8 +438,19 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Biasbuster MCP server running on port ${port}`);
-  console.log(`Health check available at: http://localhost:${port}/api/v1/health`);
-  console.log(`Authentication endpoint: http://localhost:${port}/api/v1/auth/signup`);
-  console.log(`Analysis history: http://localhost:${port}/api/v1/analyses/history`);
+  console.log(`Biasbuster server running on port ${port}`);
+  
+  // Initialize MCP Server if enabled
+  if (process.env.ENABLE_MCP_SERVER === 'true') {
+    initializeMcpServer();
+  }
+});
+
+// Handle process termination gracefully
+process.on('SIGINT', () => {
+  console.log('Server shutting down...');
+  mongoose.connection.close(() => {
+    console.log('MongoDB connection closed');
+    process.exit(0);
+  });
 }); 

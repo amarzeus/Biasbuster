@@ -1,0 +1,6 @@
+@echo off
+echo Starting Biasbuster services...
+
+REM Start Node.js service
+echo Starting Node.js service...
+npm start 

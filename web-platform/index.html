@@ -27,10 +27,15 @@
                 <button class="mobile-menu-close" id="mobile-menu-close">
                     <i class="fas fa-times"></i>
                 </button>
-                <a href="#" class="active">Home</a>
+                <a href="index.html" class="active">Home</a>
                 <a href="#demo">Demo</a>
-                <a href="https://github.com/amarzeus/Biasbuster" target="_blank">GitHub</a>
-                <a href="auth.html">Login</a>
+                <a href="ai-literacy.html">AI Literacy Hub</a>
+                <a href="ethics-committee.html">Ethics Committee</a>
+                <a href="about.html">About</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="contact.html">Contact</a>
+                <a href="auth.html" class="btn-login-nav">Sign In</a>
             </nav>
             <div class="user-nav" id="user-nav">
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
@@ -151,18 +156,18 @@
                 
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-heart"></i>
+                        <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <h4>Sentiment Analysis</h4>
-                    <p>Evaluate the emotional tone and sentiment patterns within content.</p>
+                    <h4>AI Literacy Hub</h4>
+                    <p>Interactive lessons, quizzes, and resources to build your AI and media literacy skills.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-users-cog"></i>
                     </div>
-                    <h4>Source Credibility</h4>
-                    <p>Assess the reliability of sources based on multiple factors.</p>
+                    <h4>Ethics & AI Committee</h4>
+                    <p>Join discussions on AI ethics, participate in debates, and help shape responsible AI practices.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -183,24 +188,79 @@
             </div>
         </section>
 
+        <!-- New Advanced ML Features Section -->
+        <section class="advanced-ml">
+            <div class="section-header">
+                <h3 class="text-center mb-4">Advanced Machine Learning Features</h3>
+                <p class="text-center mb-5">Powered by state-of-the-art machine learning models and natural language processing</p>
+            </div>
+            
+            <div class="ml-grid">
+                <div class="ml-card">
+                    <div class="ml-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>Neural Network Analysis</h4>
+                    <p>Uses transformer-based neural networks to understand context and nuance in text.</p>
+                    <div class="tech-badge">LLaMA3</div>
+                    <div class="tech-badge">Claude</div>
+                </div>
+                
+                <div class="ml-card">
+                    <div class="ml-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h4>Advanced NLP</h4>
+                    <p>Employs named entity recognition, part-of-speech tagging, and dependency parsing.</p>
+                    <div class="tech-badge">spaCy</div>
+                    <div class="tech-badge">NLTK</div>
+                </div>
+                
+                <div class="ml-card">
+                    <div class="ml-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h4>Semantic Analysis</h4>
+                    <p>Performs deep semantic analysis with sentence embeddings and contextual understanding.</p>
+                    <div class="tech-badge">Sentence Transformers</div>
+                </div>
+                
+                <div class="ml-card">
+                    <div class="ml-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <h4>Multi-model Ensemble</h4>
+                    <p>Combines results from multiple models for higher accuracy and resilience.</p>
+                    <div class="tech-badge">Ensemble Learning</div>
+                </div>
+            </div>
+            
+            <div class="ml-visual">
+                <img src="assets/ml-architecture.svg" alt="Machine Learning Architecture" class="ml-diagram">
+            </div>
+        </section>
+
         <section class="awards-section">
-            <h3 class="text-center mb-4">Recognition & Awards</h3>
+            <h3 class="text-center mb-4">Recognition & Startupathon Entry</h3>
             <div class="awards-container">
                 <div class="award">
                     <img src="assets/award1.svg" alt="Startupathon Finalist">
-                    <h4>Startupathon Finalist</h4>
-                    <p>Selected among top AI innovation projects</p>
+                    <h4>Startupathon Challenge Entry</h4>
+                    <p>AI-powered media literacy innovation</p>
                 </div>
                 <div class="award">
                     <img src="assets/award2.svg" alt="AI Ethics Award">
-                    <h4>AI Ethics Award</h4>
-                    <p>Recognized for responsible AI implementation</p>
+                    <h4>AI Ethics Innovation</h4>
+                    <p>Responsible AI implementation</p>
                 </div>
                 <div class="award">
                     <img src="assets/award3.svg" alt="Media Innovation Prize">
-                    <h4>Media Innovation Prize</h4>
+                    <h4>Media Literacy Innovation</h4>
                     <p>Pioneering technology in media literacy</p>
                 </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="judge-dashboard.html" class="primary-btn">View Judge's Dashboard</a>
             </div>
         </section>
     </main>
@@ -211,20 +271,23 @@
                 <div>
                     <div class="footer-logo">
                         <img src="assets/logo.png" alt="Biasbuster Logo" width="40">
-                        <span style="font-size: 1.5rem; font-weight: 600; margin-left: 0.5rem;">Biasbuster</span>
+                        <span>Biasbuster</span>
                     </div>
                     <p class="footer-description">
-                        An AI-powered tool that helps detect, explain, and mitigate bias in news articles and media content.
+                        Advanced AI-powered media literacy tool that helps detect bias in news articles and media content.
                     </p>
                     <div class="social-links">
-                        <a href="https://github.com/amarzeus/" class="social-link" target="_blank">
-                            <i class="fab fa-github"></i>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="https://www.linkedin.com/in/amarmahakal/" class="social-link" target="_blank">
+                        <a href="#" class="social-link" aria-label="LinkedIn">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
-                        <a href="https://twitter.com/" class="social-link" target="_blank">
-                            <i class="fab fa-twitter"></i>
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
                         </a>
                     </div>
                 </div>
@@ -232,39 +295,40 @@
                 <div>
                     <h3 class="footer-heading">Product</h3>
                     <ul class="footer-links">
-                        <li><a href="#top">Home</a></li>
-                        <li><a href="#demo">Demo</a></li>
-                        <li><a href="#">Chrome Extension</a></li>
-                        <li><a href="#">API</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#demo">Demo</a></li>
+                        <li><a href="chrome-extension.html">Chrome Extension</a></li>
+                        <li><a href="api-docs.html">API</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h3 class="footer-heading">Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="https://github.com/amarzeus/Biasbuster" target="_blank">Documentation</a></li>
-                        <li><a href="https://github.com/amarzeus/Biasbuster/issues" target="_blank">Support</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="../docs/AI-MODELS.md" target="_blank">AI Models</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="ai-literacy.html">AI Literacy Hub</a></li>
+                        <li><a href="ethics-committee.html">Ethics Committee</a></li>
+                        <li><a href="support.html">Support</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h3 class="footer-heading">Support</h3>
-                    <p>If you find Biasbuster helpful, consider supporting the project:</p>
-                    <a href="https://buymeacoffee.com/amarmahakal" class="buy-coffee" target="_blank">
-                        <i class="fas fa-mug-hot"></i>
-                        Buy me a coffee
-                    </a>
+                    <h3 class="footer-heading">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                    </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <div>Made with ❤️ by <a href="https://www.linkedin.com/in/amarmahakal/" target="_blank">Amar Kumar</a></div>
+                <div>© 2024 Biasbuster. All rights reserved.</div>
                 <div class="footer-nav">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Cookie Policy</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
                 </div>
             </div>
         </div>

@@ -98,7 +98,7 @@ async function checkApiHealth() {
 
 function handleOfflineMode() {
     isServerAvailable = false;
-    statusDiv.innerHTML = '<span style="color: orange;">⚠️ Running in offline demo mode. Server connection unavailable.</span>';
+    statusDiv.innerHTML = '<span style="color: #4361ee;">Interactive Demo Mode — Try the example articles!</span>';
 }
 
 function loadExample(index) {
@@ -663,4 +663,206 @@ function createCredibilityMeter(credibility) {
     }
     
     return html;
+}
+
+// Advanced ML Features interaction
+document.addEventListener('DOMContentLoaded', function() {
+    const mlCards = document.querySelectorAll('.ml-card');
+    
+    // Add hover effects and animation to ML cards
+    mlCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px)';
+            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.04)';
+            
+            // Animate the icon
+            const icon = this.querySelector('.ml-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.2) rotate(5deg)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+            
+            // Reset icon animation
+            const icon = this.querySelector('.ml-icon');
+            if (icon) {
+                icon.style.transform = '';
+            }
+        });
+        
+        // Add click interaction to show more details
+        card.addEventListener('click', function() {
+            // Get the title of the card
+            const title = this.querySelector('h4').textContent;
+            
+            // Show a modal or expand the card with more details
+            showMLDetails(title, this);
+        });
+    });
+    
+    // ML diagram interaction
+    const mlDiagram = document.querySelector('.ml-diagram');
+    if (mlDiagram) {
+        mlDiagram.addEventListener('click', function() {
+            // Make the diagram open in a larger view
+            showLargerDiagram();
+        });
+    }
+});
+
+// Function to show ML details modal
+function showMLDetails(title, card) {
+    // Create content based on which card was clicked
+    let content = '';
+    let techStack = [];
+    
+    switch(title) {
+        case 'Neural Network Analysis':
+            content = `
+                <p>Our neural network analysis utilizes state-of-the-art transformer models to understand context, nuance, and detect patterns in text that indicate bias.</p>
+                <ul>
+                    <li>Context-aware text analysis</li>
+                    <li>Transformer architecture with attention mechanisms</li>
+                    <li>Fine-tuned on diverse bias datasets</li>
+                    <li>Multi-dimensional bias detection</li>
+                </ul>
+            `;
+            techStack = ['LLaMA3', 'Claude', 'Transformer Models', 'Attention Mechanisms'];
+            break;
+            
+        case 'Advanced NLP':
+            content = `
+                <p>Our NLP pipeline breaks down text into meaningful components, extracting entities, understanding relationships, and identifying linguistic patterns that reveal bias.</p>
+                <ul>
+                    <li>Named Entity Recognition (NER)</li>
+                    <li>Part-of-speech tagging</li>
+                    <li>Dependency parsing</li>
+                    <li>Syntactic structure analysis</li>
+                </ul>
+            `;
+            techStack = ['spaCy', 'NLTK', 'NER', 'POS Tagging', 'Dependency Parsing'];
+            break;
+            
+        case 'Semantic Analysis':
+            content = `
+                <p>Using advanced embedding techniques, we capture semantic meaning beyond surface text, enabling detection of subtle bias that might be missed by traditional methods.</p>
+                <ul>
+                    <li>Sentence embeddings for contextual understanding</li>
+                    <li>Word vector analysis for bias detection</li>
+                    <li>Semantic similarity measurement</li>
+                    <li>Cross-reference with bias databases</li>
+                </ul>
+            `;
+            techStack = ['Sentence Transformers', 'Word Embeddings', 'Semantic Vectors', 'Cosine Similarity'];
+            break;
+            
+        case 'Multi-model Ensemble':
+            content = `
+                <p>Our ensemble approach combines results from multiple models, creating a more robust and accurate analysis than any single model could provide.</p>
+                <ul>
+                    <li>Weighted model voting</li>
+                    <li>Confidence scoring</li>
+                    <li>Model specialization for different bias types</li>
+                    <li>Continuous improvement through feedback</li>
+                </ul>
+            `;
+            techStack = ['Ensemble Learning', 'Model Averaging', 'Boosting', 'Stacking'];
+            break;
+            
+        default:
+            content = '<p>Advanced machine learning technique using state-of-the-art algorithms.</p>';
+            techStack = ['AI', 'ML'];
+    }
+    
+    // Create a tech stack display
+    const techStackHTML = techStack.map(tech => `<span class="tech-badge">${tech}</span>`).join('');
+    
+    // Create the modal HTML
+    const modalHTML = `
+        <div class="ml-modal-content">
+            <h3>${title}</h3>
+            <div class="ml-modal-body">
+                ${content}
+            </div>
+            <div class="ml-tech-stack">
+                <h4>Technology Stack:</h4>
+                <div class="tech-badges">
+                    ${techStackHTML}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Show the modal
+    showModal(modalHTML);
+}
+
+// Function to show the diagram in a larger view
+function showLargerDiagram() {
+    const modalHTML = `
+        <div class="diagram-modal-content">
+            <h3>Biasbuster ML Architecture</h3>
+            <img src="assets/ml-architecture.svg" alt="ML Architecture Diagram" class="large-diagram">
+            <p class="diagram-caption">
+                The Biasbuster ML architecture combines multiple specialized models to detect, analyze, and mitigate bias in content.
+                Data flows through preprocessing, is analyzed by multiple specialized models, and combined for comprehensive results.
+            </p>
+        </div>
+    `;
+    
+    // Show the modal
+    showModal(modalHTML);
+}
+
+// Generic modal function
+function showModal(content) {
+    // Check if a modal already exists
+    let modal = document.querySelector('.ml-modal');
+    
+    if (!modal) {
+        // Create modal
+        modal = document.createElement('div');
+        modal.className = 'ml-modal';
+        
+        // Create close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'ml-modal-close';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.onclick = function() {
+            document.body.removeChild(modal);
+        };
+        
+        // Create modal wrapper
+        const modalWrapper = document.createElement('div');
+        modalWrapper.className = 'ml-modal-wrapper';
+        
+        // Add content to wrapper
+        modalWrapper.innerHTML = content;
+        
+        // Add close button and wrapper to modal
+        modal.appendChild(closeBtn);
+        modal.appendChild(modalWrapper);
+        
+        // Add click handler to close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+        
+        // Add modal to page
+        document.body.appendChild(modal);
+        
+        // Add animation class after a short delay
+        setTimeout(() => {
+            modal.classList.add('visible');
+        }, 10);
+    } else {
+        // Update existing modal content
+        const modalWrapper = modal.querySelector('.ml-modal-wrapper');
+        modalWrapper.innerHTML = content;
+    }
 } 

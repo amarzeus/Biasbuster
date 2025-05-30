@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Biasbuster - Get in Touch</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+</head>
+<body data-theme="light">
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Biasbuster Logo">
+                <div>
+                    <h1>Biasbuster</h1>
+                    <div class="tagline">AI-Powered Media Literacy Tool</div>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="index.html#demo">Demo</a>
+                <a href="about.html">About</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="contact.html" class="active">Contact</a>
+                <a href="auth.html" class="btn-login-nav">Sign In</a>
+            </nav>
+            <div class="user-nav" id="user-nav">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div id="user-menu" class="hidden">
+                    <a href="auth.html" class="btn-login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="contact-hero">
+            <h2>Get in Touch</h2>
+            <p class="contact-subheading">Have questions about Biasbuster? We're here to help!</p>
+        </section>
+        
+        <section class="contact-content">
+            <div class="contact-grid">
+                <div class="contact-form-container">
+                    <h3>Send us a Message</h3>
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject">
+                                <option value="general">General Inquiry</option>
+                                <option value="support">Technical Support</option>
+                                <option value="sales">Sales</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="feedback">Feedback</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="primary-btn w-full">Send Message</button>
+                    </form>
+                </div>
+                
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <div class="info-items">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Email</h4>
+                                <p><a href="mailto:info@biasbuster.com">info@biasbuster.com</a></p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Support</h4>
+                                <p><a href="mailto:support@biasbuster.com">support@biasbuster.com</a></p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Location</h4>
+                                <p>123 Tech Plaza, Suite 400<br>San Francisco, CA 94107</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="info-content">
+                                <h4>Business Hours</h4>
+                                <p>Monday - Friday: 9:00 AM - 6:00 PM PST</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="social-connect">
+                        <h4>Connect With Us</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon" target="_blank" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon" target="_blank" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-icon" target="_blank" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon" target="_blank" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="faq-section">
+            <h3>Frequently Asked Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>How quickly can I expect a response?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We typically respond to all inquiries within 24-48 business hours. For urgent technical support issues, premium customers receive priority response times.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Do you offer technical support for the free plan?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we provide basic technical support for all users, including those on the free plan. However, premium and team plan users receive priority support with faster response times.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Can I request a product demo?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! For team and enterprise solutions, we offer personalized demos. Please select "Sales" in the subject dropdown and mention your interest in a demo in your message.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div>
+                    <div class="footer-logo">
+                        <img src="assets/logo.png" alt="Biasbuster Logo" width="40">
+                        <span style="font-size: 1.5rem; font-weight: 600; margin-left: 0.5rem;">Biasbuster</span>
+                    </div>
+                    <p class="footer-description">
+                        An AI-powered tool that helps detect, explain, and mitigate bias in news articles and media content.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" target="_blank">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link" target="_blank">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#demo">Demo</a></li>
+                        <li><a href="chrome-extension.html">Chrome Extension</a></li>
+                        <li><a href="api-docs.html">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="support.html">Support</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="ai-models.html">AI Models</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div>© 2024 Biasbuster. All rights reserved.</div>
+                <div class="footer-nav">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="cookies.html">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Form submission handler
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // In a real application, you would send the form data to a server
+            // For this demo, we'll just show a success message
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            console.log('Form data:', formData);
+            
+            // Replace the form with a success message
+            this.innerHTML = `
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Thank You!</h3>
+                    <p>Your message has been sent successfully. We'll get back to you soon.</p>
+                </div>
+            `;
+        });
+        
+        // FAQ accordion functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('active');
+                
+                const icon = question.querySelector('i');
+                if (faqItem.classList.contains('active')) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

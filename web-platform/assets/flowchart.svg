@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4361ee"/>
+    </marker>
+    <linearGradient id="gradientBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4361ee"/>
+      <stop offset="100%" stop-color="#6979f8"/>
+    </linearGradient>
+    <linearGradient id="gradientPink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef476f"/>
+      <stop offset="100%" stop-color="#ff758f"/>
+    </linearGradient>
+    <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06d6a0"/>
+      <stop offset="100%" stop-color="#4cc9f0"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.2)"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="500" fill="white" rx="20" ry="20"/>
+  <text x="400" y="40" font-family="Inter, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#2d3748">Biasbuster Analysis Process</text>
+  
+  <!-- Input Node -->
+  <rect x="50" y="100" width="180" height="80" rx="15" ry="15" fill="url(#gradientBlue)" filter="url(#shadow)"/>
+  <text x="140" y="145" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Content Input</text>
+  <text x="140" y="165" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">Articles, social media, etc.</text>
+  
+  <!-- AI Preprocessing Node -->
+  <rect x="310" y="100" width="180" height="80" rx="15" ry="15" fill="url(#gradientBlue)" filter="url(#shadow)"/>
+  <text x="400" y="135" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">NLP Preprocessing</text>
+  <text x="400" y="155" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">Tokenization, parsing,</text>
+  <text x="400" y="170" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">language detection</text>
+  
+  <!-- ML Analysis Node -->
+  <rect x="570" y="100" width="180" height="80" rx="15" ry="15" fill="url(#gradientBlue)" filter="url(#shadow)"/>
+  <text x="660" y="135" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">AI Model Analysis</text>
+  <text x="660" y="155" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">LLaMA3, Claude,</text>
+  <text x="660" y="170" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">neural networks</text>
+  
+  <!-- Bias Detection Node -->
+  <rect x="50" y="250" width="180" height="80" rx="15" ry="15" fill="url(#gradientPink)" filter="url(#shadow)"/>
+  <text x="140" y="285" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Bias Detection</text>
+  <text x="140" y="305" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">Political, ideological, </text>
+  <text x="140" y="320" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">linguistic patterns</text>
+  
+  <!-- Sentiment Analysis Node -->
+  <rect x="310" y="250" width="180" height="80" rx="15" ry="15" fill="url(#gradientPink)" filter="url(#shadow)"/>
+  <text x="400" y="285" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Sentiment Analysis</text>
+  <text x="400" y="305" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">Emotional tone, polarity,</text>
+  <text x="400" y="320" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">subjective language</text>
+  
+  <!-- Source Credibility Node -->
+  <rect x="570" y="250" width="180" height="80" rx="15" ry="15" fill="url(#gradientPink)" filter="url(#shadow)"/>
+  <text x="660" y="285" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Source Credibility</text>
+  <text x="660" y="305" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">Fact checking,</text>
+  <text x="660" y="320" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">source reputation</text>
+  
+  <!-- Results Aggregation Node -->
+  <rect x="310" y="400" width="180" height="80" rx="15" ry="15" fill="url(#gradientGreen)" filter="url(#shadow)"/>
+  <text x="400" y="435" font-family="Inter, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Results Processing</text>
+  <text x="400" y="455" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">Analysis aggregation,</text>
+  <text x="400" y="470" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="white">visualization, suggestions</text>
+  
+  <!-- Arrows -->
+  <line x1="230" y1="140" x2="310" y2="140" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="490" y1="140" x2="570" y2="140" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="660" y1="180" x2="660" y2="250" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="180" x2="400" y2="250" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="140" y1="180" x2="140" y2="250" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="140" y1="330" x2="140" y2="440" stroke="#4361ee" stroke-width="2"/>
+  <line x1="140" y1="440" x2="310" y2="440" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="330" x2="400" y2="400" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="660" y1="330" x2="660" y2="440" stroke="#4361ee" stroke-width="2"/>
+  <line x1="660" y1="440" x2="490" y2="440" stroke="#4361ee" stroke-width="2" marker-end="url(#arrowhead)"/>
+</svg> 
