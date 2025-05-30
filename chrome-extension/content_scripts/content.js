@@ -12,7 +12,7 @@ let analysisFeatures = {
 };
 
 // Initialize when the script is injected
-console.log("Biasbuster content script loaded.");
+console.log('Biasbuster content script loaded.');
 
 // Load user settings from storage
 chrome.storage.sync.get(['serverUrl', 'analysisFeatures'], function(data) {
@@ -24,7 +24,7 @@ chrome.storage.sync.get(['serverUrl', 'analysisFeatures'], function(data) {
     analysisFeatures = { ...analysisFeatures, ...data.analysisFeatures };
   }
   
-  console.log("Biasbuster settings loaded:", { serverBaseUrl, analysisFeatures });
+  console.log('Biasbuster settings loaded:', { serverBaseUrl, analysisFeatures });
   
   // Start automatic analysis if enabled
   if (analysisFeatures.autoAnalysis) {
@@ -34,17 +34,17 @@ chrome.storage.sync.get(['serverUrl', 'analysisFeatures'], function(data) {
 
 // Listen for messages from popup or service worker
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "getArticleContentAndAnalyze") {
-    console.log("Content Script: Received request to analyze article content.");
+  if (request.action === 'getArticleContentAndAnalyze') {
+    console.log('Content Script: Received request to analyze article content.');
     const articleText = getArticleText();
     
     if (articleText) {
       // Save this text to avoid redundant analysis
       lastAnalyzedText = articleText;
       
-      console.log("Content Script: Sending text to service worker for analysis.");
+      console.log('Content Script: Sending text to service worker for analysis.');
       chrome.runtime.sendMessage({ 
-        action: "analyzeText", 
+        action: 'analyzeText', 
         text: articleText,
         options: {
           includeSentiment: analysisFeatures.sentimentAnalysis,
@@ -52,29 +52,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
       }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error("Content Script: Error sending message to service worker:", chrome.runtime.lastError.message);
+          console.error('Content Script: Error sending message to service worker:', chrome.runtime.lastError.message);
           sendResponse({ success: false, error: chrome.runtime.lastError.message });
           return;
         }
         
-        console.log("Content Script: Received response from service worker:", response);
+        console.log('Content Script: Received response from service worker:', response);
         if (response && response.success) {
           biasAnalysisResults = response.data;
           highlightBias(biasAnalysisResults);
           sendResponse({ success: true, data: biasAnalysisResults, text: articleText });
         } else {
-          sendResponse({ success: false, error: response ? response.error : "Unknown error from service worker" });
+          sendResponse({ success: false, error: response ? response.error : 'Unknown error from service worker' });
         }
       });
       return true; // Indicates asynchronous response
     } else {
-      console.warn("Content Script: No text found to analyze.");
-      sendResponse({ success: false, error: "No text found on page to analyze." });
+      console.warn('Content Script: No text found to analyze.');
+      sendResponse({ success: false, error: 'No text found on page to analyze.' });
     }
-  } else if (request.action === "clearHighlights") {
+  } else if (request.action === 'clearHighlights') {
     clearHighlights();
     sendResponse({ success: true });
-  } else if (request.action === "updateSettings") {
+  } else if (request.action === 'updateSettings') {
     // Update settings
     if (request.settings.serverUrl) {
       serverBaseUrl = request.settings.serverUrl;
@@ -97,7 +97,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
  * Initialize automatic analysis for articles as you read
  */
 function initializeAutoAnalysis() {
-  console.log("Content Script: Initializing automatic analysis");
+  console.log('Content Script: Initializing automatic analysis');
   
   // Use Intersection Observer to detect when article elements are visible
   const observer = new IntersectionObserver((entries) => {
@@ -111,7 +111,7 @@ function initializeAutoAnalysis() {
         
         // Only analyze if we have substantial text and it's different from last analysis
         if (articleText && articleText.length > 100 && articleText !== lastAnalyzedText) {
-          console.log("Content Script: Article scrolled into view, analyzing automatically");
+          console.log('Content Script: Article scrolled into view, analyzing automatically');
           
           // Use debounce to avoid too many requests
           if (predictionTimeoutId) {
@@ -175,7 +175,7 @@ async function analyzeArticleText(text, options = {}) {
     
     // Send directly to background script for API call
     chrome.runtime.sendMessage({ 
-      action: "analyzeText", 
+      action: 'analyzeText', 
       text: text,
       options: {
         includeSentiment: analysisFeatures.sentimentAnalysis,
@@ -184,7 +184,7 @@ async function analyzeArticleText(text, options = {}) {
       }
     }, (response) => {
       if (chrome.runtime.lastError) {
-        console.error("Content Script: Error sending message to service worker:", chrome.runtime.lastError.message);
+        console.error('Content Script: Error sending message to service worker:', chrome.runtime.lastError.message);
         if (!options.quickAnalysis) {
           showFloatingNotification('Error analyzing content', 'error');
         }
@@ -209,7 +209,7 @@ async function analyzeArticleText(text, options = {}) {
       }
     });
   } catch (error) {
-    console.error("Content Script: Error in direct analysis:", error);
+    console.error('Content Script: Error in direct analysis:', error);
   }
 }
 
@@ -246,10 +246,10 @@ function showFloatingNotification(message, type = 'info') {
  * Uses a combination of heuristics to find the main content
  */
 function getArticleText() {
-  console.log("Content Script: Extracting article text...");
+  console.log('Content Script: Extracting article text...');
   
   // Try to use Readability-like heuristics to find the main content
-  let text = "";
+  let text = '';
   let mainContentFound = false;
   
   // 1. Try to find article by common selectors
@@ -325,7 +325,7 @@ function getArticleText() {
   // 4. Last resort: use body text
   if (!mainContentFound || text.length < 100) {
     text = document.body.innerText;
-    console.log("Content Script: Using entire body text as fallback");
+    console.log('Content Script: Using entire body text as fallback');
   }
   
   console.log(`Content Script: Extracted ${text.length} characters of text`);
@@ -336,13 +336,13 @@ function getArticleText() {
  * Highlight biased content on the page
  */
 function highlightBias(analysisResult) {
-  console.log("Content Script: Highlighting bias instances...", analysisResult);
+  console.log('Content Script: Highlighting bias instances...', analysisResult);
   
   // Clear any existing highlights first
   clearHighlights();
   
   if (!analysisResult || !analysisResult.BiasInstances || analysisResult.BiasInstances.length === 0) {
-    console.log("Content Script: No bias instances to highlight.");
+    console.log('Content Script: No bias instances to highlight.');
     return;
   }
   
@@ -399,7 +399,7 @@ function quickHighlightBias(analysisResult) {
   // Don't clear existing highlights for quick analysis
   
   if (!analysisResult || !analysisResult.BiasInstances || analysisResult.BiasInstances.length === 0) {
-    console.log("Content Script: No bias instances to highlight in quick analysis.");
+    console.log('Content Script: No bias instances to highlight in quick analysis.');
     return;
   }
   
@@ -409,7 +409,7 @@ function quickHighlightBias(analysisResult) {
   );
   
   if (highSeverityInstances.length === 0) {
-    console.log("Content Script: No high severity bias to highlight in quick analysis.");
+    console.log('Content Script: No high severity bias to highlight in quick analysis.');
     return;
   }
   
@@ -680,21 +680,25 @@ function showBiasTooltip(element, biasInfo) {
  * Clear all highlights from the page
  */
 function clearHighlights() {
-  console.log("Content Script: Clearing highlights...");
+  console.log('Content Script: Clearing highlights...');
   
-  // Remove existing tooltips
-  const tooltips = document.querySelectorAll('.biasbuster-tooltip, .biasbuster-summary-indicator, .biasbuster-subtle-indicator, .biasbuster-notification');
-  tooltips.forEach(tooltip => tooltip.remove());
-  
-  // Remove highlights by unwrapping them
-  highlightedElements.forEach(highlight => {
-    if (highlight.parentNode) {
-      // Replace the highlight with its text content
-      const parent = highlight.parentNode;
-      const textNode = document.createTextNode(highlight.textContent);
-      parent.replaceChild(textNode, highlight);
+  // Remove all highlight elements from the page
+  highlightedElements.forEach(el => {
+    if (el && el.parentNode) {
+      el.parentNode.removeChild(el);
     }
   });
-  
   highlightedElements = [];
+}
+
+// Check for a while expression with an assignment instead of comparison
+if ((match = /while\s*\(\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*([^\)]*)\)/g.exec(currentCode)) !== null) {
+  issues.push({
+    type: 'potential_bug',
+    description: 'Possible assignment in while condition instead of comparison',
+    details: `Found while with assignment: ${match[0]}. Did you mean to use == or === instead?`,
+    severity: 'warning',
+    line: line + 1,
+    column: match.index + 1
+  });
 } 

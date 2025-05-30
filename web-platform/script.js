@@ -21,8 +21,8 @@ const alternativePerspectives = document.getElementById('alternative-perspective
 
 // Example articles with varying degrees of bias
 const exampleArticles = [
-    // Example 1: Politically biased article
-    `WASHINGTON DISASTER: Government Wastes Billions on Failed Climate Program
+  // Example 1: Politically biased article
+  `WASHINGTON DISASTER: Government Wastes Billions on Failed Climate Program
     
     The federal government has once again proven it cannot be trusted with taxpayer dollars. The latest climate initiative, championed by liberal politicians, has wasted over $12 billion with absolutely nothing to show for it.
     
@@ -32,8 +32,8 @@ const exampleArticles = [
     
     Critics argue that this program was designed to satisfy environmental extremists rather than implement practical solutions. The devastating impact on the coal industry has left thousands unemployed in rural communities.`,
     
-    // Example 2: Article with subtler bias
-    `New Study Examines Healthcare Options
+  // Example 2: Article with subtler bias
+  `New Study Examines Healthcare Options
     
     A recent study by the Institute for Health Policy has found that single-payer healthcare systems in several European countries provide coverage to all citizens at approximately 30% lower cost than the current U.S. system.
     
@@ -43,8 +43,8 @@ const exampleArticles = [
     
     The study comes as lawmakers debate various healthcare reform proposals, with advocates on both sides claiming their approach would better serve Americans.`,
     
-    // Example 3: Relatively balanced article
-    `Global Tech Conference Highlights AI Advancements
+  // Example 3: Relatively balanced article
+  `Global Tech Conference Highlights AI Advancements
     
     The International Technology Summit concluded yesterday with presentations from leading tech companies showcasing advancements in artificial intelligence.
     
@@ -57,323 +57,387 @@ const exampleArticles = [
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Check API health
-    checkApiHealth();
+  // Check API health
+  checkApiHealth();
     
-    // Event listeners
-    analyzeBtn.addEventListener('click', analyzeArticle);
-    clearBtn.addEventListener('click', clearArticle);
-    document.getElementById('example1-btn').addEventListener('click', () => loadExample(0));
-    document.getElementById('example2-btn').addEventListener('click', () => loadExample(1));
-    document.getElementById('example3-btn').addEventListener('click', () => loadExample(2));
+  // Event listeners
+  analyzeBtn.addEventListener('click', analyzeArticle);
+  clearBtn.addEventListener('click', clearArticle);
+  document.getElementById('example1-btn').addEventListener('click', () => loadExample(0));
+  document.getElementById('example2-btn').addEventListener('click', () => loadExample(1));
+  document.getElementById('example3-btn').addEventListener('click', () => loadExample(2));
 });
 
 // Functions
 async function checkApiHealth() {
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
         
-        const response = await fetch(API_HEALTH_URL, {
-            method: 'GET',
-            signal: controller.signal
-        });
+    const response = await fetch(API_HEALTH_URL, {
+      method: 'GET',
+      signal: controller.signal
+    });
         
-        clearTimeout(timeoutId);
+    clearTimeout(timeoutId);
         
-        if (response.ok) {
-            console.log('API is available');
-            isServerAvailable = true;
-            statusDiv.textContent = 'API connection successful. Ready for analysis.';
-            statusDiv.style.color = 'green';
-        } else {
-            console.warn('API health check failed:', response.status);
-            handleOfflineMode();
-        }
-    } catch (error) {
-        console.error('API health check error:', error);
-        handleOfflineMode();
+    if (response.ok) {
+      console.log('API is available');
+      isServerAvailable = true;
+      statusDiv.textContent = 'API connection successful. Ready for analysis.';
+      statusDiv.style.color = 'green';
+    } else {
+      console.warn('API health check failed:', response.status);
+      handleOfflineMode();
     }
+  } catch (error) {
+    console.error('API health check error:', error);
+    handleOfflineMode();
+  }
 }
 
 function handleOfflineMode() {
-    isServerAvailable = false;
-    statusDiv.innerHTML = '<span style="color: #4361ee;">Interactive Demo Mode — Try the example articles!</span>';
+  isServerAvailable = false;
+  statusDiv.innerHTML = '<span style="color: #4361ee; font-weight: 500;"><i class="fas fa-info-circle"></i> Interactive Demo Mode — Try the example articles!</span>';
 }
 
 function loadExample(index) {
-    articleText.value = exampleArticles[index];
-    statusDiv.textContent = 'Example article loaded. Click "Analyze for Bias" to analyze.';
+  articleText.value = exampleArticles[index];
+  statusDiv.textContent = 'Example article loaded. Click "Analyze for Bias" to analyze.';
 }
 
 function clearArticle() {
-    articleText.value = '';
-    resultsContainer.classList.add('hidden');
-    statusDiv.textContent = 'Text cleared. Enter new content to analyze.';
+  articleText.value = '';
+  resultsContainer.classList.add('hidden');
+  statusDiv.textContent = 'Text cleared. Enter new content to analyze.';
 }
 
 async function analyzeArticle() {
-    const text = articleText.value.trim();
+  const text = articleText.value.trim();
     
-    if (!text) {
-        statusDiv.textContent = 'Please enter some text to analyze.';
-        statusDiv.style.color = 'red';
-        return;
+  if (!text) {
+    statusDiv.textContent = 'Please enter some text to analyze.';
+    statusDiv.style.color = 'red';
+    return;
+  }
+    
+  // Show analyzing status
+  statusDiv.textContent = 'Analyzing content...';
+  statusDiv.style.color = 'blue';
+    
+  try {
+    let result;
+        
+    if (isServerAvailable) {
+      // Online mode - use actual API
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          options: {
+            includeSentiment: true,
+            includeCredibility: true
+          }
+        })
+      });
+            
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+            
+      result = await response.json();
+            
+      // Also fetch alternative perspectives
+      fetchAlternativePerspectives(text);
+    } else {
+      // Offline mode - use mock response
+      result = generateMockResponse(text);
+      // Add artificial delay to simulate processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+            
+      // Generate mock perspectives for offline mode
+      generateMockPerspectives(text);
     }
+        
+    // Display results
+    displayResults(result);
+    statusDiv.textContent = 'Analysis complete!';
+    statusDiv.style.color = 'green';
+        
+  } catch (error) {
+    console.error('Analysis error:', error);
+    // Show a more friendly offline mode message
+    handleOfflineMode();
     
-    // Show analyzing status
-    statusDiv.textContent = 'Analyzing content...';
-    statusDiv.style.color = 'blue';
+    // Generate mock response and continue with the demo functionality
+    const mockResult = generateMockResponse(text);
+    displayResults(mockResult);
     
-    try {
-        let result;
-        
-        if (isServerAvailable) {
-            // Online mode - use actual API
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    text: text,
-                    options: {
-                        includeSentiment: true,
-                        includeCredibility: true
-                    }
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`API responded with status: ${response.status}`);
-            }
-            
-            result = await response.json();
-            
-            // Also fetch alternative perspectives
-            fetchAlternativePerspectives(text);
-        } else {
-            // Offline mode - use mock response
-            result = generateMockResponse(text);
-            // Add artificial delay to simulate processing
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Generate mock perspectives for offline mode
-            generateMockPerspectives(text);
-        }
-        
-        // Display results
-        displayResults(result);
-        statusDiv.textContent = 'Analysis complete!';
-        statusDiv.style.color = 'green';
-        
-    } catch (error) {
-        console.error('Analysis error:', error);
-        statusDiv.textContent = 'Error: Could not connect to analysis API. Using offline mode.';
-        statusDiv.style.color = 'orange';
-        
-        // In case of error, generate mock response anyway to demonstrate functionality
-        const mockResult = generateMockResponse(text);
-        displayResults(mockResult);
-        
-        // Generate mock perspectives for offline mode
-        generateMockPerspectives(text);
-        
-        // Show offline mode message
-        handleOfflineMode();
-    }
+    // Generate mock perspectives for offline mode
+    generateMockPerspectives(text);
+  }
 }
 
 function generateMockResponse(text) {
-    // Simplified response structure
-    const response = {
-        MainTopic: detectTopic(text),
-        BiasAnalysis: {
-            OverallBias: determineMockBias(text),
-            BiasScore: Math.random() * 10 - 5, // Random score between -5 and 5
-            Details: generateMockBiasDetails(text)
-        },
-        SentimentAnalysis: {
-            Overall: Math.random() > 0.5 ? "positive" : (Math.random() > 0.5 ? "negative" : "neutral"),
-            Score: parseFloat((Math.random() * 2 - 1).toFixed(2)),
-            EmotionalTone: ["informative", "concerned", "critical", "objective"].slice(0, Math.floor(Math.random() * 3) + 1)
-        },
-        SourceCredibility: {
-            Score: parseFloat((Math.random() * 10).toFixed(1)),
-            Factors: {
-                "Factual Accuracy": parseFloat((Math.random() * 10).toFixed(1)),
-                "Multiple Perspectives": parseFloat((Math.random() * 10).toFixed(1)),
-                "Citation Quality": parseFloat((Math.random() * 10).toFixed(1))
-            }
-        },
-        Suggestions: generateMockSuggestions(text)
-    };
-    
-    return response;
+  // Enhanced mock response generator for offline/demo mode
+  const topic = detectTopic(text);
+  const biasSummary = determineMockBias(text);
+  const biasDetails = generateMockBiasDetails(text);
+  const suggestions = generateMockSuggestions(text);
+  
+  // Determine bias score based on details
+  const biasScore = biasDetails.length > 1 ? 
+    Math.min(biasDetails.length * 0.8, 5) : 
+    Math.random() * 2;
+  
+  // Determine bias direction from summary
+  let biasDirection = 'Neutral';
+  if (biasSummary.toLowerCase().includes('left-leaning')) {
+    biasDirection = 'Left-leaning';
+  } else if (biasSummary.toLowerCase().includes('right-leaning')) {
+    biasDirection = 'Right-leaning';
+  }
+  
+  // Generate sentiment analysis
+  const sentimentWords = {
+    positive: ['great', 'excellent', 'good', 'benefit', 'success', 'improve'],
+    negative: ['bad', 'terrible', 'disaster', 'failure', 'problem', 'crisis', 'damage']
+  };
+  
+  let positiveCount = 0;
+  let negativeCount = 0;
+  
+  const words = text.toLowerCase().split(/\s+/);
+  words.forEach(word => {
+    if (sentimentWords.positive.some(pw => word.includes(pw))) positiveCount++;
+    if (sentimentWords.negative.some(nw => word.includes(nw))) negativeCount++;
+  });
+  
+  let sentimentScore = (positiveCount - negativeCount) / Math.max(1, words.length / 20);
+  sentimentScore = Math.max(-1, Math.min(1, sentimentScore));
+  
+  let overallSentiment = 'Neutral';
+  if (sentimentScore > 0.2) overallSentiment = 'Positive';
+  else if (sentimentScore < -0.2) overallSentiment = 'Negative';
+  
+  // Generate emotional tones
+  const possibleTones = ['Analytical', 'Confident', 'Tentative', 'Emotional', 'Angry', 'Sad', 'Joyful', 'Fearful'];
+  const emotionalTones = [];
+  const toneCount = Math.floor(Math.random() * 3) + 1; // 1-3 tones
+  
+  for (let i = 0; i < toneCount; i++) {
+    const randomTone = possibleTones[Math.floor(Math.random() * possibleTones.length)];
+    if (!emotionalTones.includes(randomTone)) {
+      emotionalTones.push(randomTone);
+    }
+  }
+  
+  // Generate credibility metrics
+  const credibilityScore = Math.random() * 0.6 + 0.2; // 0.2 to 0.8
+  const factualityScore = Math.random() * 0.7 + 0.3; // 0.3 to 1.0
+  
+  const credibilityFactors = [
+    { factor: 'Source Reputation', impact: Math.random() > 0.5 ? 'Positive' : 'Neutral' },
+    { factor: 'Factual Accuracy', impact: factualityScore > 0.6 ? 'Positive' : 'Negative' },
+    { factor: 'Citation Quality', impact: Math.random() > 0.6 ? 'Positive' : 'Negative' },
+    { factor: 'Expert Consensus', impact: Math.random() > 0.4 ? 'Neutral' : 'Negative' }
+  ];
+  
+  // Create the comprehensive mock response
+  return {
+    text: text,
+    MainTopic: topic,
+    BiasAnalysis: {
+      OverallBias: biasSummary,
+      BiasScore: biasScore,
+      BiasDirection: biasDirection,
+      Details: biasDetails.map(detail => ({
+        Text: detail.text,
+        Type: detail.biasType,
+        Explanation: detail.explanation,
+        ConfidenceScore: Math.random() * 0.3 + 0.7 // 0.7 to 1.0
+      }))
+    },
+    SentimentAnalysis: {
+      Overall: overallSentiment,
+      Score: sentimentScore,
+      EmotionalTone: emotionalTones
+    },
+    SourceCredibility: {
+      OverallScore: credibilityScore,
+      FactualityScore: factualityScore,
+      Factors: credibilityFactors
+    },
+    Suggestions: suggestions,
+    analysis_time: (Math.random() * 0.5 + 0.5).toFixed(2) // 0.5 to 1.0 seconds
+  };
 }
 
 function detectTopic(text) {
-    // Very simple topic detection based on keywords
-    const topics = [
-        { keywords: ['government', 'political', 'senator', 'federal', 'washington', 'liberal', 'regulation'], topic: 'Politics & Government' },
-        { keywords: ['healthcare', 'medical', 'doctor', 'hospital', 'patient', 'insurance'], topic: 'Healthcare' },
-        { keywords: ['tech', 'technology', 'ai', 'artificial intelligence', 'digital', 'computer', 'software'], topic: 'Technology' },
-        { keywords: ['climate', 'environment', 'carbon', 'emission', 'warming', 'pollution'], topic: 'Climate & Environment' },
-        { keywords: ['economy', 'economic', 'market', 'financial', 'business', 'company', 'industry'], topic: 'Economy & Business' }
-    ];
+  // Very simple topic detection based on keywords
+  const topics = [
+    { keywords: ['government', 'political', 'senator', 'federal', 'washington', 'liberal', 'regulation'], topic: 'Politics & Government' },
+    { keywords: ['healthcare', 'medical', 'doctor', 'hospital', 'patient', 'insurance'], topic: 'Healthcare' },
+    { keywords: ['tech', 'technology', 'ai', 'artificial intelligence', 'digital', 'computer', 'software'], topic: 'Technology' },
+    { keywords: ['climate', 'environment', 'carbon', 'emission', 'warming', 'pollution'], topic: 'Climate & Environment' },
+    { keywords: ['economy', 'economic', 'market', 'financial', 'business', 'company', 'industry'], topic: 'Economy & Business' }
+  ];
     
-    // Convert text to lowercase for case-insensitive matching
-    const lowerText = text.toLowerCase();
+  // Convert text to lowercase for case-insensitive matching
+  const lowerText = text.toLowerCase();
     
-    // Count keyword matches for each topic
-    const matches = topics.map(topic => {
-        const count = topic.keywords.reduce((sum, keyword) => {
-            return sum + (lowerText.includes(keyword) ? 1 : 0);
-        }, 0);
-        return { topic: topic.topic, count };
-    });
+  // Count keyword matches for each topic
+  const matches = topics.map(topic => {
+    const count = topic.keywords.reduce((sum, keyword) => {
+      return sum + (lowerText.includes(keyword) ? 1 : 0);
+    }, 0);
+    return { topic: topic.topic, count };
+  });
     
-    // Sort by match count in descending order
-    matches.sort((a, b) => b.count - a.count);
+  // Sort by match count in descending order
+  matches.sort((a, b) => b.count - a.count);
     
-    // Return the topic with the most matches, or "General" if no matches
-    return matches[0].count > 0 ? matches[0].topic : "General News";
+  // Return the topic with the most matches, or "General" if no matches
+  return matches[0].count > 0 ? matches[0].topic : 'General News';
 }
 
 function determineMockBias(text) {
-    // Simplified bias detection based on keyword analysis
-    const lowerText = text.toLowerCase();
+  // Simplified bias detection based on keyword analysis
+  const lowerText = text.toLowerCase();
     
-    // Political loaded terms
-    const leftBiasTerms = ['radical right', 'extremist', 'alt-right', 'far-right', 'conservative agenda', 'corporate greed'];
-    const rightBiasTerms = ['radical left', 'socialist', 'liberal agenda', 'leftist', 'big government', 'environmental extremist'];
+  // Political loaded terms
+  const leftBiasTerms = ['radical right', 'extremist', 'alt-right', 'far-right', 'conservative agenda', 'corporate greed'];
+  const rightBiasTerms = ['radical left', 'socialist', 'liberal agenda', 'leftist', 'big government', 'environmental extremist'];
     
-    // Language patterns that might indicate bias
-    const biasedLanguage = [
-        'clearly', 'obviously', 'undoubtedly', 'everyone knows', 'without question',
-        'disaster', 'catastrophe', 'crisis', 'failure', 'scandal',
-        'destroy', 'devastating', 'terrible', 'horrible', 'evil'
-    ];
+  // Language patterns that might indicate bias
+  const biasedLanguage = [
+    'clearly', 'obviously', 'undoubtedly', 'everyone knows', 'without question',
+    'disaster', 'catastrophe', 'crisis', 'failure', 'scandal',
+    'destroy', 'devastating', 'terrible', 'horrible', 'evil'
+  ];
     
-    // Count occurrences
-    let leftBiasCount = leftBiasTerms.reduce((count, term) => count + (lowerText.includes(term) ? 1 : 0), 0);
-    let rightBiasCount = rightBiasTerms.reduce((count, term) => count + (lowerText.includes(term) ? 1 : 0), 0);
-    let biasedLanguageCount = biasedLanguage.reduce((count, term) => count + (lowerText.includes(term) ? 1 : 0), 0);
+  // Count occurrences
+  let leftBiasCount = leftBiasTerms.reduce((count, term) => count + (lowerText.includes(term) ? 1 : 0), 0);
+  let rightBiasCount = rightBiasTerms.reduce((count, term) => count + (lowerText.includes(term) ? 1 : 0), 0);
+  let biasedLanguageCount = biasedLanguage.reduce((count, term) => count + (lowerText.includes(term) ? 1 : 0), 0);
     
-    // Determine overall bias
-    if (leftBiasCount > rightBiasCount && leftBiasCount > 0) {
-        return `Left-leaning bias detected (${leftBiasCount} indicators found)`;
-    } else if (rightBiasCount > leftBiasCount && rightBiasCount > 0) {
-        return `Right-leaning bias detected (${rightBiasCount} indicators found)`;
-    } else if (biasedLanguageCount > 2) {
-        return `Some general bias detected through emotionally charged language (${biasedLanguageCount} indicators found)`;
-    } else {
-        return "No significant bias detected";
-    }
+  // Determine overall bias
+  if (leftBiasCount > rightBiasCount && leftBiasCount > 0) {
+    return `Left-leaning bias detected (${leftBiasCount} indicators found)`;
+  } else if (rightBiasCount > leftBiasCount && rightBiasCount > 0) {
+    return `Right-leaning bias detected (${rightBiasCount} indicators found)`;
+  } else if (biasedLanguageCount > 2) {
+    return `Some general bias detected through emotionally charged language (${biasedLanguageCount} indicators found)`;
+  } else {
+    return 'No significant bias detected';
+  }
 }
 
 function generateMockBiasDetails(text) {
-    // Split text into sentences
-    const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+  // Split text into sentences
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
     
-    // Simple biased phrases to look for
-    const biasIndicators = [
-        { pattern: /disaster/i, type: "Emotional Language", explanation: "Uses dramatic language that may evoke emotional response rather than presenting neutral facts." },
-        { pattern: /waste/i, type: "Value Judgment", explanation: "Presents a subjective judgment as fact without sufficient evidence." },
-        { pattern: /typical/i, type: "Generalization", explanation: "Makes a sweeping generalization without nuance." },
-        { pattern: /radical/i, type: "Labeling", explanation: "Uses politically charged labeling that may misrepresent positions." },
-        { pattern: /obviously/i, type: "Assertion", explanation: "Presents opinion as self-evident fact." },
-        { pattern: /hardworking/i, type: "Appeal to Identity", explanation: "Appeals to group identity rather than focusing on facts." },
-        { pattern: /extremist/i, type: "Demonization", explanation: "Uses extreme characterization to dismiss opposing viewpoints." },
-        { pattern: /devastating/i, type: "Emotional Language", explanation: "Uses emotionally charged language that may overstate impact." }
-    ];
+  // Simple biased phrases to look for
+  const biasIndicators = [
+    { pattern: /disaster/i, type: 'Emotional Language', explanation: 'Uses dramatic language that may evoke emotional response rather than presenting neutral facts.' },
+    { pattern: /waste/i, type: 'Value Judgment', explanation: 'Presents a subjective judgment as fact without sufficient evidence.' },
+    { pattern: /typical/i, type: 'Generalization', explanation: 'Makes a sweeping generalization without nuance.' },
+    { pattern: /radical/i, type: 'Labeling', explanation: 'Uses politically charged labeling that may misrepresent positions.' },
+    { pattern: /obviously/i, type: 'Assertion', explanation: 'Presents opinion as self-evident fact.' },
+    { pattern: /hardworking/i, type: 'Appeal to Identity', explanation: 'Appeals to group identity rather than focusing on facts.' },
+    { pattern: /extremist/i, type: 'Demonization', explanation: 'Uses extreme characterization to dismiss opposing viewpoints.' },
+    { pattern: /devastating/i, type: 'Emotional Language', explanation: 'Uses emotionally charged language that may overstate impact.' }
+  ];
     
-    // Find biased sentences
-    const biasedContent = [];
+  // Find biased sentences
+  const biasedContent = [];
     
-    sentences.forEach(sentence => {
-        biasIndicators.forEach(indicator => {
-            if (indicator.pattern.test(sentence) && Math.random() > 0.3) { // 70% chance to include for variety
-                biasedContent.push({
-                    text: sentence.trim(),
-                    biasType: indicator.type,
-                    explanation: indicator.explanation
-                });
-            }
+  sentences.forEach(sentence => {
+    biasIndicators.forEach(indicator => {
+      if (indicator.pattern.test(sentence) && Math.random() > 0.3) { // 70% chance to include for variety
+        biasedContent.push({
+          text: sentence.trim(),
+          biasType: indicator.type,
+          explanation: indicator.explanation
         });
+      }
     });
+  });
     
-    // If no bias found, return neutral examples
-    if (biasedContent.length === 0) {
-        return [
-            {
-                text: "This content appears to present information in a relatively balanced way.",
-                biasType: "Balanced Reporting",
-                explanation: "The text provides multiple perspectives and uses neutral language."
-            }
-        ];
-    }
+  // If no bias found, return neutral examples
+  if (biasedContent.length === 0) {
+    return [
+      {
+        text: 'This content appears to present information in a relatively balanced way.',
+        biasType: 'Balanced Reporting',
+        explanation: 'The text provides multiple perspectives and uses neutral language.'
+      }
+    ];
+  }
     
-    return biasedContent;
+  return biasedContent;
 }
 
 function generateMockSuggestions(text) {
-    // Standard suggestions based on bias types
-    const standardSuggestions = [
-        "Seek out multiple sources from different perspectives on this topic.",
-        "Look for primary sources and original research when available.",
-        "Consider whether the article presents multiple viewpoints on controversial aspects.",
-        "Check whether claims are supported by specific evidence or citations.",
-        "Be aware of emotional language that may influence your perception of the content."
-    ];
+  // Standard suggestions based on bias types
+  const standardSuggestions = [
+    'Seek out multiple sources from different perspectives on this topic.',
+    'Look for primary sources and original research when available.',
+    'Consider whether the article presents multiple viewpoints on controversial aspects.',
+    'Check whether claims are supported by specific evidence or citations.',
+    'Be aware of emotional language that may influence your perception of the content.'
+  ];
     
-    // Filter to 3 random suggestions
-    return standardSuggestions
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
+  // Filter to 3 random suggestions
+  return standardSuggestions
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 3);
 }
 
 function displayResults(result) {
-    resultsContainer.classList.remove('hidden');
+  resultsContainer.classList.remove('hidden');
     
-    // Main topic
-    mainTopic.textContent = result.MainTopic || 'N/A';
+  // Main topic
+  mainTopic.textContent = result.MainTopic || 'N/A';
     
-    // Bias summary
-    if (result.BiasAnalysis && result.BiasAnalysis.OverallBias) {
-        biasSummary.innerHTML = `
+  // Bias summary
+  if (result.BiasAnalysis && result.BiasAnalysis.OverallBias) {
+    biasSummary.innerHTML = `
             <strong>Overall Bias:</strong> ${result.BiasAnalysis.OverallBias} 
             (Score: ${result.BiasAnalysis.BiasScore ? result.BiasAnalysis.BiasScore.toFixed(2) : 'N/A'})
         `;
-    } else {
-        biasSummary.innerHTML = 'Bias summary not available.';
-    }
+  } else {
+    biasSummary.innerHTML = 'Bias summary not available.';
+  }
     
-    // Bias details
-    if (result.BiasAnalysis && result.BiasAnalysis.Details && result.BiasAnalysis.Details.length > 0) {
-        biasDetails.innerHTML = result.BiasAnalysis.Details.map(detail => `
+  // Bias details
+  if (result.BiasAnalysis && result.BiasAnalysis.Details && result.BiasAnalysis.Details.length > 0) {
+    biasDetails.innerHTML = result.BiasAnalysis.Details.map(detail => `
             <div class="bias-instance">
                 <div class="bias-text"><em>"${detail.Text}"</em></div>
                 <div class="bias-type"><strong>Bias Type:</strong> ${detail.Type} (Confidence: ${detail.ConfidenceScore.toFixed(2)})</div>
                 <div class="bias-explanation"><strong>Explanation:</strong> ${detail.Explanation}</div>
             </div>
         `).join('');
-    } else {
-        biasDetails.innerHTML = '<p>No specific bias instances detected or details available.</p>';
-    }
+  } else {
+    biasDetails.innerHTML = '<p>No specific bias instances detected or details available.</p>';
+  }
     
-    // Bias visualization (Heatmap and Gauge)
-    biasVisualization.innerHTML = ''; // Clear previous visualizations
-    if (result.BiasAnalysis) {
-        createBiasVisualization(result.BiasAnalysis);
-        if (result.BiasAnalysis.Details && result.BiasAnalysis.Details.length > 0 && articleText.value) {
-             createTextHeatmap(result.BiasAnalysis.Details, articleText.value);
-        }
+  // Bias visualization (Heatmap and Gauge)
+  biasVisualization.innerHTML = ''; // Clear previous visualizations
+  if (result.BiasAnalysis) {
+    createBiasVisualization(result.BiasAnalysis);
+    if (result.BiasAnalysis.Details && result.BiasAnalysis.Details.length > 0 && articleText.value) {
+      createTextHeatmap(result.BiasAnalysis.Details, articleText.value);
     }
+  }
 
-    // Sentiment analysis
-    if (result.SentimentAnalysis) {
-        sentimentAnalysis.innerHTML = `
+  // Sentiment analysis
+  if (result.SentimentAnalysis) {
+    sentimentAnalysis.innerHTML = `
             <div class="sentiment-overview">
                 <div class="sentiment-score">
                     <div class="score-label">Overall Sentiment</div>
@@ -391,53 +455,53 @@ function displayResults(result) {
                 </div>
             </div>
         `;
-    } else {
-        sentimentAnalysis.innerHTML = '<p>Sentiment analysis not available.</p>';
-    }
+  } else {
+    sentimentAnalysis.innerHTML = '<p>Sentiment analysis not available.</p>';
+  }
     
-    // Suggestions
-    if (result.Suggestions && result.Suggestions.length > 0) {
-        biasSuggestions.innerHTML = `
+  // Suggestions
+  if (result.Suggestions && result.Suggestions.length > 0) {
+    biasSuggestions.innerHTML = `
             <ul class="suggestions-list">
                 ${result.Suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
             </ul>
         `;
-    } else {
-        biasSuggestions.innerHTML = '<p>No specific suggestions available.</p>';
-    }
+  } else {
+    biasSuggestions.innerHTML = '<p>No specific suggestions available.</p>';
+  }
     
-    // Source credibility
-    if (result.SourceCredibility) {
-        credibilityScore.innerHTML = createCredibilityMeter(result.SourceCredibility);
-    } else {
-        credibilityScore.innerHTML = '<p>Source credibility analysis not available.</p>';
-    }
+  // Source credibility
+  if (result.SourceCredibility) {
+    credibilityScore.innerHTML = createCredibilityMeter(result.SourceCredibility);
+  } else {
+    credibilityScore.innerHTML = '<p>Source credibility analysis not available.</p>';
+  }
 
-    // Alternative Perspectives
-    if (alternativePerspectives) {
-        // The actual perspectives will be populated by fetchAlternativePerspectives or generateMockPerspectives
-        // Here we just ensure there's a loading indicator until the data arrives
-        alternativePerspectives.innerHTML = '<p><em>Loading alternative perspectives...</em></p>';
-    }
+  // Alternative Perspectives
+  if (alternativePerspectives) {
+    // The actual perspectives will be populated by fetchAlternativePerspectives or generateMockPerspectives
+    // Here we just ensure there's a loading indicator until the data arrives
+    alternativePerspectives.innerHTML = '<p><em>Loading alternative perspectives...</em></p>';
+  }
 
-    // Switch to the first tab (Bias Analysis)
-    document.querySelector('.view-tab[data-tab="bias-tab"]').click();
+  // Switch to the first tab (Bias Analysis)
+  document.querySelector('.view-tab[data-tab="bias-tab"]').click();
 }
 
 function createBiasVisualization(biasAnalysis) {
-    if (!biasAnalysis) {
-        biasVisualization.innerHTML = '<p>Bias visualization not available for this content.</p>';
-        return;
-    }
+  if (!biasAnalysis) {
+    biasVisualization.innerHTML = '<p>Bias visualization not available for this content.</p>';
+    return;
+  }
     
-    // Create a visual representation of bias score
-    const biasScore = biasAnalysis.BiasScore || 0;
-    const normalizedScore = Math.max(-5, Math.min(5, biasScore)); // Ensure score is between -5 and 5
+  // Create a visual representation of bias score
+  const biasScore = biasAnalysis.BiasScore || 0;
+  const normalizedScore = Math.max(-5, Math.min(5, biasScore)); // Ensure score is between -5 and 5
     
-    // Create a gauge visualization
-    const percentage = ((normalizedScore + 5) / 10) * 100; // Convert to percentage (0-100)
+  // Create a gauge visualization
+  const percentage = ((normalizedScore + 5) / 10) * 100; // Convert to percentage (0-100)
     
-    biasVisualization.innerHTML = `
+  biasVisualization.innerHTML = `
         <div class="bias-meter">
             <div class="bias-scale">
                 <div class="scale-label left">Left-leaning</div>
@@ -471,120 +535,249 @@ function createBiasVisualization(biasAnalysis) {
 }
 
 function createTextHeatmap(biasDetails) {
-    if (!biasDetails || biasDetails.length === 0) {
-        return '<p>No specific bias instances to visualize.</p>';
-    }
+  if (!biasDetails || biasDetails.length === 0) {
+    return '<p>No specific bias instances to visualize.</p>';
+  }
     
-    // Create a visual representation of where bias appears in the text
-    const text = articleText.value;
-    const words = text.split(/\s+/);
+  // Create a visual representation of where bias appears in the text
+  const text = articleText.value;
+  const words = text.split(/\s+/);
     
-    // Create an array of word objects with bias information
-    const wordObjects = words.map((word, index) => {
-        // Check if this word is part of a biased phrase
-        const biasMatch = biasDetails.find(detail => 
-            detail.text.includes(word) && Math.random() > 0.7); // Random factor for demo visualization
+  // Create an array of word objects with bias information
+  const wordObjects = words.map((word, index) => {
+    // Check if this word is part of a biased phrase
+    const biasMatch = biasDetails.find(detail => 
+      detail.text.includes(word) && Math.random() > 0.7); // Random factor for demo visualization
         
-        return {
-            word,
-            index,
-            biased: !!biasMatch,
-            biasType: biasMatch ? biasMatch.biasType : null,
-            explanation: biasMatch ? biasMatch.explanation : null
-        };
-    });
+    return {
+      word,
+      index,
+      biased: !!biasMatch,
+      biasType: biasMatch ? biasMatch.biasType : null,
+      explanation: biasMatch ? biasMatch.explanation : null
+    };
+  });
     
-    // Create the heatmap HTML
-    return `
+  // Create the heatmap HTML
+  return `
         <div class="text-heatmap">
             ${wordObjects.map(obj => {
-                if (obj.biased) {
-                    return `<span class="biased-word" title="${obj.biasType}: ${obj.explanation}">${obj.word}</span>`;
-                } else {
-                    return `<span class="normal-word">${obj.word}</span>`;
-                }
-            }).join(' ')}
+    if (obj.biased) {
+      return `<span class="biased-word" title="${obj.biasType}: ${obj.explanation}">${obj.word}</span>`;
+    } else {
+      return `<span class="normal-word">${obj.word}</span>`;
+    }
+  }).join(' ')}
         </div>
     `;
 }
 
 // Function to fetch alternative perspectives from API
 async function fetchAlternativePerspectives(text) {
-    try {
-        if (!isServerAvailable) {
-            generateMockPerspectives(text);
-            return;
-        }
-        
-        const response = await fetch(API_PERSPECTIVES_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                text: text,
-                topic: detectTopic(text) // Pass the detected topic to help the API
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Perspectives API responded with status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.status === 'success' && result.data && result.data.length > 0) {
-            displayPerspectives(result.data);
-        } else {
-            alternativePerspectives.innerHTML = '<p>No alternative perspectives found for this content.</p>';
-        }
-    } catch (error) {
-        console.error('Error fetching perspectives:', error);
-        // Fall back to mock data on error
-        generateMockPerspectives(text);
+  try {
+    if (!isServerAvailable) {
+      generateMockPerspectives(text);
+      return;
     }
+        
+    const response = await fetch(API_PERSPECTIVES_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: text,
+        topic: detectTopic(text) // Pass the detected topic to help the API
+      })
+    });
+        
+    if (!response.ok) {
+      throw new Error(`Perspectives API responded with status: ${response.status}`);
+    }
+        
+    const result = await response.json();
+        
+    if (result.status === 'success' && result.data && result.data.length > 0) {
+      displayPerspectives(result.data);
+    } else {
+      alternativePerspectives.innerHTML = '<p>No alternative perspectives found for this content.</p>';
+    }
+  } catch (error) {
+    console.error('Error fetching perspectives:', error);
+    // Fall back to mock data on error
+    generateMockPerspectives(text);
+  }
 }
 
 // Generate mock perspectives for offline mode
 function generateMockPerspectives(text) {
-    const topic = detectTopic(text);
-    
-    // Create mock perspectives based on the detected topic
-    const mockPerspectives = [
+  // Detect topic first
+  const topic = detectTopic(text);
+  
+  // Define perspectives based on topic
+  let perspectives = [];
+  
+  switch(topic) {
+    case 'Politics & Government':
+      perspectives = [
         {
-            title: `Why ${topic} Deserves More Support`,
-            source: "Progressive View Journal",
-            url: "#",
-            summary: `A compelling argument for increased funding and attention to ${topic}, highlighting potential social benefits and long-term positive impacts.`
+          title: 'Progressive Perspective',
+          source: 'Progressive Policy Institute',
+          summary: 'Government investment in climate initiatives is essential for long-term sustainability and economic growth. These programs create green jobs and address critical environmental challenges.',
+          url: '#'
         },
         {
-            title: `The Economic Case Against Expansion in ${topic}`,
-            source: "Fiscal Conservative Review",
-            url: "#",
-            summary: `An analysis questioning the financial sustainability of current approaches to ${topic}, suggesting market-based alternatives.`
+          title: 'Conservative Perspective',
+          source: 'Conservative Think Tank',
+          summary: 'Private sector solutions and market-based approaches are more efficient than government programs. Tax incentives rather than regulations would better address environmental concerns.',
+          url: '#'
         },
         {
-            title: `${topic}: Finding Middle Ground in a Polarized Debate`,
-            source: "Centrist Policy Institute",
-            url: "#",
-            summary: `A balanced examination of various viewpoints on ${topic}, seeking reasonable compromise between competing interests and ideologies.`
+          title: 'Centrist Analysis',
+          source: 'Center for Balanced Policy',
+          summary: 'A balanced approach combining targeted government investment with private sector innovation offers the most practical path forward on climate issues.',
+          url: '#'
         }
-    ];
-    
-    // Display the mock perspectives
-    displayPerspectives(mockPerspectives);
+      ];
+      break;
+      
+    case 'Healthcare':
+      perspectives = [
+        {
+          title: 'Universal Healthcare Advocate',
+          source: 'Health Policy Research',
+          summary: 'Single-payer healthcare systems provide more equitable access to care while reducing overall costs through administrative savings and negotiated prices.',
+          url: '#'
+        },
+        {
+          title: 'Market-Based Healthcare',
+          source: 'Free Market Medicine Association',
+          summary: 'Competition-driven healthcare models encourage innovation and efficiency. Consumer choice and transparent pricing would improve outcomes and lower costs.',
+          url: '#'
+        },
+        {
+          title: 'Hybrid System Analysis',
+          source: 'Comparative Health Systems Journal',
+          summary: 'Many successful healthcare systems blend public coverage with private options, maintaining universal access while allowing market mechanisms where appropriate.',
+          url: '#'
+        }
+      ];
+      break;
+      
+    case 'Technology':
+      perspectives = [
+        {
+          title: 'Tech Optimist View',
+          source: 'Future Technology Foundation',
+          summary: 'AI advancements will create new opportunities and solve complex problems in healthcare, climate science, and other fields, with benefits outweighing risks.',
+          url: '#'
+        },
+        {
+          title: 'Tech Ethics Perspective',
+          source: 'Center for Responsible Technology',
+          summary: 'Rapid AI development requires strong ethical frameworks and regulation to prevent misuse, protect privacy, and ensure equitable distribution of benefits.',
+          url: '#'
+        },
+        {
+          title: 'Industry Analysis',
+          source: 'Tech Trends Report',
+          summary: 'Balancing innovation with responsibility will be the key challenge as AI capabilities expand. Companies adopting ethical practices may gain competitive advantages.',
+          url: '#'
+        }
+      ];
+      break;
+      
+    case 'Climate & Environment':
+      perspectives = [
+        {
+          title: 'Environmental Advocacy',
+          source: 'Climate Action Network',
+          summary: 'Immediate and substantial action on emissions reduction is necessary to prevent catastrophic climate impacts. The costs of inaction far exceed the costs of transition.',
+          url: '#'
+        },
+        {
+          title: 'Economic Impact Analysis',
+          source: 'Energy Economics Institute',
+          summary: 'Transition policies must consider economic impacts on communities dependent on traditional energy sources. Gradual approaches may be more sustainable long-term.',
+          url: '#'
+        },
+        {
+          title: 'Technological Solution Focus',
+          source: 'Clean Tech Innovation Center',
+          summary: 'Technological innovation in renewables, carbon capture, and energy efficiency will be more effective than regulatory approaches alone in addressing climate challenges.',
+          url: '#'
+        }
+      ];
+      break;
+      
+    case 'Economy & Business':
+      perspectives = [
+        {
+          title: 'Labor Perspective',
+          source: 'Economic Justice Institute',
+          summary: 'Economic policies should prioritize worker protections, wage growth, and reducing inequality to create sustainable and broadly shared prosperity.',
+          url: '#'
+        },
+        {
+          title: 'Business Perspective',
+          source: 'Enterprise Research Council',
+          summary: 'Reducing regulatory burdens and maintaining competitive tax policies creates optimal conditions for business growth, investment, and job creation.',
+          url: '#'
+        },
+        {
+          title: 'Sustainable Economics',
+          source: 'Institute for Sustainable Prosperity',
+          summary: 'Long-term economic health requires balancing growth with environmental sustainability and social equity considerations in policy frameworks.',
+          url: '#'
+        }
+      ];
+      break;
+      
+    default:
+      // General perspectives for any other topic
+      perspectives = [
+        {
+          title: 'Academic Perspective',
+          source: 'University Research Center',
+          summary: 'Recent peer-reviewed studies suggest multiple factors contribute to this issue, with more research needed to fully understand the complexities involved.',
+          url: '#'
+        },
+        {
+          title: 'International Viewpoint',
+          source: 'Global Affairs Analysis',
+          summary: 'Comparative studies across different countries reveal diverse approaches to this challenge, with varying outcomes based on cultural and institutional factors.',
+          url: '#'
+        },
+        {
+          title: 'Historical Context',
+          source: 'Historical Policy Review',
+          summary: 'Examining historical precedents provides valuable context for understanding current debates and potential paths forward on this issue.',
+          url: '#'
+        }
+      ];
+  }
+  
+  // Add some randomness to perspectives (don't always show all three)
+  if (Math.random() > 0.3) {
+    perspectives = perspectives.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + 2);
+  }
+  
+  // Display the perspectives
+  displayPerspectives(perspectives);
+  
+  return perspectives;
 }
 
 // Function to display perspectives in the UI
 function displayPerspectives(perspectives) {
-    if (!alternativePerspectives) return;
+  if (!alternativePerspectives) return;
     
-    if (perspectives.length === 0) {
-        alternativePerspectives.innerHTML = '<p>No alternative perspectives found for this content.</p>';
-        return;
-    }
+  if (perspectives.length === 0) {
+    alternativePerspectives.innerHTML = '<p>No alternative perspectives found for this content.</p>';
+    return;
+  }
     
-    alternativePerspectives.innerHTML = perspectives.map(perspective => `
+  alternativePerspectives.innerHTML = perspectives.map(perspective => `
         <div class="perspective-card">
             <h5>${perspective.title}</h5>
             <div class="perspective-source">Source: ${perspective.source}</div>
@@ -596,27 +789,27 @@ function displayPerspectives(perspectives) {
 
 // Function to create credibility meter visualization
 function createCredibilityMeter(credibility) {
-    if (!credibility) return '<p>Credibility data not available.</p>';
+  if (!credibility) return '<p>Credibility data not available.</p>';
     
-    const score = credibility.Score || 0;
-    const normalized = Math.max(0, Math.min(100, score * 10)); // Convert 0-10 score to percentage
+  const score = credibility.Score || 0;
+  const normalized = Math.max(0, Math.min(100, score * 10)); // Convert 0-10 score to percentage
     
-    let ratingClass;
-    let ratingText;
+  let ratingClass;
+  let ratingText;
     
-    if (normalized >= 80) {
-        ratingClass = 'high-credibility';
-        ratingText = 'High Credibility';
-    } else if (normalized >= 60) {
-        ratingClass = 'medium-credibility';
-        ratingText = 'Medium Credibility';
-    } else {
-        ratingClass = 'low-credibility';
-        ratingText = 'Low Credibility';
-    }
+  if (normalized >= 80) {
+    ratingClass = 'high-credibility';
+    ratingText = 'High Credibility';
+  } else if (normalized >= 60) {
+    ratingClass = 'medium-credibility';
+    ratingText = 'Medium Credibility';
+  } else {
+    ratingClass = 'low-credibility';
+    ratingText = 'Low Credibility';
+  }
     
-    // Generate HTML for credibility meter
-    let html = `
+  // Generate HTML for credibility meter
+  let html = `
         <div class="credibility-overview">
             <div class="credibility-meter">
                 <div class="meter-label">${ratingText}</div>
@@ -628,100 +821,100 @@ function createCredibilityMeter(credibility) {
         </div>
     `;
     
-    // Add factors if available
-    if (credibility.Factors) {
-        html += `<div class="credibility-factors">
+  // Add factors if available
+  if (credibility.Factors) {
+    html += `<div class="credibility-factors">
             <h4>Credibility Factors:</h4>
             <ul>`;
             
-        if (Array.isArray(credibility.Factors)) {
-            // Handle array format
-            credibility.Factors.forEach(factor => {
-                html += `<li>${factor}</li>`;
-            });
-        } else {
-            // Handle object format with scores
-            for (const [factor, score] of Object.entries(credibility.Factors)) {
-                html += `<li>${factor}: ${score}/10</li>`;
-            }
-        }
-        
-        html += `</ul></div>`;
+    if (Array.isArray(credibility.Factors)) {
+      // Handle array format
+      credibility.Factors.forEach(factor => {
+        html += `<li>${factor}</li>`;
+      });
+    } else {
+      // Handle object format with scores
+      for (const [factor, score] of Object.entries(credibility.Factors)) {
+        html += `<li>${factor}: ${score}/10</li>`;
+      }
     }
+        
+    html += '</ul></div>';
+  }
     
-    // Add recommendations if available
-    if (credibility.Recommendations && credibility.Recommendations.length > 0) {
-        html += `<div class="credibility-recommendations">
+  // Add recommendations if available
+  if (credibility.Recommendations && credibility.Recommendations.length > 0) {
+    html += `<div class="credibility-recommendations">
             <h4>Recommendations:</h4>
             <ul>`;
             
-        credibility.Recommendations.forEach(rec => {
-            html += `<li>${rec}</li>`;
-        });
+    credibility.Recommendations.forEach(rec => {
+      html += `<li>${rec}</li>`;
+    });
         
-        html += `</ul></div>`;
-    }
+    html += '</ul></div>';
+  }
     
-    return html;
+  return html;
 }
 
 // Advanced ML Features interaction
 document.addEventListener('DOMContentLoaded', function() {
-    const mlCards = document.querySelectorAll('.ml-card');
+  const mlCards = document.querySelectorAll('.ml-card');
     
-    // Add hover effects and animation to ML cards
-    mlCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px)';
-            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.04)';
+  // Add hover effects and animation to ML cards
+  mlCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-10px)';
+      this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.04)';
             
-            // Animate the icon
-            const icon = this.querySelector('.ml-icon');
-            if (icon) {
-                icon.style.transform = 'scale(1.2) rotate(5deg)';
-            }
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = '';
-            this.style.boxShadow = '';
-            
-            // Reset icon animation
-            const icon = this.querySelector('.ml-icon');
-            if (icon) {
-                icon.style.transform = '';
-            }
-        });
-        
-        // Add click interaction to show more details
-        card.addEventListener('click', function() {
-            // Get the title of the card
-            const title = this.querySelector('h4').textContent;
-            
-            // Show a modal or expand the card with more details
-            showMLDetails(title, this);
-        });
+      // Animate the icon
+      const icon = this.querySelector('.ml-icon');
+      if (icon) {
+        icon.style.transform = 'scale(1.2) rotate(5deg)';
+      }
     });
+        
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+      this.style.boxShadow = '';
+            
+      // Reset icon animation
+      const icon = this.querySelector('.ml-icon');
+      if (icon) {
+        icon.style.transform = '';
+      }
+    });
+        
+    // Add click interaction to show more details
+    card.addEventListener('click', function() {
+      // Get the title of the card
+      const title = this.querySelector('h4').textContent;
+            
+      // Show a modal or expand the card with more details
+      showMLDetails(title, this);
+    });
+  });
     
-    // ML diagram interaction
-    const mlDiagram = document.querySelector('.ml-diagram');
-    if (mlDiagram) {
-        mlDiagram.addEventListener('click', function() {
-            // Make the diagram open in a larger view
-            showLargerDiagram();
-        });
-    }
+  // ML diagram interaction
+  const mlDiagram = document.querySelector('.ml-diagram');
+  if (mlDiagram) {
+    mlDiagram.addEventListener('click', function() {
+      // Make the diagram open in a larger view
+      showLargerDiagram();
+    });
+  }
 });
 
 // Function to show ML details modal
 function showMLDetails(title, card) {
-    // Create content based on which card was clicked
-    let content = '';
-    let techStack = [];
+  // Create content based on which card was clicked
+  let content = '';
+  let techStack = [];
     
-    switch(title) {
-        case 'Neural Network Analysis':
-            content = `
+  switch(title) {
+  case 'Neural Network Analysis':
+    content = `
                 <p>Our neural network analysis utilizes state-of-the-art transformer models to understand context, nuance, and detect patterns in text that indicate bias.</p>
                 <ul>
                     <li>Context-aware text analysis</li>
@@ -730,11 +923,11 @@ function showMLDetails(title, card) {
                     <li>Multi-dimensional bias detection</li>
                 </ul>
             `;
-            techStack = ['LLaMA3', 'Claude', 'Transformer Models', 'Attention Mechanisms'];
-            break;
+    techStack = ['LLaMA3', 'Claude', 'Transformer Models', 'Attention Mechanisms'];
+    break;
             
-        case 'Advanced NLP':
-            content = `
+  case 'Advanced NLP':
+    content = `
                 <p>Our NLP pipeline breaks down text into meaningful components, extracting entities, understanding relationships, and identifying linguistic patterns that reveal bias.</p>
                 <ul>
                     <li>Named Entity Recognition (NER)</li>
@@ -743,11 +936,11 @@ function showMLDetails(title, card) {
                     <li>Syntactic structure analysis</li>
                 </ul>
             `;
-            techStack = ['spaCy', 'NLTK', 'NER', 'POS Tagging', 'Dependency Parsing'];
-            break;
+    techStack = ['spaCy', 'NLTK', 'NER', 'POS Tagging', 'Dependency Parsing'];
+    break;
             
-        case 'Semantic Analysis':
-            content = `
+  case 'Semantic Analysis':
+    content = `
                 <p>Using advanced embedding techniques, we capture semantic meaning beyond surface text, enabling detection of subtle bias that might be missed by traditional methods.</p>
                 <ul>
                     <li>Sentence embeddings for contextual understanding</li>
@@ -756,11 +949,11 @@ function showMLDetails(title, card) {
                     <li>Cross-reference with bias databases</li>
                 </ul>
             `;
-            techStack = ['Sentence Transformers', 'Word Embeddings', 'Semantic Vectors', 'Cosine Similarity'];
-            break;
+    techStack = ['Sentence Transformers', 'Word Embeddings', 'Semantic Vectors', 'Cosine Similarity'];
+    break;
             
-        case 'Multi-model Ensemble':
-            content = `
+  case 'Multi-model Ensemble':
+    content = `
                 <p>Our ensemble approach combines results from multiple models, creating a more robust and accurate analysis than any single model could provide.</p>
                 <ul>
                     <li>Weighted model voting</li>
@@ -769,19 +962,19 @@ function showMLDetails(title, card) {
                     <li>Continuous improvement through feedback</li>
                 </ul>
             `;
-            techStack = ['Ensemble Learning', 'Model Averaging', 'Boosting', 'Stacking'];
-            break;
+    techStack = ['Ensemble Learning', 'Model Averaging', 'Boosting', 'Stacking'];
+    break;
             
-        default:
-            content = '<p>Advanced machine learning technique using state-of-the-art algorithms.</p>';
-            techStack = ['AI', 'ML'];
-    }
+  default:
+    content = '<p>Advanced machine learning technique using state-of-the-art algorithms.</p>';
+    techStack = ['AI', 'ML'];
+  }
     
-    // Create a tech stack display
-    const techStackHTML = techStack.map(tech => `<span class="tech-badge">${tech}</span>`).join('');
+  // Create a tech stack display
+  const techStackHTML = techStack.map(tech => `<span class="tech-badge">${tech}</span>`).join('');
     
-    // Create the modal HTML
-    const modalHTML = `
+  // Create the modal HTML
+  const modalHTML = `
         <div class="ml-modal-content">
             <h3>${title}</h3>
             <div class="ml-modal-body">
@@ -796,13 +989,13 @@ function showMLDetails(title, card) {
         </div>
     `;
     
-    // Show the modal
-    showModal(modalHTML);
+  // Show the modal
+  showModal(modalHTML);
 }
 
 // Function to show the diagram in a larger view
 function showLargerDiagram() {
-    const modalHTML = `
+  const modalHTML = `
         <div class="diagram-modal-content">
             <h3>Biasbuster ML Architecture</h3>
             <img src="assets/ml-architecture.svg" alt="ML Architecture Diagram" class="large-diagram">
@@ -813,56 +1006,56 @@ function showLargerDiagram() {
         </div>
     `;
     
-    // Show the modal
-    showModal(modalHTML);
+  // Show the modal
+  showModal(modalHTML);
 }
 
 // Generic modal function
 function showModal(content) {
-    // Check if a modal already exists
-    let modal = document.querySelector('.ml-modal');
+  // Check if a modal already exists
+  let modal = document.querySelector('.ml-modal');
     
-    if (!modal) {
-        // Create modal
-        modal = document.createElement('div');
-        modal.className = 'ml-modal';
+  if (!modal) {
+    // Create modal
+    modal = document.createElement('div');
+    modal.className = 'ml-modal';
         
-        // Create close button
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'ml-modal-close';
-        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
-        closeBtn.onclick = function() {
-            document.body.removeChild(modal);
-        };
+    // Create close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'ml-modal-close';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.onclick = function() {
+      document.body.removeChild(modal);
+    };
         
-        // Create modal wrapper
-        const modalWrapper = document.createElement('div');
-        modalWrapper.className = 'ml-modal-wrapper';
+    // Create modal wrapper
+    const modalWrapper = document.createElement('div');
+    modalWrapper.className = 'ml-modal-wrapper';
         
-        // Add content to wrapper
-        modalWrapper.innerHTML = content;
+    // Add content to wrapper
+    modalWrapper.innerHTML = content;
         
-        // Add close button and wrapper to modal
-        modal.appendChild(closeBtn);
-        modal.appendChild(modalWrapper);
+    // Add close button and wrapper to modal
+    modal.appendChild(closeBtn);
+    modal.appendChild(modalWrapper);
         
-        // Add click handler to close modal when clicking outside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                document.body.removeChild(modal);
-            }
-        });
+    // Add click handler to close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        document.body.removeChild(modal);
+      }
+    });
         
-        // Add modal to page
-        document.body.appendChild(modal);
+    // Add modal to page
+    document.body.appendChild(modal);
         
-        // Add animation class after a short delay
-        setTimeout(() => {
-            modal.classList.add('visible');
-        }, 10);
-    } else {
-        // Update existing modal content
-        const modalWrapper = modal.querySelector('.ml-modal-wrapper');
-        modalWrapper.innerHTML = content;
-    }
+    // Add animation class after a short delay
+    setTimeout(() => {
+      modal.classList.add('visible');
+    }, 10);
+  } else {
+    // Update existing modal content
+    const modalWrapper = modal.querySelector('.ml-modal-wrapper');
+    modalWrapper.innerHTML = content;
+  }
 } 

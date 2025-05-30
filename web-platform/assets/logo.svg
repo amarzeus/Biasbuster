@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo for Biasbuster -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7209b7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="white" stroke="url(#logoGradient)" stroke-width="10"/>
+  
+  <!-- B Letter -->
+  <path d="M70 50 L70 150 L120 150 C140 150 150 135 150 120 C150 105 140 95 125 92 C135 90 140 80 140 70 C140 55 130 50 115 50 Z" 
+        fill="url(#logoGradient)" stroke="none"/>
+  
+  <!-- Inner Cutouts for B -->
+  <path d="M90 70 L90 90 L110 90 C115 90 120 85 120 80 C120 75 115 70 110 70 Z" fill="white"/>
+  <path d="M90 110 L90 130 L115 130 C120 130 125 125 125 120 C125 115 120 110 115 110 Z" fill="white"/>
+  
+  <!-- Bias Detection Symbol -->
+  <path d="M125 40 L135 40 L145 60 L135 80 L125 80 L135 60 Z" fill="#4361ee"/>
+  
+  <!-- Shield Icon -->
+  <path d="M50 90 C50 120 75 140 100 150 C125 140 150 120 150 90 L150 60 C125 70 100 50 75 70 L50 60 Z" 
+        fill="none" stroke="#7209b7" stroke-width="5" opacity="0.3"/>
+</svg> 

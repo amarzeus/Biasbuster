@@ -1,277 +1,157 @@
-# Biasbuster Workflow Flowchart
+# Biasbuster Project Flowcharts
 
-This document visualizes the workflow and architecture of the Biasbuster system.
+This document provides visual representations of the key workflows and architecture within the Biasbuster project.
 
-## Core System Architecture
+## System Architecture
 
 ```mermaid
 graph TD
-    subgraph "Front-End Interfaces"
-        A[Chrome Extension] --> C
-        B[Web Platform] --> C
-    end
+    User[User/Client] --> |Interacts with| WebPlatform[Web Platform]
+    User --> |Installs| ChromeExt[Chrome Extension]
     
-    subgraph "MCP Server"
-        C[API Gateway] --> D[Request Handler]
-        D --> E[Content Analyzer]
-        E --> F[AI Service Selection]
-        F --> G1[Groq AI]
-        F --> G2[Anthropic AI]
-        F --> G3[OpenAI]
-        F --> G4[Mock AI]
-        G1 --> H
-        G2 --> H
-        G3 --> H
-        G4 --> H
-        H[Response Processor] --> I[Bias Analysis Result]
-    end
+    ChromeExt --> |Sends article| APIGateway[API Gateway]
+    WebPlatform --> |Sends text| APIGateway
     
-    I --> J[Front-End Visualization]
-    J --> K[User Feedback]
+    APIGateway --> |Routes requests| BiasAPI[Bias Analysis API]
     
-    style A fill:#ff9900,stroke:#333,stroke-width:2px
-    style B fill:#3498db,stroke:#333,stroke-width:2px
-    style C fill:#2ecc71,stroke:#333,stroke-width:2px
-    style F fill:#9b59b6,stroke:#333,stroke-width:2px
-    style I fill:#e74c3c,stroke:#333,stroke-width:2px
+    BiasAPI --> |Processes text| LLM[Large Language Models]
+    BiasAPI --> |Validates| Rules[Rules Engine]
+    BiasAPI --> |Queries| FactCheck[Fact-checking Services]
+    
+    LLM --> |Returns analysis| BiasAPI
+    Rules --> |Returns validation| BiasAPI
+    FactCheck --> |Returns facts| BiasAPI
+    
+    BiasAPI --> |Sends results| APIGateway
+    APIGateway --> |Returns results| WebPlatform
+    APIGateway --> |Returns results| ChromeExt
+    
+    WebPlatform --> |Displays| Results[Analysis Results]
+    ChromeExt --> |Displays| Results
+    
+    style User fill:#f9f,stroke:#333,stroke-width:2px
+    style WebPlatform fill:#bbf,stroke:#333,stroke-width:2px
+    style ChromeExt fill:#bbf,stroke:#333,stroke-width:2px
+    style APIGateway fill:#bfb,stroke:#333,stroke-width:2px
+    style BiasAPI fill:#bfb,stroke:#333,stroke-width:2px
+    style LLM fill:#fbb,stroke:#333,stroke-width:2px
+    style Rules fill:#fbb,stroke:#333,stroke-width:2px
+    style FactCheck fill:#fbb,stroke:#333,stroke-width:2px
+    style Results fill:#fffaaa,stroke:#333,stroke-width:2px
 ```
 
-## User Workflow
+## Bias Detection Workflow
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant Extension as Chrome Extension
-    participant Web as Web Platform
-    participant MCP as MCP Server
-    participant AI as AI Service
-
-    alt Using Chrome Extension
-        User->>Extension: Browse news article
-        Extension->>Extension: Detect article content
-        Extension->>MCP: Send article text for analysis
-        MCP->>AI: Forward to optimal AI model
-        AI->>MCP: Return structured bias analysis
-        MCP->>Extension: Return bias results
-        Extension->>User: Display highlighted bias with explanations
-    else Using Web Platform
-        User->>Web: Paste article text
-        User->>Web: Click "Analyze"
-        Web->>MCP: Send article text for analysis
-        MCP->>AI: Forward to optimal AI model
-        AI->>MCP: Return structured bias analysis
-        MCP->>Web: Return bias results
-        Web->>User: Display bias analysis dashboard
-    end
+    participant UI as Web UI/Extension
+    participant API as Biasbuster API
+    participant NLP as NLP Processing
+    participant DB as Database
     
-    User->>User: Make informed reading decision
+    User->>UI: Submits article text
+    UI->>API: Sends text for analysis
+    API->>NLP: Processes text for bias markers
+    NLP->>NLP: Analyzes text using ML models
+    NLP->>API: Returns bias analysis
+    API->>DB: Logs analysis results
+    API->>UI: Returns results
+    UI->>User: Displays bias analysis results
+    UI->>User: Shows visualization & alternative perspectives
 ```
 
-## AI Model Selection Process
+## Chrome Extension Flow
 
 ```mermaid
-flowchart TD
-    A[Article Text Received] --> B{Content Length?}
-    B -->|Short| C[Standard Model Selection]
-    B -->|Long| D[Large Context Model Selection]
-    
-    C --> E{Features Required?}
-    D --> E
-    
-    E -->|Basic Analysis| F[Lightweight Model]
-    E -->|Advanced Analysis| G[Full-Featured Model]
-    
-    F --> H{API Keys Available?}
-    G --> H
-    
-    H -->|Yes| I[Use Selected External AI]
-    H -->|No| J[Fallback to Mock AI]
-    
-    I --> K[Process AI Response]
-    J --> K
+graph LR
+    A[User] -->|Visits news site| B[News Article]
+    B -->|Extension activates| C[Extension Icon]
+    C -->|User clicks| D[Analysis Panel]
+    D -->|Sends article| E[Biasbuster API]
+    E -->|Returns analysis| D
+    D -->|Shows| F[Bias Highlights]
+    D -->|Shows| G[Bias Score]
+    D -->|Shows| H[Alternative Sources]
     
     style A fill:#f9f,stroke:#333,stroke-width:2px
-    style K fill:#bbf,stroke:#333,stroke-width:2px
+    style B fill:#fffaaa,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+    style F fill:#fbb,stroke:#333,stroke-width:2px
+    style G fill:#fbb,stroke:#333,stroke-width:2px
+    style H fill:#fbb,stroke:#333,stroke-width:2px
 ```
 
-## Bias Detection Process
+## AI Literacy Training Module Flow
 
 ```mermaid
-flowchart TD
-    A[Raw Article Text] --> B[Text Preprocessing]
-    B --> C[Language Detection]
-    C --> D[AI Prompt Construction]
-    D --> E[Send to AI Service]
-    E --> F[Parse AI Response]
+graph TD
+    A[User] -->|Enters| B[AI Literacy Hub]
+    B -->|Selects| C[Learning Path]
     
-    F --> G{Bias Detected?}
-    G -->|Yes| H[Extract Bias Instances]
-    G -->|No| I[No Bias Found]
+    C -->|Option 1| D[Beginner Track]
+    C -->|Option 2| E[Intermediate Track]
+    C -->|Option 3| F[Advanced Track]
     
-    H --> J[Severity Classification]
-    H --> K[Bias Type Categorization]
-    H --> L[Generate Rewrites]
+    D -->|Step 1| G[Understanding AI Basics]
+    D -->|Step 2| H[Recognizing AI Content]
+    D -->|Step 3| I[Interactive Quiz]
     
-    J --> M[Create Bias Report]
-    K --> M
-    L --> M
-    I --> M
+    E -->|Lessons| J[Detecting Bias in AI]
+    E -->|Activities| K[Bias Case Studies]
     
-    M --> N[Return Structured Analysis]
+    F -->|Workshops| L[Creating Responsible AI]
+    F -->|Projects| M[Build Your Own Detector]
     
-    style A fill:#f5f5f5,stroke:#333,stroke-width:2px
-    style E fill:#ffe6cc,stroke:#333,stroke-width:2px
-    style G fill:#d5e8d4,stroke:#333,stroke-width:2px
-    style N fill:#dae8fc,stroke:#333,stroke-width:2px
+    G & H & I & J & K & L & M -->|Completion| N[Digital Certificate]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bfb,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+    style F fill:#bfb,stroke:#333,stroke-width:2px
+    style G fill:#fbb,stroke:#333,stroke-width:2px
+    style H fill:#fbb,stroke:#333,stroke-width:2px
+    style I fill:#fbb,stroke:#333,stroke-width:2px
+    style J fill:#fbb,stroke:#333,stroke-width:2px
+    style K fill:#fbb,stroke:#333,stroke-width:2px
+    style L fill:#fbb,stroke:#333,stroke-width:2px
+    style M fill:#fbb,stroke:#333,stroke-width:2px
+    style N fill:#fffaaa,stroke:#333,stroke-width:2px
 ```
 
-## Chrome Extension Architecture
+## Technical Implementation
 
 ```mermaid
-flowchart TD
-    A[Extension Icon Clicked] --> B{Page Contains Article?}
-    B -->|Yes| C[Extract Article Text]
-    B -->|No| D[Show Error Message]
+graph TB
+    Frontend[Frontend Layer] --> |API Calls| Backend[Backend Layer]
+    Backend --> |Processes| Model[AI Model Layer]
     
-    C --> E[Send to MCP Server]
-    E --> F[Receive Analysis]
-    
-    F --> G[Create DOM Overlay]
-    G --> H[Highlight Biased Text]
-    H --> I[Add Interactive Tooltips]
-    
-    I --> J[Create Summary Panel]
-    J --> K[User Clicks Highlight]
-    K --> L[Show Detailed Explanation]
-    
-    style A fill:#ff9900,stroke:#333,stroke-width:2px
-    style E fill:#3498db,stroke:#333,stroke-width:2px
-    style F fill:#2ecc71,stroke:#333,stroke-width:2px
-    style H fill:#e74c3c,stroke:#333,stroke-width:2px
-```
-
-## Web Platform Interface Flow
-
-```mermaid
-flowchart TD
-    A[User Visits Web Platform] --> B[View Demo Page]
-    B --> C[Input Article Text]
-    C --> D[Submit for Analysis]
-    
-    D --> E[Show Loading Indicator]
-    E --> F[Receive Analysis Results]
-    
-    F --> G[Display Bias Summary]
-    F --> H[Show Bias Visualization]
-    F --> I[Show Detailed Analysis]
-    F --> J[Show Educational Resources]
-    F --> N[Fetch Alternative Perspectives]
-    
-    H --> K[Interactive Heat Map]
-    I --> L[Bias Instances List]
-    J --> M[Trusted Sources]
-    N --> O[Display Diverse Viewpoints]
-    
-    style A fill:#f5f5f5,stroke:#333,stroke-width:2px
-    style D fill:#dae8fc,stroke:#333,stroke-width:2px
-    style F fill:#d5e8d4,stroke:#333,stroke-width:2px
-    style K fill:#ffe6cc,stroke:#333,stroke-width:2px
-    style N fill:#ffccff,stroke:#333,stroke-width:2px
-```
-
-## Alternative Perspectives Flow
-
-```mermaid
-flowchart TD
-    A[Article Analyzed] --> B[Extract Key Topic]
-    B --> C[Query Perspectives API]
-    
-    C --> D[Retrieve Diverse Viewpoints]
-    D --> E[Left-leaning Sources]
-    D --> F[Centrist Sources]
-    D --> G[Right-leaning Sources]
-    
-    E --> H[Generate Perspective Cards]
-    F --> H
-    G --> H
-    
-    H --> I[Display in UI Tab]
-    I --> J[User Explores Different Viewpoints]
-    
-    style A fill:#f5f5f5,stroke:#333,stroke-width:2px
-    style B fill:#dae8fc,stroke:#333,stroke-width:2px
-    style D fill:#d5e8d4,stroke:#333,stroke-width:2px
-    style J fill:#ffe6cc,stroke:#333,stroke-width:2px
-```
-
-## Multi-Model AI Integration
-
-```mermaid
-flowchart TD
-    A[Content Analysis Request] --> B{Content Type?}
-    B -->|News Article| C[News Analysis Mode]
-    B -->|Opinion Piece| D[Opinion Analysis Mode]
-    B -->|Social Media| E[Social Media Analysis Mode]
-    
-    C --> F{Content Length?}
-    D --> F
-    E --> F
-    
-    F -->|< 4K tokens| G[Groq Llama3-8B]
-    F -->|4K-8K tokens| H[Groq Llama3-70B]
-    F -->|8K-100K tokens| I[Anthropic Claude]
-    F -->|> 100K tokens| J[Chunking Processor]
-    
-    G --> K[Process Response]
-    H --> K
-    I --> K
-    J --> K
-    
-    style A fill:#f5f5f5,stroke:#333,stroke-width:2px
-    style B fill:#dae8fc,stroke:#333,stroke-width:2px
-    style K fill:#d5e8d4,stroke:#333,stroke-width:2px
-```
-
-## Data Flow Architecture
-
-```mermaid
-flowchart LR
-    subgraph User
-        A[Chrome Extension]
-        B[Web Platform]
+    subgraph Frontend Layer
+        WebApp[Web Application<br>HTML/CSS/JavaScript]
+        ChromeExt[Chrome Extension<br>JavaScript]
+        Mobile[Mobile App<br>React Native]
     end
     
-    subgraph MCP
-        C[API Gateway]
-        D[Bias Analyzer]
-        E[Model Selector]
-        F[Response Formatter]
+    subgraph Backend Layer
+        API[RESTful API<br>Node.js/Express]
+        Auth[Authentication<br>JWT]
+        Database[Database<br>MongoDB]
+        Cache[Cache<br>Redis]
     end
     
-    subgraph AI
-        G[Groq]
-        H[Anthropic]
-        I[OpenAI]
-        J[Mock Service]
+    subgraph AI Model Layer
+        BiasDetection[Bias Detection<br>ML Models]
+        NLP[NLP Processing<br>Transformers]
+        Scoring[Scoring System<br>Rules Engine]
     end
     
-    A --> C
-    B --> C
-    C --> D
-    D --> E
-    E --> G
-    E --> H
-    E --> I
-    E --> J
-    G --> F
-    H --> F
-    I --> F
-    J --> F
-    F --> A
-    F --> B
-    
-    style A fill:#ffcc99,stroke:#333,stroke-width:2px
-    style B fill:#99ccff,stroke:#333,stroke-width:2px
-    style C fill:#99ff99,stroke:#333,stroke-width:2px
-    style F fill:#ff9999,stroke:#333,stroke-width:2px
-``` 
+    style Frontend fill:#bbf,stroke:#333,stroke-width:2px
+    style Backend fill:#bfb,stroke:#333,stroke-width:2px
+    style Model fill:#fbb,stroke:#333,stroke-width:2px
+```
+
+These diagrams provide a high-level overview of the Biasbuster system architecture and workflows. For more detailed documentation, please refer to the technical specifications in the project documentation. 

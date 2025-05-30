@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="header-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7209b7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000033"/>
+    </filter>
+    <filter id="popup-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="3" dy="3" stdDeviation="5" flood-color="#00000055"/>
+    </filter>
+  </defs>
+  
+  <!-- Browser Window -->
+  <rect x="50" y="50" width="700" height="500" rx="10" ry="10" fill="white" stroke="#ddd" stroke-width="2" filter="url(#shadow)"/>
+  
+  <!-- Browser Header -->
+  <rect x="50" y="50" width="700" height="40" rx="10" ry="10" fill="#f0f0f0" stroke="#ddd" stroke-width="1"/>
+  <circle cx="80" cy="70" r="8" fill="#ff6b6b"/>
+  <circle cx="110" cy="70" r="8" fill="#ffd93d"/>
+  <circle cx="140" cy="70" r="8" fill="#6bcb77"/>
+  <rect x="170" y="60" width="400" height="20" rx="10" ry="10" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="200" y="75" font-family="Arial" font-size="12" fill="#666">https://newswebsite.com/article/climate-policy-debate</text>
+  
+  <!-- Chrome Extension Icon -->
+  <rect x="580" y="60" width="20" height="20" rx="3" ry="3" fill="#4361ee"/>
+  <text x="590" y="75" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="white">B</text>
+  
+  <!-- Fake News Website Content -->
+  <rect x="50" y="90" width="700" height="80" rx="0" ry="0" fill="#222"/>
+  <text x="80" y="140" font-family="Arial" font-size="28" font-weight="bold" fill="white">Global Climate Herald</text>
+  <text x="400" y="140" font-family="Arial" font-size="16" fill="#aaa">News | Opinion | Science | Politics</text>
+  
+  <!-- Article Title -->
+  <text x="80" y="200" font-family="Arial" font-size="24" font-weight="bold" fill="#333">Climate Policy Sparks Heated Debate in Congress</text>
+  <text x="80" y="225" font-family="Arial" font-size="14" fill="#666">By John Smith | May 30, 2024 | 5 min read</text>
+  
+  <!-- Article Content -->
+  <rect x="80" y="240" width="640" height="280" rx="0" ry="0" fill="white"/>
+  <text x="80" y="270" font-family="Arial" font-size="16" fill="#333">
+    The federal government has once again proven it cannot be trusted with taxpayer dollars.
+  </text>
+  <text x="80" y="300" font-family="Arial" font-size="16" fill="#333">
+    The latest climate initiative, championed by liberal politicians, has wasted over
+  </text>
+  <text x="80" y="330" font-family="Arial" font-size="16" fill="#333">
+    $12 billion with absolutely nothing to show for it. "This is typical big government
+  </text>
+  <text x="80" y="360" font-family="Arial" font-size="16" fill="#333">
+    overreach," said Senator James Wilson. Meanwhile, hardworking Americans are
+  </text>
+  <text x="80" y="390" font-family="Arial" font-size="16" fill="#333">
+    struggling to pay their bills as energy prices soar due to these unnecessary
+  </text>
+  <text x="80" y="420" font-family="Arial" font-size="16" fill="#333">
+    environmental regulations. The radical climate agenda continues to hurt our
+  </text>
+  <text x="80" y="450" font-family="Arial" font-size="16" fill="#333">
+    economy while countries like China and India face no consequences.
+  </text>
+  
+  <!-- Highlighted Biased Text -->
+  <rect x="80" y="268" width="643" height="18" fill="rgba(255, 200, 200, 0.3)"/>
+  <rect x="80" y="328" width="300" height="18" fill="rgba(255, 200, 200, 0.3)"/>
+  <rect x="190" y="418" width="230" height="18" fill="rgba(255, 200, 200, 0.3)"/>
+  <rect x="80" y="358" width="160" height="18" fill="rgba(255, 200, 200, 0.3)"/>
+  
+  <!-- Biasbuster Extension Popup -->
+  <rect x="450" y="120" width="280" height="350" rx="10" ry="10" fill="white" stroke="#ddd" stroke-width="2" filter="url(#popup-shadow)"/>
+  
+  <!-- Popup Header -->
+  <rect x="450" y="120" width="280" height="60" rx="10" ry="0" fill="url(#header-grad)"/>
+  <text x="480" y="155" font-family="Arial" font-size="18" font-weight="bold" fill="white">Biasbuster</text>
+  <text x="570" y="155" font-family="Arial" font-size="12" fill="white">Bias Analysis</text>
+  
+  <!-- Analysis Results -->
+  <text x="470" y="195" font-family="Arial" font-size="14" font-weight="bold" fill="#333">Bias Analysis Results</text>
+  
+  <rect x="470" y="205" width="240" height="30" rx="3" ry="3" fill="#f0f7ff" stroke="#ddd" stroke-width="1"/>
+  <text x="480" y="225" font-family="Arial" font-size="12" fill="#333">Topic: <tspan font-weight="bold">Politics & Government</tspan></text>
+  
+  <text x="470" y="255" font-family="Arial" font-size="14" font-weight="bold" fill="#333">Bias Detected:</text>
+  <text x="470" y="275" font-family="Arial" font-size="13" fill="#333">Right-leaning bias (Score: 3.5/5)</text>
+  
+  <!-- Bias Meter -->
+  <text x="470" y="305" font-family="Arial" font-size="12" fill="#333">Bias Meter:</text>
+  <rect x="470" y="315" width="240" height="8" rx="4" ry="4" fill="#e9ecef"/>
+  <rect x="470" y="315" width="180" height="8" rx="4" ry="4" fill="linear-gradient(90deg, #3b82f6, #d1d5db, #ef4444)"/>
+  <circle cx="650" cy="319" r="6" fill="white" stroke="#4361ee" stroke-width="2"/>
+  
+  <text x="470" y="335" font-family="Arial" font-size="10" fill="#777">Left-leaning</text>
+  <text x="680" y="335" font-family="Arial" font-size="10" text-anchor="end" fill="#777">Right-leaning</text>
+  
+  <!-- Bias Types -->
+  <text x="470" y="355" font-family="Arial" font-size="12" font-weight="bold" fill="#333">Bias Types Found:</text>
+  <text x="480" y="375" font-family="Arial" font-size="12" fill="#333">• Loaded Language (3 instances)</text>
+  <text x="480" y="395" font-family="Arial" font-size="12" fill="#333">• Emotional Appeal (2 instances)</text>
+  <text x="480" y="415" font-family="Arial" font-size="12" fill="#333">• Labeling (1 instance)</text>
+  
+  <!-- Action Buttons -->
+  <rect x="470" y="435" width="110" height="25" rx="5" ry="5" fill="#4361ee" stroke="none"/>
+  <text x="525" y="452" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="white">View Details</text>
+  
+  <rect x="590" y="435" width="120" height="25" rx="5" ry="5" fill="white" stroke="#4361ee" stroke-width="1"/>
+  <text x="650" y="452" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#4361ee">Alternative Views</text>
+</svg> 

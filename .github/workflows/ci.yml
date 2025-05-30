@@ -190,7 +190,8 @@ jobs:
             # Check icons
             if [ -d "chrome-extension/icons" ]; then
               echo "✅ icons directory exists"
-              if [ -f "chrome-extension/icons/icon128.png" ]; then
+              # Check for either SVG or PNG icons
+              if [ -f "chrome-extension/icons/icon128.svg" ] || [ -f "chrome-extension/icons/icon128.png" ]; then
                 echo "✅ Icon files exist"
               else
                 echo "❌ Icon files are missing"
@@ -314,6 +315,14 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
         
+      - name: Create docs directory if it doesn't exist
+        run: |
+          mkdir -p docs
+          if [ ! -f "docs/demo.gif" ]; then
+            echo "Warning: docs/demo.gif is missing, creating placeholder"
+            cp README.md docs/placeholder.txt
+          fi
+          
       - name: Prepare release package
         run: |
           mkdir -p release-package
@@ -359,9 +368,7 @@ jobs:
     concurrency:
       group: pages
       cancel-in-progress: true
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    environment: pages
     steps:
       - uses: actions/checkout@v3
       

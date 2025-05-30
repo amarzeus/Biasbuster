@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Literacy Toolkit - Biasbuster</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <meta name="description" content="Enhance your media literacy skills with Biasbuster's interactive tools, fact-checking resources, and educational materials.">
+    <style>
+        .media-hero {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #ff758f 100%);
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 40px;
+        }
+        
+        .media-hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .media-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .resource-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .resource-header {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .resource-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+        
+        .resource-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            opacity: 0.8;
+        }
+        
+        .resource-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .resource-content p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            flex-grow: 1;
+        }
+        
+        .resource-footer {
+            padding: 15px 20px;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .fact-checking-section {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .fact-site-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .fact-site-card {
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .fact-site-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .fact-site-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .fact-site-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .tag {
+            background: rgba(var(--primary-color-rgb), 0.1);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .educational-tools {
+            margin-bottom: 60px;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .tool-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .tool-img {
+            height: 160px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tool-img i {
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .tool-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .tool-description {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        
+        .interactive-demos {
+            margin-bottom: 60px;
+        }
+        
+        .demo-box {
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .demo-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 15px 20px;
+        }
+        
+        .demo-header h4 {
+            margin: 0;
+        }
+        
+        .demo-content {
+            padding: 20px;
+        }
+        
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .comparison-box {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 15px;
+        }
+        
+        .comparison-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .comparison-content {
+            color: var(--text-secondary);
+        }
+        
+        .rating-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .rating-box {
+            text-align: center;
+            flex-basis: 30%;
+        }
+        
+        .rating-label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .rating-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .rating-value.high {
+            color: var(--success-color);
+        }
+        
+        .rating-value.medium {
+            color: var(--warning-color);
+        }
+        
+        .rating-value.low {
+            color: var(--danger-color);
+        }
+        
+        .image-comparison {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .comparison-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .steps-list {
+            counter-reset: step-counter;
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .steps-list li {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 20px;
+            counter-increment: step-counter;
+        }
+        
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 35px;
+            height: 35px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .resource-grid,
+            .fact-site-grid,
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .fact-checking-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="Biasbuster Logo">
+                <div>
+                    <h1>Biasbuster</h1>
+                    <div class="tagline">AI-Powered Media Literacy Tool</div>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="ai-literacy.html">AI Literacy Hub</a>
+                <a href="media-literacy.html" class="active">Media Literacy</a>
+                <a href="ethics-committee.html">Ethics Committee</a>
+                <a href="about.html">About</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="contact.html">Contact</a>
+                <a href="auth.html" class="btn-login-nav">Sign In</a>
+            </nav>
+            <div class="user-nav" id="user-nav">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div id="user-menu" class="hidden">
+                    <a href="auth.html" class="btn-login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="media-hero">
+            <h2>Media Literacy Toolkit</h2>
+            <p>Develop critical thinking skills to navigate today's complex media landscape. Learn to evaluate sources, detect bias, and become a more informed digital citizen.</p>
+            <a href="#resources" class="btn primary-btn">Explore Resources</a>
+        </div>
+        
+        <section id="resources">
+            <h3 class="text-center mb-4">Essential Media Literacy Resources</h3>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <h3>Evaluating Sources</h3>
+                        <div class="resource-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                    </div>
+                    <div class="resource-content">
+                        <p>Learn how to critically evaluate news sources and information for credibility, bias, and reliability using the ESCAPE method.</p>
+                        <ul>
+                            <li>Evidence - Is it based on facts?</li>
+                            <li>Source - Who created this information?</li>
+                            <li>Context - What's the bigger picture?</li>
+                            <li>Audience - Who is this meant for?</li>
+                            <li>Purpose - Why was this created?</li>
+                            <li>Execution - How is it presented?</li>
+                        </ul>
+                    </div>
+                    <div class="resource-footer">
+                        <a href="#" class="btn secondary-btn">Learn More</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <h3>Detecting Misinformation</h3>
+                        <div class="resource-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="resource-content">
+                        <p>Develop skills to identify false or misleading information online, including deepfakes, manipulated media, and AI-generated content.</p>
+                        <ul>
+                            <li>Spotting clickbait headlines</li>
+                            <li>Recognizing emotional manipulation</li>
+                            <li>Identifying false context</li>
+                            <li>Detecting manipulated images and videos</li>
+                            <li>Understanding AI hallucinations</li>
+                            <li>Cross-checking information</li>
+                        </ul>
+                    </div>
+                    <div class="resource-footer">
+                        <a href="#" class="btn secondary-btn">Learn More</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <h3>Understanding Bias</h3>
+                        <div class="resource-icon">
+                            <i class="fas fa-glasses"></i>
+                        </div>
+                    </div>
+                    <div class="resource-content">
+                        <p>Learn to recognize different types of bias in media and how they influence our perception and understanding of events and issues.</p>
+                        <ul>
+                            <li>Political bias spectrum</li>
+                            <li>Selection bias and framing</li>
+                            <li>Word choice and tone analysis</li>
+                            <li>Visual bias in imagery</li>
+                            <li>Confirmation bias awareness</li>
+                            <li>Source diversity assessment</li>
+                        </ul>
+                    </div>
+                    <div class="resource-footer">
+                        <a href="#" class="btn secondary-btn">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="fact-checking" class="fact-checking-section">
+            <h3 class="text-center mb-3">Fact-Checking Resources</h3>
+            <p class="text-center mb-4">Reliable fact-checking websites to help verify information and combat misinformation.</p>
+            
+            <div class="fact-site-grid">
+                <div class="fact-site-card">
+                    <div class="fact-site-name">Snopes</div>
+                    <div class="tag-container">
+                        <span class="tag">Politics</span>
+                        <span class="tag">Viral Content</span>
+                        <span class="tag">Urban Legends</span>
+                    </div>
+                    <div class="fact-site-description">
+                        One of the internet's oldest and most respected fact-checking resources, focused on debunking misinformation, rumors, and urban legends.
+                    </div>
+                    <a href="https://www.snopes.com/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn">Visit Snopes</a>
+                </div>
+                
+                <div class="fact-site-card">
+                    <div class="fact-site-name">PolitiFact</div>
+                    <div class="tag-container">
+                        <span class="tag">Politics</span>
+                        <span class="tag">Truth-O-Meter</span>
+                        <span class="tag">Statements</span>
+                    </div>
+                    <div class="fact-site-description">
+                        Fact-checking focused on political claims and statements, featuring the "Truth-O-Meter" rating system to evaluate accuracy on a scale.
+                    </div>
+                    <a href="https://www.politifact.com/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn">Visit PolitiFact</a>
+                </div>
+                
+                <div class="fact-site-card">
+                    <div class="fact-site-name">FactCheck.org</div>
+                    <div class="tag-container">
+                        <span class="tag">Politics</span>
+                        <span class="tag">Science</span>
+                        <span class="tag">Health</span>
+                    </div>
+                    <div class="fact-site-description">
+                        A nonpartisan, nonprofit organization that aims to reduce deception and confusion in U.S. politics by monitoring factual accuracy in political discourse.
+                    </div>
+                    <a href="https://www.factcheck.org/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn">Visit FactCheck.org</a>
+                </div>
+                
+                <div class="fact-site-card">
+                    <div class="fact-site-name">Reuters Fact Check</div>
+                    <div class="tag-container">
+                        <span class="tag">Global News</span>
+                        <span class="tag">Social Media</span>
+                        <span class="tag">Visual Verification</span>
+                    </div>
+                    <div class="fact-site-description">
+                        Reuters' dedicated fact-checking service that investigates viral content and claims spread on social media and elsewhere online.
+                    </div>
+                    <a href="https://www.reuters.com/fact-check/" target="_blank" rel="noopener noreferrer" class="btn secondary-btn">Visit Reuters Fact Check</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="educational-tools" class="educational-tools">
+            <h3 class="text-center mb-4">Educational Tools & Resources</h3>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-img">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="tool-content">
+                        <div class="tool-title">Media Literacy Curriculum</div>
+                        <div class="tool-description">
+                            Comprehensive lesson plans and learning materials for teachers and students to develop critical media literacy skills.
+                        </div>
+                        <a href="#" class="btn secondary-btn">Access Curriculum</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-img">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="tool-content">
+                        <div class="tool-title">Video Tutorials</div>
+                        <div class="tool-description">
+                            Video series explaining key media literacy concepts, fact-checking techniques, and how to identify different types of misinformation.
+                        </div>
+                        <a href="#" class="btn secondary-btn">Watch Videos</a>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-img">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="tool-content">
+                        <div class="tool-title">Interactive Games</div>
+                        <div class="tool-description">
+                            Educational games that teach media literacy concepts through engaging, hands-on activities suitable for various age groups.
+                        </div>
+                        <a href="#" class="btn secondary-btn">Play Games</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="interactive-demos" class="interactive-demos">
+            <h3 class="text-center mb-4">Interactive Demonstrations</h3>
+            
+            <div class="demo-box">
+                <div class="demo-header">
+                    <h4>Bias Comparison Demo</h4>
+                </div>
+                <div class="demo-content">
+                    <p>Compare how the same story can be reported differently based on the source's bias. This example shows coverage of the same economic policy from different perspectives.</p>
+                    
+                    <div class="comparison-container">
+                        <div class="comparison-box">
+                            <div class="comparison-title">Left-Leaning Coverage</div>
+                            <div class="comparison-content">
+                                <p>The new economic policy aims to address wealth inequality by increasing taxes on the ultra-wealthy, which economists say could fund vital social programs that millions of Americans depend on.</p>
+                                <p>Supporters argue this is a long-overdue step toward economic justice and ensuring that the privileged pay their fair share.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-box">
+                            <div class="comparison-title">Right-Leaning Coverage</div>
+                            <div class="comparison-content">
+                                <p>The controversial economic policy imposes burdensome tax increases that critics warn could harm job creators and slow economic growth at a critical time for the nation's recovery.</p>
+                                <p>Business leaders express concern that the policy could lead to reduced investment and potentially drive businesses overseas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-container">
+                        <div class="rating-box">
+                            <div class="rating-label">Emotional Language</div>
+                            <div class="rating-value medium">6.2</div>
+                        </div>
+                        <div class="rating-box">
+                            <div class="rating-label">Source Diversity</div>
+                            <div class="rating-value low">4.8</div>
+                        </div>
+                        <div class="rating-box">
+                            <div class="rating-label">Context Provided</div>
+                            <div class="rating-value medium">5.5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-box">
+                <div class="demo-header">
+                    <h4>Deepfake Detection Challenge</h4>
+                </div>
+                <div class="demo-content">
+                    <p>Learn to identify potentially manipulated media by recognizing common signs of deepfakes and other forms of synthetic media.</p>
+                    
+                    <div class="image-comparison">
+                        <img src="assets/detailed-workflow.svg" alt="Deepfake Detection Challenge" class="comparison-image">
+                    </div>
+                    
+                    <h5 class="mt-4">How to Spot Potential Deepfakes:</h5>
+                    <ul class="steps-list">
+                        <li>Check for unnatural facial movements, especially around the eyes and mouth</li>
+                        <li>Look for inconsistent lighting, shadows, or skin tone</li>
+                        <li>Pay attention to strange blending lines where the face meets the neck or hair</li>
+                        <li>Notice audio that doesn't perfectly sync with lip movements</li>
+                        <li>Use reverse image search to find the original source of the media</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/logo.svg" alt="Biasbuster Logo">
+                        <h3>Biasbuster</h3>
+                    </div>
+                    <p>AI-powered media literacy tools to detect bias, misinformation, and promote critical thinking in the digital age.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="ai-literacy.html">AI Literacy Hub</a></li>
+                        <li><a href="ethics-committee.html">Ethics Committee</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Chrome Extension</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Biasbuster. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Global Footer -->
+    <div class="global-footer">
+        <div class="global-footer-content">
+            <a href="https://github.com/amarzeus/" target="_blank" rel="noopener noreferrer" class="github-link">
+                <i class="fab fa-github github-icon"></i>
+                <span>GitHub</span>
+            </a>
+            <div class="heart-text">
+                Made with <i class="fas fa-heart heart-icon"></i> by 
+                <a href="https://www.linkedin.com/in/amarmahakal/" target="_blank" rel="noopener noreferrer" class="linkedin-link">Amar</a>
+            </div>
+            <a href="https://buymeacoffee.com/amarmahakal" target="_blank" rel="noopener noreferrer" class="buy-coffee-link">
+                <i class="fas fa-coffee coffee-icon"></i>
+                <span>Buy me a coffee</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            
+            themeToggle.addEventListener('click', () => {
+                if (body.getAttribute('data-theme') === 'light') {
+                    body.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    body.setAttribute('data-theme', 'light');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            const mainNav = document.getElementById('main-nav');
+            
+            mobileMenuToggle.addEventListener('click', () => {
+                mainNav.classList.add('mobile-active');
+            });
+            
+            mobileMenuClose.addEventListener('click', () => {
+                mainNav.classList.remove('mobile-active');
+            });
+        });
+    </script>
+</body>
+</html> 

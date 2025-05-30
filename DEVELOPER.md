@@ -1,97 +1,202 @@
-# Biasbuster MCP Server Developer Guide
+# Developer Guide for Biasbuster
+
+This guide provides detailed information for developers who want to contribute to the Biasbuster project.
 
 ## Project Structure
+
+Biasbuster consists of several key components:
+
+- **Web Platform**: Frontend interface for users to analyze articles for bias
+- **Chrome Extension**: Browser extension for real-time bias detection
+- **MCP Server**: Master Control Program server that handles API requests and AI processing
+- **AI Models**: Integration with various AI services for bias detection
+
+## Development Environment Setup
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- Git
+- A code editor (VSCode recommended)
+
+### Setting Up the Project
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/Biasbuster.git
+   cd Biasbuster
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file in the project root with the following variables:
+   ```
+   # API Keys
+   OPENAI_API_KEY=your_openai_key
+   ANTHROPIC_API_KEY=your_anthropic_key
+   GROQ_API_KEY=your_groq_key
+   
+   # Server Configuration
+   PORT=8080
+   CORS_ORIGIN=*
+   DEFAULT_AI_MODEL=auto
+   ```
+
+## Running the Project
+
+### Starting the Server
+
+- **Windows**:
+  ```bash
+  start-server.bat
+  ```
+  
+- **macOS/Linux**:
+  ```bash
+  sh start-server.sh
+  ```
+
+### MCP Server (Master Control Program)
+
+The MCP server can be started in different modes:
+
+- **HTTP Mode**:
+  ```bash
+  npm run mcp-http
+  ```
+
+- **STDIO Mode**:
+  ```bash
+  npm run mcp-stdio
+  ```
+
+- **Dual Mode**:
+  ```bash
+  npm run mcp-dual
+  ```
+
+### Web Platform
+
+The web platform can be served using any static file server:
+
+```bash
+cd web-platform
+python -m http.server 8000
 ```
-.
-├── src/
-│   ├── index.ts           # Entry point
-│   ├── services/          # Service integrations
-│   │   └── aiService.ts   # AI service integration
-│   └── tools/             # MCP tool implementations
-│       └── analyzeBias.ts # Bias analysis tool
-├── prompts/               # AI prompt templates
-│   └── biasbusterPrompt.txt # Main prompt
-├── chrome-extension/      # Chrome extension
-│   ├── manifest.json      # Extension configuration
-│   ├── service_worker.js  # Background service worker  
-│   ├── popup/            # Extension popup UI
-│   ├── content_scripts/   # In-page scripts
-│   └── icons/            # Extension icons
-├── web-platform/         # Demo web platform
-│   ├── index.html        # Main page
-│   ├── style.css         # Styles
-│   └── script.js         # Frontend logic
-├── package.json          # Dependencies
-├── tsconfig.json         # TypeScript config
-└── .env                  # Environment variables
-```
 
-## Development Workflow
-1. **Install dependencies:** `npm install`
-2. **Run locally:** `npm run dev`
-3. **Test endpoints:** Use Postman or `curl` to test `/api/v1/analyze`
-4. **Build for production:** `npm run build`
-5. **Deploy:** Use Docker, Kubernetes, or cloud provider
+Then access the application at http://localhost:8000
 
-## API Documentation
+### Chrome Extension
 
-### Analyze Endpoint
-- **Endpoint:** `POST /api/v1/analyze`
-- **Description:** Analyzes text for bias
-- **Request Body:**
-  ```json
-  {
-    "text": "Article text to analyze"
-  }
-  ```
-- **Response Body:**
-  ```json
-  {
-    "MainTopic": "Topic of article",
-    "BiasDetected": "yes/no",
-    "BiasInstances": [
-      {
-        "Sentence": "Biased sentence",
-        "BiasType": "Type of bias",
-        "Explanation": "Why it's biased",
-        "Severity": "0/1/2",
-        "Justification": "Reason for severity",
-        "Mitigation": "Unbiased rewrite"
-      }
-    ],
-    "BiasSummary": "Summary of bias",
-    "TrustedSources": ["URL1", "URL2", "URL3"],
-    "EducationalContent": "Educational info about bias"
-  }
-  ```
-
-### Health Check Endpoint
-- **Endpoint:** `GET /api/v1/health`
-- **Description:** Returns server health status
-- **Response Body:**
-  ```json
-  {
-    "status": "ok",
-    "timestamp": "ISO timestamp"
-  }
-  ```
-
-## Environment Variables
-- `PORT` - Server port (default 8080)
-- `NODE_ENV` - Environment (development/production)
-- `API_KEY` - API key for authentication (if implemented)
-- `AI_SERVICE` - Type of AI service to use (groq/openai/google)
-- `GROQ_API_KEY` - API key for Groq
-- `OPENAI_API_KEY` - API key for OpenAI (if used)
-- `GOOGLE_API_KEY` - API key for Google AI (if used)
-
-## Coding Standards
-- TypeScript preferred for safety
-- Use async/await for all async code
-- Log errors and use structured error responses
-- Document all functions with JSDoc
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Enable "Developer mode"
+3. Click "Load unpacked"
+4. Select the `chrome-extension` directory from the Biasbuster project
 
 ## Testing
-- Endpoint testing with Postman or curl
-- Prompt testing with sample articles
-- Chrome extension testing in Developer mode 
+
+We use Jest for testing. Run tests with:
+
+```bash
+npm test
+```
+
+### Test Structure
+
+Tests are organized in the `__tests__` directory:
+
+- `web-platform.test.js`: Tests for the web platform functionality
+- `api.test.js`: Tests for the API functionality
+- `script.test.js`: Tests for script.js functions
+
+### Writing Tests
+
+When writing new tests:
+1. Place them in the `__tests__` directory
+2. Name files with `.test.js` suffix
+3. Use Jest's `describe` and `test` functions
+4. Mock external dependencies when necessary
+
+Example:
+```javascript
+describe('Feature', () => {
+  test('should behave correctly', () => {
+    // Test code here
+    expect(result).toBe(expectedValue);
+  });
+});
+```
+
+## Code Style and Linting
+
+We use ESLint for code quality. Run the linter with:
+
+```bash
+npm run lint
+```
+
+To automatically fix linting issues:
+
+```bash
+npx eslint --fix . --ext .js,.ts
+```
+
+## Build Process
+
+Build the project with:
+
+```bash
+npm run build
+```
+
+This compiles TypeScript files and prepares the project for production.
+
+## Documentation
+
+- [API Documentation](docs/api.md): Describes API endpoints and usage
+- [Architecture](ARCHITECTURE.md): Explains the system architecture
+- [Flowchart](FLOWCHART.md): Visual representation of the system flow
+
+## Contributing
+
+1. Create a new branch for your feature:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. Make your changes and commit them:
+   ```bash
+   git commit -m "Add your detailed commit message"
+   ```
+
+3. Push to your branch:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+4. Create a pull request on GitHub
+
+## Troubleshooting
+
+### Common Issues
+
+1. **API Connection Errors**:
+   - Check that your API keys are correctly set in the `.env` file
+   - Verify the server is running on the expected port
+
+2. **Chrome Extension Not Working**:
+   - Make sure you've loaded the unpacked extension correctly
+   - Check the browser console for errors
+
+3. **Tests Failing**:
+   - Ensure all dependencies are installed
+   - Check that the test environment is properly set up in `__tests__/setup.js`
+
+## Contact
+
+For questions or assistance, please contact the project maintainers or open an issue on GitHub.

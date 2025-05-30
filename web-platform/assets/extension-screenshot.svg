@@ -1,1 +1,102 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"><rect width="800" height="400" fill="#f9f9f9"/><text x="400" y="200" text-anchor="middle" font-family="Arial" font-size="24">Browser Extension Screenshot</text></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chrome Extension Screenshot -->
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3a0ca3;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Browser Window -->
+  <rect width="800" height="600" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- Browser Chrome -->
+  <rect x="50" y="50" width="700" height="500" rx="6" ry="6" fill="white" stroke="#ddd" stroke-width="1" filter="url(#shadow)"/>
+  
+  <!-- Browser Toolbar -->
+  <rect x="50" y="50" width="700" height="40" rx="6" ry="6" fill="#f1f3f5"/>
+  
+  <!-- URL Bar -->
+  <rect x="130" y="60" width="500" height="20" rx="10" ry="10" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="150" y="75" font-family="Arial" font-size="12" fill="#666">https://example.com/news-article</text>
+  
+  <!-- Extension Icon -->
+  <circle cx="660" cy="70" r="10" fill="#4361ee"/>
+  <text x="660" y="74" font-family="Arial" font-size="12" text-anchor="middle" fill="white">B</text>
+  
+  <!-- Content Area -->
+  <rect x="50" y="90" width="700" height="460" fill="white"/>
+  
+  <!-- Article Title -->
+  <text x="100" y="130" font-family="Arial" font-size="20" font-weight="bold" fill="#333">Major Policy Change Announced Yesterday</text>
+  
+  <!-- Extension Popup -->
+  <rect x="450" y="150" width="280" height="360" rx="8" ry="8" fill="white" stroke="#ddd" stroke-width="1" filter="url(#shadow)"/>
+  
+  <!-- Popup Header -->
+  <rect x="450" y="150" width="280" height="50" rx="8" ry="8" fill="url(#headerGradient)"/>
+  <text x="590" y="180" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold" fill="white">Biasbuster Analysis</text>
+  
+  <!-- Bias Score -->
+  <rect x="470" y="220" width="240" height="40" rx="5" ry="5" fill="#f8f9fa"/>
+  <text x="490" y="245" font-family="Arial" font-size="14" fill="#333">Bias Score:</text>
+  <rect x="580" y="225" width="100" height="20" rx="10" ry="10" fill="#fee2e2"/>
+  <text x="630" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#ef4444">Moderate Right</text>
+  
+  <!-- Sentiment -->
+  <rect x="470" y="270" width="240" height="40" rx="5" ry="5" fill="#f8f9fa"/>
+  <text x="490" y="295" font-family="Arial" font-size="14" fill="#333">Sentiment:</text>
+  <rect x="580" y="275" width="100" height="20" rx="10" ry="10" fill="#dbeafe"/>
+  <text x="630" y="290" font-family="Arial" font-size="12" text-anchor="middle" fill="#3b82f6">Negative</text>
+  
+  <!-- Highlighted Bias -->
+  <rect x="470" y="320" width="240" height="90" rx="5" ry="5" fill="#f8f9fa"/>
+  <text x="490" y="340" font-family="Arial" font-size="14" fill="#333">Detected Bias:</text>
+  <rect x="480" y="350" width="220" height="50" rx="4" ry="4" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="490" y="370" font-family="Arial" font-size="11" fill="#666" width="200">
+    <tspan x="490" dy="0">"Critics argue that this policy is a</tspan>
+    <tspan x="490" dy="15">disaster waiting to happen..."</tspan>
+    <tspan x="490" dy="15">Emotional language (Confidence: 87%)</tspan>
+  </text>
+  
+  <!-- Suggestions -->
+  <rect x="470" y="420" width="240" height="70" rx="5" ry="5" fill="#f8f9fa"/>
+  <text x="490" y="440" font-family="Arial" font-size="14" fill="#333">Suggestions:</text>
+  <text x="490" y="460" font-family="Arial" font-size="11" fill="#666">
+    <tspan x="490" dy="0">• Check multiple sources</tspan>
+    <tspan x="490" dy="15">• Consider alternative viewpoints</tspan>
+    <tspan x="490" dy="15">• Look for supporting evidence</tspan>
+  </text>
+  
+  <!-- Article Text with Highlighting -->
+  <rect x="100" y="150" width="320" height="360" fill="white"/>
+  <text x="100" y="170" font-family="Arial" font-size="12" fill="#666" width="320">
+    <tspan x="100" dy="0">The government announced a major policy</tspan>
+    <tspan x="100" dy="20">shift yesterday that will affect millions of</tspan>
+    <tspan x="100" dy="20">citizens across the country.</tspan>
+    <tspan x="100" dy="20"></tspan>
+    <tspan x="100" dy="20">"This is a bold step forward," said the</tspan>
+    <tspan x="100" dy="20">spokesperson for the administration.</tspan>
+    <tspan x="100" dy="20"></tspan>
+    <tspan x="100" dy="20">However, opposition leaders were quick</tspan>
+    <tspan x="100" dy="20">to criticize the move. </tspan>
+  </text>
+  
+  <!-- Highlighted Text -->
+  <rect x="100" y="310" width="320" height="20" fill="#fee2e2" opacity="0.5"/>
+  <text x="100" y="325" font-family="Arial" font-size="12" fill="#333" font-style="italic">
+    Critics argue that this policy is a disaster waiting to happen.
+  </text>
+  
+  <!-- More Article Text -->
+  <text x="100" y="360" font-family="Arial" font-size="12" fill="#666" width="320">
+    <tspan x="100" dy="0">Experts in the field have mixed opinions,</tspan>
+    <tspan x="100" dy="20">with some supporting the changes while</tspan>
+    <tspan x="100" dy="20">others express concerns about potential</tspan>
+    <tspan x="100" dy="20">unintended consequences.</tspan>
+  </text>
+</svg>

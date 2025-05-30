@@ -471,22 +471,24 @@ button:disabled {
 /* Tab Navigation */
 .tab-navigation {
   display: flex;
-  gap: var(--spacing-xs);
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: var(--spacing-lg);
+  padding-bottom: 0;
+  width: 100%;
   overflow-x: auto;
-  scrollbar-width: thin;
 }
 
 .view-tab {
   background: none;
   border: none;
-  border-bottom: 3px solid transparent;
   padding: var(--spacing-md) var(--spacing-lg);
-  color: var(--text-secondary);
   font-weight: 500;
-  cursor: pointer;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
   transition: all var(--transition-fast);
+  cursor: pointer;
   white-space: nowrap;
 }
 
@@ -495,8 +497,9 @@ button:disabled {
 }
 
 .view-tab.active {
-  border-bottom-color: var(--primary-color);
   color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background-color: transparent;
 }
 
 /* Tab Content */
@@ -2177,4 +2180,104 @@ footer {
 
 .main-nav .btn-login-nav.active {
     background-color: var(--accent-color-dark);
+}
+
+/* Global Footer */
+.global-footer {
+  background-color: #101014;
+  color: #f8f9fa;
+  padding: var(--spacing-md) 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.global-footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: #f8f9fa;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.github-link:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.github-icon {
+  font-size: 1.2rem;
+}
+
+.heart-text {
+  color: #ff758f;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.heart-icon {
+  color: #ff758f;
+  animation: heartbeat 1.5s infinite;
+}
+
+.linkedin-link {
+  color: #f8f9fa;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.linkedin-link:hover {
+  color: #0077b5;
+  text-decoration: none;
+}
+
+.buy-coffee-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background-color: #FFDD00;
+  color: #000000;
+  padding: 0.35rem 1rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.buy-coffee-link:hover {
+  background-color: #ffea7f;
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: #000000;
+}
+
+.coffee-icon {
+  font-size: 1.2rem;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.2); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.2); }
+  60% { transform: scale(1); }
+}
+
+/* Make sure buy-coffee-link is responsive */
+@media (max-width: 768px) {
+  .global-footer-content {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
 } 

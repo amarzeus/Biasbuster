@@ -155,23 +155,23 @@ function createMockAnalysis(text) {
                          'Sample sentence for analysis.';
   
   return {
-    MainTopic: "Mock Analysis Result",
-    BiasDetected: "yes",
+    MainTopic: 'Mock Analysis Result',
+    BiasDetected: 'yes',
     BiasInstances: [
       {
         Sentence: sampleSentence,
-        BiasType: "Possible Bias",
-        Explanation: "This is a mock bias detection when offline.",
-        Severity: "1",
-        Justification: "Mock analysis cannot determine actual severity.",
-        Mitigation: "Please try again when online for real analysis."
+        BiasType: 'Possible Bias',
+        Explanation: 'This is a mock bias detection when offline.',
+        Severity: '1',
+        Justification: 'Mock analysis cannot determine actual severity.',
+        Mitigation: 'Please try again when online for real analysis.'
       }
     ],
-    BiasSummary: "Mock analysis performed because the server is unavailable.",
+    BiasSummary: 'Mock analysis performed because the server is unavailable.',
     TrustedSources: [
-      "https://example.com/media-literacy"
+      'https://example.com/media-literacy'
     ],
-    EducationalContent: "Biasbuster works best when connected to the server."
+    EducationalContent: 'Biasbuster works best when connected to the server.'
   };
 }
 

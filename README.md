@@ -1,180 +1,120 @@
-# Biasbuster: AI-Powered Media Literacy Tool
+# Biasbuster
 
-<div align="center">
-  <img src="chrome-extension/icons/icon128.png" alt="Biasbuster Logo" width="128" height="128">
-  <h3>Detect, explain, and mitigate media bias in real-time</h3>
-  <p><i>Created for the Persist Ventures Startupathon Challenge</i></p>
-</div>
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/amarzeus/Biasbuster/ci.yml?style=flat-square)
+![GitHub Stars](https://img.shields.io/github/stars/amarzeus/Biasbuster?style=flat-square)
+![GitHub License](https://img.shields.io/github/license/amarzeus/Biasbuster?style=flat-square)
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Platform-Web%20%7C%20Chrome-blue" alt="Platform">
-  <img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20TypeScript%20%7C%20Express-green" alt="Stack">
-  <img src="https://img.shields.io/badge/AI-Groq%20%7C%20Anthropic%20%7C%20OpenAI-purple" alt="AI">
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
-</div>
+Biasbuster is an AI-powered media literacy tool designed to help users detect and understand bias in online content. It includes a Chrome extension, web platform, and API service for analyzing text across multiple dimensions of bias.
 
-<br>
+<p align="center">
+  <img src="docs/architecture.svg" alt="Biasbuster Architecture" width="600">
+</p>
 
 ## 🚀 Quick Demo
 
-https://github.com/amarzeus/Biasbuster/assets/demo.gif
+Check out Biasbuster in action:
 
-## 🔍 What is Biasbuster?
+<p align="center">
+  <img src="docs/demo.gif" alt="Biasbuster Demo" width="500">
+</p>
 
-Biasbuster uses advanced AI to analyze news articles for bias and misinformation, helping readers become more informed and critical consumers of media. It works both as a Chrome extension that analyzes articles as you browse and as a web platform where you can paste any text for analysis.
+## 🌟 Features
 
-<img src="https://raw.githubusercontent.com/amarzeus/Biasbuster/main/docs/demo-screenshot.png" alt="Biasbuster Demo" width="100%">
+- **Chrome Extension**: Analyze any webpage for bias directly while browsing
+- **Web Platform**: Upload text or articles for comprehensive bias analysis
+- **Multi-dimensional Analysis**: Identifies political bias, emotional language, framing, and more
+- **Educational Resources**: AI literacy and media literacy educational content
+- **Ethical Framework**: Built with transparency and ethics in mind
 
-## ✨ Key Features
+## 📸 Screenshots
 
-### Core Capabilities
-- 🔍 **Advanced Bias Detection**: Identify multiple types of bias including political, racial, gender, framing, selection, and more
-- 📊 **Bias Visualization**: Highlight biased content with an intuitive heat map showing bias intensity
-- 📝 **Bias Explanation**: Get detailed explanations of why specific text contains bias
-- 🔄 **Alternative Perspectives**: Discover diverse viewpoints on the same topic from various sources to break echo chambers
-- ✏️ **Mitigation Suggestions**: Receive balanced rewording suggestions for biased content
-- 🎯 **Educational Resources**: Learn about different bias types and how to spot them
+<p align="center">
+  <img src="docs/web-platform-demo.svg" alt="Web Platform" width="400">
+  <img src="docs/extension-demo.svg" alt="Chrome Extension" width="400">
+</p>
 
-### Advanced AI/ML Features
-- 🧠 **Adaptive AI Model Selection**: Automatically selects the best AI model based on content complexity
-- 🌐 **Multilingual Analysis**: Detect and explain bias in multiple languages
-- 😀 **Sentiment Analysis**: Measure the emotional tone of content
-- ⚖️ **Source Credibility Scoring**: Evaluate the reliability of news sources
-- 📱 **Real-time Bias Detection**: Get bias alerts as you browse the web
-- 🔄 **Offline Analysis**: Basic bias detection even without internet connection
-
-## 🖥️ Project Components
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/amarzeus/Biasbuster/main/docs/architecture.png" alt="Biasbuster Architecture" width="80%">
-</div>
-
-### MCP Server
-The Master Control Program (MCP) server processes article text and communicates with AI services.
-
-- RESTful API endpoints for bias analysis
-- Support for multiple AI service providers (OpenAI, Anthropic, Groq)
-- Rate limiting and request caching
-- Comprehensive error handling
-
-### Chrome Extension
-A browser extension that analyzes web pages for bias in real-time.
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/amarzeus/Biasbuster/main/docs/extension-demo.png" alt="Chrome Extension" width="60%">
-</div>
-
-- Content scripts for page analysis
-- Bias highlighting with severity indicators
-- Detailed bias explanation tooltips
-- Auto-analysis feature for passive bias detection
-- Settings for customizing analysis features
-
-### Web Platform
-A standalone web application that allows users to analyze text directly.
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/amarzeus/Biasbuster/main/docs/web-platform-demo.png" alt="Web Platform" width="60%">
-</div>
-
-- Interactive bias visualization dashboard
-- Statistical analysis of detected bias
-- Educational resources on media literacy
-- Example articles demonstrating various bias types
-
-## 🚀 Quick Start
+## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js 14 or higher
-- NPM 6 or higher
 
-### One-Line Setup
-```bash
-git clone https://github.com/amarzeus/Biasbuster.git && cd Biasbuster && npm install && npm start
-```
+- Node.js 14+ (16+ recommended)
+- NPM or Yarn
+- Chrome browser (for extension)
 
-### Step-by-Step Setup
+### Installation
 
 1. Clone the repository:
    ```
    git clone https://github.com/amarzeus/Biasbuster.git
-   cd biasbuster
+   cd Biasbuster
    ```
 
 2. Install dependencies:
-```
-npm install
-```
+   ```
+   npm install
+   ```
 
-3. Start the server:
-- On Windows:
-```
-start-server.bat
-```
-- On macOS/Linux:
-```
-sh start-server.sh
-```
+3. Build the project:
+   ```
+   npm run build
+   ```
 
-4. Access the web platform:
-```
-Open web-platform/index.html in your browser
-```
+4. Start the server:
+   ```
+   npm start
+   ```
 
-5. Load the Chrome extension:
-```
-Open Chrome > Extensions > Load unpacked > Select chrome-extension folder
-```
+### Installing the Chrome Extension
 
-## 🔧 Configuration
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Enable "Developer mode"
+3. Click "Load unpacked" and select the `chrome-extension` folder from this repository
+4. The Biasbuster icon should appear in your browser toolbar
 
-Create a `.env` file in the project root to configure API keys and settings:
+## 🏗️ Project Structure
 
 ```
-# AI Service Keys
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-GROQ_API_KEY=your_groq_key
-
-# Server Configuration
-PORT=8080
-CORS_ORIGIN=*
-DEFAULT_AI_MODEL=auto
+Biasbuster/
+├── src/                # Backend API server source code
+├── web-platform/       # Web platform front-end
+├── chrome-extension/   # Chrome extension source
+├── prompts/            # AI prompts for bias analysis
+├── docs/               # Documentation and assets
+└── scripts/            # Utility scripts
 ```
 
-## 📊 How It Works
+## 📊 Flowchart
 
-<div align="center">
-  <a href="FLOWCHART.md">
-    <img src="https://raw.githubusercontent.com/amarzeus/Biasbuster/main/docs/flowchart-preview.png" alt="Flowchart" width="70%">
-    <p>View detailed system flowcharts</p>
-  </a>
-</div>
+See [FLOWCHART.md](FLOWCHART.md) for a visual representation of how Biasbuster works.
 
-## 🔄 System Workflow
+## 📚 Documentation
 
-1. **Input**: User submits article text via Chrome extension or web platform
-2. **Processing**: MCP server sends text to the appropriate AI model
-3. **Analysis**: AI performs comprehensive bias detection
-4. **Results**: System returns structured analysis with bias instances, explanations, and suggestions
-5. **Visualization**: Front-end displays results with interactive heat maps and detailed breakdowns
+- [Architecture](ARCHITECTURE.md): Detailed system architecture
+- [Product Requirements](Biasbuster%20Product%20Requirements%20Document%20-%20PRD.md): Product specifications
+- [Developer Guide](DEVELOPER.md): Guide for developers
 
-## 🌟 Why Biasbuster?
+## 🧪 Running Tests
 
-- **Media Literacy**: Empowers readers to identify bias and make informed decisions
-- **Educational Tool**: Helps students and educators understand media bias
-- **Journalistic Aid**: Supports journalists in creating more balanced content
-- **AI Transparency**: Uses explainable AI to justify bias detections
+```
+npm test
+```
 
-## 👥 Contributing
+## 🤝 Contributing
 
-Contributions to Biasbuster are welcome! Please review our [contributing guidelines](CONTRIBUTING.md) before submitting pull requests.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgements
+## 👨‍💻 Author
 
-- This project was created as part of the Persist Ventures Startupathon challenge.
-- Thanks to the open source community for the amazing tools and libraries that made this project possible.
+Made with ❤️ by [Amar](https://www.linkedin.com/in/amarmahakal/)
+
+## 🙏 Support
+
+If you find this project helpful, please consider giving it a star on GitHub and supporting the developer:
+
+<a href="https://buymeacoffee.com/amarmahakal">
+  <img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" >
+</a>
