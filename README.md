@@ -31,6 +31,7 @@ Biasbuster uses advanced AI to analyze news articles for bias and misinformation
 - 🔍 **Advanced Bias Detection**: Identify multiple types of bias including political, racial, gender, framing, selection, and more
 - 📊 **Bias Visualization**: Highlight biased content with an intuitive heat map showing bias intensity
 - 📝 **Bias Explanation**: Get detailed explanations of why specific text contains bias
+- 🔄 **Alternative Perspectives**: Discover diverse viewpoints on the same topic from various sources to break echo chambers
 - ✏️ **Mitigation Suggestions**: Receive balanced rewording suggestions for biased content
 - 🎯 **Educational Resources**: Learn about different bias types and how to spot them
 

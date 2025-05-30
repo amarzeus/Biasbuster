@@ -5,6 +5,7 @@ import { analyzeBias } from './tools/analyzeBias';
 import { connectDB } from './config/database';
 import authRoutes from './routes/authRoutes';
 import analysisRoutes from './routes/analysisRoutes';
+import perspectivesRoutes from './routes/perspectivesRoutes';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import morgan from 'morgan';
@@ -97,6 +98,7 @@ app.use('/api', rateLimiter);
 // API Routes
 app.use('/api/v1/auth', authRoutes); // Authentication routes
 app.use('/api/v1/analyses', analysisRoutes); // Analysis history routes
+app.use('/api/v1/perspectives', perspectivesRoutes); // New: Alternative Perspectives routes
 
 // Health check endpoint
 app.get('/api/v1/health', (req, res) => {

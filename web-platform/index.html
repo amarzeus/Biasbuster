@@ -7,20 +7,26 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="../chrome-extension/icons/icon16.png" type="image/png">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
     <meta name="description" content="Biasbuster is an AI-powered tool that detects, explains, and helps mitigate bias and misinformation in news articles in real time.">
 </head>
 <body data-theme="light">
     <header>
         <div class="container">
             <div class="logo">
-                <img src="../chrome-extension/icons/icon48.png" alt="Biasbuster Logo">
+                <img src="assets/logo.png" alt="Biasbuster Logo">
                 <div>
                     <h1>Biasbuster</h1>
                     <div class="tagline">AI-Powered Media Literacy Tool</div>
                 </div>
             </div>
-            <nav class="main-nav">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
                 <a href="#" class="active">Home</a>
                 <a href="#demo">Demo</a>
                 <a href="https://github.com/amarzeus/Biasbuster" target="_blank">GitHub</a>
@@ -44,6 +50,9 @@
             <div class="flex gap-2 justify-center">
                 <a href="#demo" class="btn primary-btn">Try the Demo</a>
                 <a href="auth.html" class="btn secondary-btn">Create Account</a>
+            </div>
+            <div class="hero-image">
+                <img src="assets/hero-illustration.svg" alt="Media bias detection illustration">
             </div>
         </section>
 
@@ -83,6 +92,7 @@
                     <button class="view-tab" data-tab="sentiment-tab">Sentiment Analysis</button>
                     <button class="view-tab" data-tab="suggestions-tab">Suggestions</button>
                     <button class="view-tab" data-tab="credibility-tab">Source Credibility</button>
+                    <button class="view-tab" data-tab="perspectives-tab">Alternative Perspectives</button>
                 </div>
                 
                 <div class="tab-content">
@@ -109,6 +119,11 @@
                     <div id="credibility-tab" class="tab-pane hidden">
                         <p class="tab-description">Analysis of source credibility and fact-checking:</p>
                         <div id="credibility-score"></div>
+                    </div>
+
+                    <div id="perspectives-tab" class="tab-pane hidden">
+                        <p class="tab-description">Discover alternative perspectives on this topic from various sources:</p>
+                        <div id="alternative-perspectives"></div>
                     </div>
                 </div>
             </div>
@@ -167,6 +182,27 @@
                 </div>
             </div>
         </section>
+
+        <section class="awards-section">
+            <h3 class="text-center mb-4">Recognition & Awards</h3>
+            <div class="awards-container">
+                <div class="award">
+                    <img src="assets/award1.svg" alt="Startupathon Finalist">
+                    <h4>Startupathon Finalist</h4>
+                    <p>Selected among top AI innovation projects</p>
+                </div>
+                <div class="award">
+                    <img src="assets/award2.svg" alt="AI Ethics Award">
+                    <h4>AI Ethics Award</h4>
+                    <p>Recognized for responsible AI implementation</p>
+                </div>
+                <div class="award">
+                    <img src="assets/award3.svg" alt="Media Innovation Prize">
+                    <h4>Media Innovation Prize</h4>
+                    <p>Pioneering technology in media literacy</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -174,7 +210,7 @@
             <div class="footer-container">
                 <div>
                     <div class="footer-logo">
-                        <img src="../chrome-extension/icons/icon48.png" alt="Biasbuster Logo" width="40">
+                        <img src="assets/logo.png" alt="Biasbuster Logo" width="40">
                         <span style="font-size: 1.5rem; font-weight: 600; margin-left: 0.5rem;">Biasbuster</span>
                     </div>
                     <p class="footer-description">
@@ -266,6 +302,19 @@
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
             }
+        });
+        
+        // Mobile Menu
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mainNav = document.getElementById('main-nav');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            mainNav.classList.add('active');
+        });
+        
+        mobileMenuClose.addEventListener('click', () => {
+            mainNav.classList.remove('active');
         });
         
         // Tab Switching

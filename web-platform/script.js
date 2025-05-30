@@ -1,6 +1,7 @@
 // Constants
 const API_URL = 'http://localhost:8080/api/v1/analyze';
 const API_HEALTH_URL = 'http://localhost:8080/api/v1/health';
+const API_PERSPECTIVES_URL = 'http://localhost:8080/api/v1/perspectives';
 let isServerAvailable = false;
 
 // DOM Elements
@@ -16,6 +17,7 @@ const biasVisualization = document.getElementById('bias-visualization');
 const sentimentAnalysis = document.getElementById('sentiment-analysis');
 const biasSuggestions = document.getElementById('bias-suggestions');
 const credibilityScore = document.getElementById('credibility-score');
+const alternativePerspectives = document.getElementById('alternative-perspectives');
 
 // Example articles with varying degrees of bias
 const exampleArticles = [
@@ -147,11 +149,17 @@ async function analyzeArticle() {
             }
             
             result = await response.json();
+            
+            // Also fetch alternative perspectives
+            fetchAlternativePerspectives(text);
         } else {
             // Offline mode - use mock response
             result = generateMockResponse(text);
             // Add artificial delay to simulate processing
             await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Generate mock perspectives for offline mode
+            generateMockPerspectives(text);
         }
         
         // Display results
@@ -167,6 +175,9 @@ async function analyzeArticle() {
         // In case of error, generate mock response anyway to demonstrate functionality
         const mockResult = generateMockResponse(text);
         displayResults(mockResult);
+        
+        // Generate mock perspectives for offline mode
+        generateMockPerspectives(text);
         
         // Show offline mode message
         handleOfflineMode();
@@ -323,66 +334,68 @@ function generateMockSuggestions(text) {
 }
 
 function displayResults(result) {
-    // Show results container
     resultsContainer.classList.remove('hidden');
     
-    // Display main topic
-    mainTopic.textContent = result.MainTopic || "Unknown";
+    // Main topic
+    mainTopic.textContent = result.MainTopic || 'N/A';
     
-    // Display bias summary
-    biasSummary.textContent = result.BiasAnalysis?.OverallBias || "No significant bias detected";
+    // Bias summary
+    if (result.BiasAnalysis && result.BiasAnalysis.OverallBias) {
+        biasSummary.innerHTML = `
+            <strong>Overall Bias:</strong> ${result.BiasAnalysis.OverallBias} 
+            (Score: ${result.BiasAnalysis.BiasScore ? result.BiasAnalysis.BiasScore.toFixed(2) : 'N/A'})
+        `;
+    } else {
+        biasSummary.innerHTML = 'Bias summary not available.';
+    }
     
-    // Display detailed bias analysis
-    if (result.BiasAnalysis?.Details && result.BiasAnalysis.Details.length > 0) {
+    // Bias details
+    if (result.BiasAnalysis && result.BiasAnalysis.Details && result.BiasAnalysis.Details.length > 0) {
         biasDetails.innerHTML = result.BiasAnalysis.Details.map(detail => `
             <div class="bias-instance">
-                <div class="bias-text">"${detail.text}"</div>
-                <div class="bias-type"><strong>${detail.biasType || 'Potential Bias'}</strong></div>
-                <div class="bias-explanation">${detail.explanation || 'No explanation provided'}</div>
+                <div class="bias-text"><em>"${detail.Text}"</em></div>
+                <div class="bias-type"><strong>Bias Type:</strong> ${detail.Type} (Confidence: ${detail.ConfidenceScore.toFixed(2)})</div>
+                <div class="bias-explanation"><strong>Explanation:</strong> ${detail.Explanation}</div>
             </div>
         `).join('');
     } else {
-        biasDetails.innerHTML = '<p>No specific instances of bias were detected in this content.</p>';
+        biasDetails.innerHTML = '<p>No specific bias instances detected or details available.</p>';
     }
     
-    // Create bias visualization
-    createBiasVisualization(result.BiasAnalysis);
-    
-    // Display sentiment analysis
-    if (result.SentimentAnalysis) {
-        const sentiment = result.SentimentAnalysis;
-        let sentimentColor = 'neutral-color';
-        
-        if (sentiment.Overall === 'positive') {
-            sentimentColor = 'positive-color';
-        } else if (sentiment.Overall === 'negative') {
-            sentimentColor = 'negative-color';
+    // Bias visualization (Heatmap and Gauge)
+    biasVisualization.innerHTML = ''; // Clear previous visualizations
+    if (result.BiasAnalysis) {
+        createBiasVisualization(result.BiasAnalysis);
+        if (result.BiasAnalysis.Details && result.BiasAnalysis.Details.length > 0 && articleText.value) {
+             createTextHeatmap(result.BiasAnalysis.Details, articleText.value);
         }
-        
+    }
+
+    // Sentiment analysis
+    if (result.SentimentAnalysis) {
         sentimentAnalysis.innerHTML = `
             <div class="sentiment-overview">
                 <div class="sentiment-score">
-                    <span class="score-label">Overall Sentiment:</span>
-                    <span class="score-value ${sentimentColor}">${sentiment.Overall}</span>
+                    <div class="score-label">Overall Sentiment</div>
+                    <div class="score-value ${result.SentimentAnalysis.Overall.toLowerCase()}-color">${result.SentimentAnalysis.Overall}</div>
                 </div>
-                <div class="sentiment-score">
-                    <span class="score-label">Sentiment Score:</span>
-                    <span class="score-value">${sentiment.Score}</span>
+                 <div class="sentiment-score">
+                    <div class="score-label">Sentiment Score</div>
+                    <div class="score-value">${result.SentimentAnalysis.Score.toFixed(2)}</div>
                 </div>
             </div>
             <div class="emotional-tone">
                 <h4>Emotional Tone:</h4>
                 <div class="tone-tags">
-                    ${sentiment.EmotionalTone ? sentiment.EmotionalTone.map(tone => 
-                        `<span class="tone-tag">${tone}</span>`).join('') : 'Not available'}
+                    ${result.SentimentAnalysis.EmotionalTone.map(tone => `<span class="tone-tag">${tone}</span>`).join('')}
                 </div>
             </div>
         `;
     } else {
-        sentimentAnalysis.innerHTML = '<p>Sentiment analysis not available for this content.</p>';
+        sentimentAnalysis.innerHTML = '<p>Sentiment analysis not available.</p>';
     }
     
-    // Display bias mitigation suggestions
+    // Suggestions
     if (result.Suggestions && result.Suggestions.length > 0) {
         biasSuggestions.innerHTML = `
             <ul class="suggestions-list">
@@ -390,33 +403,25 @@ function displayResults(result) {
             </ul>
         `;
     } else {
-        biasSuggestions.innerHTML = '<p>No specific suggestions available for this content.</p>';
+        biasSuggestions.innerHTML = '<p>No specific suggestions available.</p>';
     }
     
-    // Display credibility score
+    // Source credibility
     if (result.SourceCredibility) {
-        const credibility = result.SourceCredibility;
-        credibilityScore.innerHTML = `
-            <div class="credibility-overview">
-                <div class="credibility-meter">
-                    <div class="meter-label">Overall Credibility</div>
-                    <div class="meter-bar">
-                        <div class="meter-fill" style="width: ${credibility.Score * 10}%"></div>
-                    </div>
-                    <div class="meter-value">${credibility.Score}/10</div>
-                </div>
-            </div>
-            <div class="credibility-factors">
-                <h4>Credibility Factors:</h4>
-                <ul>
-                    ${Object.entries(credibility.Factors || {}).map(([factor, score]) => 
-                        `<li><span>${factor}:</span> <strong>${score}/10</strong></li>`).join('')}
-                </ul>
-            </div>
-        `;
+        credibilityScore.innerHTML = createCredibilityMeter(result.SourceCredibility);
     } else {
-        credibilityScore.innerHTML = '<p>Source credibility analysis not available for this content.</p>';
+        credibilityScore.innerHTML = '<p>Source credibility analysis not available.</p>';
     }
+
+    // Alternative Perspectives
+    if (alternativePerspectives) {
+        // The actual perspectives will be populated by fetchAlternativePerspectives or generateMockPerspectives
+        // Here we just ensure there's a loading indicator until the data arrives
+        alternativePerspectives.innerHTML = '<p><em>Loading alternative perspectives...</em></p>';
+    }
+
+    // Switch to the first tab (Bias Analysis)
+    document.querySelector('.view-tab[data-tab="bias-tab"]').click();
 }
 
 function createBiasVisualization(biasAnalysis) {
@@ -501,4 +506,161 @@ function createTextHeatmap(biasDetails) {
             }).join(' ')}
         </div>
     `;
+}
+
+// Function to fetch alternative perspectives from API
+async function fetchAlternativePerspectives(text) {
+    try {
+        if (!isServerAvailable) {
+            generateMockPerspectives(text);
+            return;
+        }
+        
+        const response = await fetch(API_PERSPECTIVES_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                text: text,
+                topic: detectTopic(text) // Pass the detected topic to help the API
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Perspectives API responded with status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+            displayPerspectives(result.data);
+        } else {
+            alternativePerspectives.innerHTML = '<p>No alternative perspectives found for this content.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching perspectives:', error);
+        // Fall back to mock data on error
+        generateMockPerspectives(text);
+    }
+}
+
+// Generate mock perspectives for offline mode
+function generateMockPerspectives(text) {
+    const topic = detectTopic(text);
+    
+    // Create mock perspectives based on the detected topic
+    const mockPerspectives = [
+        {
+            title: `Why ${topic} Deserves More Support`,
+            source: "Progressive View Journal",
+            url: "#",
+            summary: `A compelling argument for increased funding and attention to ${topic}, highlighting potential social benefits and long-term positive impacts.`
+        },
+        {
+            title: `The Economic Case Against Expansion in ${topic}`,
+            source: "Fiscal Conservative Review",
+            url: "#",
+            summary: `An analysis questioning the financial sustainability of current approaches to ${topic}, suggesting market-based alternatives.`
+        },
+        {
+            title: `${topic}: Finding Middle Ground in a Polarized Debate`,
+            source: "Centrist Policy Institute",
+            url: "#",
+            summary: `A balanced examination of various viewpoints on ${topic}, seeking reasonable compromise between competing interests and ideologies.`
+        }
+    ];
+    
+    // Display the mock perspectives
+    displayPerspectives(mockPerspectives);
+}
+
+// Function to display perspectives in the UI
+function displayPerspectives(perspectives) {
+    if (!alternativePerspectives) return;
+    
+    if (perspectives.length === 0) {
+        alternativePerspectives.innerHTML = '<p>No alternative perspectives found for this content.</p>';
+        return;
+    }
+    
+    alternativePerspectives.innerHTML = perspectives.map(perspective => `
+        <div class="perspective-card">
+            <h5>${perspective.title}</h5>
+            <div class="perspective-source">Source: ${perspective.source}</div>
+            <div class="perspective-summary">${perspective.summary}</div>
+            <a href="${perspective.url}" class="perspective-link" target="_blank">Read full article <i class="fas fa-external-link-alt"></i></a>
+        </div>
+    `).join('');
+}
+
+// Function to create credibility meter visualization
+function createCredibilityMeter(credibility) {
+    if (!credibility) return '<p>Credibility data not available.</p>';
+    
+    const score = credibility.Score || 0;
+    const normalized = Math.max(0, Math.min(100, score * 10)); // Convert 0-10 score to percentage
+    
+    let ratingClass;
+    let ratingText;
+    
+    if (normalized >= 80) {
+        ratingClass = 'high-credibility';
+        ratingText = 'High Credibility';
+    } else if (normalized >= 60) {
+        ratingClass = 'medium-credibility';
+        ratingText = 'Medium Credibility';
+    } else {
+        ratingClass = 'low-credibility';
+        ratingText = 'Low Credibility';
+    }
+    
+    // Generate HTML for credibility meter
+    let html = `
+        <div class="credibility-overview">
+            <div class="credibility-meter">
+                <div class="meter-label">${ratingText}</div>
+                <div class="meter-bar">
+                    <div class="meter-fill ${ratingClass}" style="width: ${normalized}%"></div>
+                </div>
+                <div class="meter-value">${normalized.toFixed(1)}%</div>
+            </div>
+        </div>
+    `;
+    
+    // Add factors if available
+    if (credibility.Factors) {
+        html += `<div class="credibility-factors">
+            <h4>Credibility Factors:</h4>
+            <ul>`;
+            
+        if (Array.isArray(credibility.Factors)) {
+            // Handle array format
+            credibility.Factors.forEach(factor => {
+                html += `<li>${factor}</li>`;
+            });
+        } else {
+            // Handle object format with scores
+            for (const [factor, score] of Object.entries(credibility.Factors)) {
+                html += `<li>${factor}: ${score}/10</li>`;
+            }
+        }
+        
+        html += `</ul></div>`;
+    }
+    
+    // Add recommendations if available
+    if (credibility.Recommendations && credibility.Recommendations.length > 0) {
+        html += `<div class="credibility-recommendations">
+            <h4>Recommendations:</h4>
+            <ul>`;
+            
+        credibility.Recommendations.forEach(rec => {
+            html += `<li>${rec}</li>`;
+        });
+        
+        html += `</ul></div>`;
+    }
+    
+    return html;
 } 

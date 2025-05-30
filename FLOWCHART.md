@@ -165,15 +165,43 @@ flowchart TD
     F --> H[Show Bias Visualization]
     F --> I[Show Detailed Analysis]
     F --> J[Show Educational Resources]
+    F --> N[Fetch Alternative Perspectives]
     
     H --> K[Interactive Heat Map]
     I --> L[Bias Instances List]
     J --> M[Trusted Sources]
+    N --> O[Display Diverse Viewpoints]
     
     style A fill:#f5f5f5,stroke:#333,stroke-width:2px
     style D fill:#dae8fc,stroke:#333,stroke-width:2px
     style F fill:#d5e8d4,stroke:#333,stroke-width:2px
     style K fill:#ffe6cc,stroke:#333,stroke-width:2px
+    style N fill:#ffccff,stroke:#333,stroke-width:2px
+```
+
+## Alternative Perspectives Flow
+
+```mermaid
+flowchart TD
+    A[Article Analyzed] --> B[Extract Key Topic]
+    B --> C[Query Perspectives API]
+    
+    C --> D[Retrieve Diverse Viewpoints]
+    D --> E[Left-leaning Sources]
+    D --> F[Centrist Sources]
+    D --> G[Right-leaning Sources]
+    
+    E --> H[Generate Perspective Cards]
+    F --> H
+    G --> H
+    
+    H --> I[Display in UI Tab]
+    I --> J[User Explores Different Viewpoints]
+    
+    style A fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style B fill:#dae8fc,stroke:#333,stroke-width:2px
+    style D fill:#d5e8d4,stroke:#333,stroke-width:2px
+    style J fill:#ffe6cc,stroke:#333,stroke-width:2px
 ```
 
 ## Multi-Model AI Integration

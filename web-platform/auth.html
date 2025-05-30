@@ -7,19 +7,25 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="../chrome-extension/icons/icon16.png" type="image/png">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
 </head>
 <body data-theme="light">
     <header>
         <div class="container">
             <div class="logo">
-                <img src="../chrome-extension/icons/icon48.png" alt="Biasbuster Logo">
+                <img src="assets/logo.png" alt="Biasbuster Logo">
                 <div>
                     <h1>Biasbuster</h1>
                     <div class="tagline">AI-Powered Media Literacy Tool</div>
                 </div>
             </div>
-            <nav class="main-nav">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
                 <a href="index.html">Home</a>
                 <a href="index.html#demo">Demo</a>
                 <a href="https://github.com/amarzeus/Biasbuster" target="_blank">GitHub</a>
@@ -130,7 +136,7 @@
             <div class="footer-container">
                 <div>
                     <div class="footer-logo">
-                        <img src="../chrome-extension/icons/icon48.png" alt="Biasbuster Logo" width="40">
+                        <img src="assets/logo.png" alt="Biasbuster Logo" width="40">
                         <span style="font-size: 1.5rem; font-weight: 600; margin-left: 0.5rem;">Biasbuster</span>
                     </div>
                     <p class="footer-description">
@@ -223,7 +229,20 @@
             }
         });
         
-        // Form Switching
+        // Mobile Menu
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mainNav = document.getElementById('main-nav');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            mainNav.classList.add('active');
+        });
+        
+        mobileMenuClose.addEventListener('click', () => {
+            mainNav.classList.remove('active');
+        });
+        
+        // Tab Switching
         const loginTab = document.getElementById('login-tab');
         const signupTab = document.getElementById('signup-tab');
         const loginForm = document.getElementById('login-form');
@@ -271,132 +290,46 @@
         
         backToLogin.addEventListener('click', (e) => {
             e.preventDefault();
-            resetForm.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-            loginTab.classList.add('active');
+            loginTab.click();
         });
         
-        // Form Validation and Submission
-        document.getElementById('login-form-element').addEventListener('submit', async (e) => {
+        // Form Submission
+        const loginFormEl = document.getElementById('login-form-element');
+        const signupFormEl = document.getElementById('signup-form-element');
+        const resetFormEl = document.getElementById('reset-form-element');
+        
+        loginFormEl.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
             
-            try {
-                const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Success - store user info and redirect
-                    localStorage.setItem('user', JSON.stringify(data.data.user));
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Handle errors
-                    alert(data.message || 'Login failed. Please try again.');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('Could not connect to the server. Please try again later.');
-                
-                // For demo purposes, simulate successful login
-                localStorage.setItem('user', JSON.stringify({
-                    name: 'Demo User',
-                    email: email,
-                    role: 'user'
-                }));
-                window.location.href = 'index.html';
-            }
+            // Simple demo - no real authentication
+            localStorage.setItem('user', JSON.stringify({
+                email: email,
+                name: email.split('@')[0]
+            }));
+            
+            window.location.href = 'index.html';
         });
         
-        document.getElementById('signup-form-element').addEventListener('submit', async (e) => {
+        signupFormEl.addEventListener('submit', (e) => {
             e.preventDefault();
             const firstName = document.getElementById('signup-firstname').value;
             const lastName = document.getElementById('signup-lastname').value;
             const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const confirmPassword = document.getElementById('signup-confirm-password').value;
             
-            // Basic validation
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
+            // Simple demo - no real registration
+            localStorage.setItem('user', JSON.stringify({
+                email: email,
+                name: firstName + ' ' + lastName
+            }));
             
-            try {
-                const response = await fetch('http://localhost:8080/api/v1/auth/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        firstName, 
-                        lastName, 
-                        email, 
-                        password 
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Success - store user info and redirect
-                    localStorage.setItem('user', JSON.stringify(data.data.user));
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Handle errors
-                    alert(data.message || 'Registration failed. Please try again.');
-                }
-            } catch (error) {
-                console.error('Signup error:', error);
-                alert('Could not connect to the server. Please try again later.');
-                
-                // For demo purposes, simulate successful signup
-                localStorage.setItem('user', JSON.stringify({
-                    name: firstName + ' ' + lastName,
-                    email: email,
-                    role: 'user'
-                }));
-                window.location.href = 'index.html';
-            }
+            window.location.href = 'index.html';
         });
         
-        document.getElementById('reset-form-element').addEventListener('submit', async (e) => {
+        resetFormEl.addEventListener('submit', (e) => {
             e.preventDefault();
-            const email = document.getElementById('reset-email').value;
-            
-            try {
-                const response = await fetch('http://localhost:8080/api/v1/auth/forgot-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert('Password reset email sent. Please check your inbox.');
-                    loginTab.click();
-                } else {
-                    alert(data.message || 'Failed to send reset email. Please try again.');
-                }
-            } catch (error) {
-                console.error('Reset password error:', error);
-                alert('Could not connect to the server. Please try again later.');
-                
-                // For demo purposes, show success message
-                alert('Demo mode: Password reset link would be sent to ' + email);
-                loginTab.click();
-            }
+            alert('Password reset link would be sent to your email (demo only)');
+            loginTab.click();
         });
     </script>
 </body>

@@ -58,6 +58,7 @@ A. Chrome Extension
 B. Web Platform  
   - Homepage with clear value proposition and mission  
   - Live demo: paste text or URL for instant analysis  
+  - Alternative Perspectives Engine to discover diverse viewpoints on the same topic
   - Educational resources (articles, infographics, videos)  
   - Community feedback/testimonials  
   - About Us, Contact/Support, and FAQ sections  
