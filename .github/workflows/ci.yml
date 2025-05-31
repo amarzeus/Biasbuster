@@ -31,11 +31,12 @@ jobs:
     
     - name: Install dependencies
       run: |
-        npm ci
+        npm install
         if [ $? -ne 0 ]; then
           echo "::error::Dependencies installation failed"
           exit 1
         fi
+
     
     - name: Build
       run: |
@@ -75,12 +76,12 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: javascript
         config-file: .github/codeql/codeql-config.yml
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:javascript"
