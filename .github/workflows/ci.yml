@@ -21,6 +21,15 @@ jobs:
         node-version: [16.x]
       fail-fast: false
 
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+
+    env:
+      MONGODB_URI: mongodb://localhost:27017/biasbuster_test
+
     steps:
     - uses: actions/checkout@v3
     
@@ -97,6 +106,8 @@ jobs:
         key: ${{ runner.os }}-build-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-build-
+
+
 
 
 
