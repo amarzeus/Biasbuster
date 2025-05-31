@@ -206,12 +206,12 @@ export class BiasAnalysisService {
       const biasTypeCount: Record<string, number> = {};
       
       // Analyze each sentence for bias patterns
-      sentences.forEach((sentence, index) => {
+      sentences.forEach((sentence, _index) => {
         // Add period to make it a complete sentence again
         const completeSentence = sentence.trim() + '.';
         
         // Check against all bias patterns
-        this.customBiasPatterns.forEach((pattern, id) => {
+        this.customBiasPatterns.forEach((pattern, _id) => {
           if (pattern.regex.test(completeSentence)) {
             // Count bias types for visualization
             biasTypeCount[pattern.biasType] = (biasTypeCount[pattern.biasType] || 0) + 1;
@@ -260,11 +260,6 @@ export class BiasAnalysisService {
    */
   private extractMainTopic(text: string): string {
     // Simplified topic extraction - would be more sophisticated in production
-    const commonTopics = [
-      'Politics', 'Economy', 'Technology', 'Health', 'Environment', 
-      'Education', 'Sports', 'Entertainment', 'Science', 'International'
-    ];
-    
     const topicKeywords: Record<string, string[]> = {
       'Politics': ['government', 'election', 'political', 'policy', 'president', 'congress', 'senate', 'democrat', 'republican'],
       'Economy': ['economy', 'economic', 'market', 'stock', 'financial', 'trade', 'budget', 'inflation', 'recession'],

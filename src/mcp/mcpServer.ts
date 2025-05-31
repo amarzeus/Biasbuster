@@ -12,7 +12,7 @@ interface MCPRequest extends Request {
 }
 
 // Health check endpoint
-router.get('/health', (req: Request, res: Response) => {
+router.get('/health', (_req: Request, res: Response) => {
     res.json({ status: 'ok', service: 'mcp-server' });
 });
 
@@ -81,5 +81,47 @@ router.post('/feedback', (req: Request, res: Response) => {
 
     res.json({ message: 'Feedback received' });
 });
+
+/**
+ * Start the MCP server via HTTP
+ * @param port Port number to listen on
+ */
+export function startMcpHttpServer(port: number): void {
+    const app = express();
+    app.use(express.json());
+    app.use('/', router);
+    
+    app.listen(port, () => {
+        console.log(`MCP HTTP server running on port ${port}`);
+    });
+}
+
+/**
+ * Start the MCP server via stdio for direct process communications
+ */
+export function startMcpStdioTransport(): void {
+    console.log('MCP STDIO transport started');
+    
+    // Read from stdin
+    process.stdin.on('data', async (data) => {
+        try {
+            const input = JSON.parse(data.toString());
+            if (input.type === 'analyze' && input.text) {
+                const result = await analyzeBias(input.text, input.options);
+                process.stdout.write(JSON.stringify({ success: true, result }) + '\n');
+            } else {
+                process.stdout.write(JSON.stringify({ 
+                    success: false, 
+                    error: 'Invalid request format' 
+                }) + '\n');
+            }
+        } catch (error) {
+            process.stdout.write(JSON.stringify({ 
+                success: false, 
+                error: 'Error processing request' 
+            }) + '\n');
+        }
+    });
+}
 
 export default router;

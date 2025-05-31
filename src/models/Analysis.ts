@@ -1,4 +1,4 @@
-import { Document, Schema, model, Model } from 'mongoose';
+import { Schema, model, Model } from 'mongoose';
 
 export interface IBiasInstance {
     line: number;

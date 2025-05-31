@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { Types } from 'mongoose';
 import Analysis from '../models/Analysis';
 import { IUserRequest } from '../middlewares/authMiddleware';
-import { analyzeBias } from '../tools/analyzeBias';
+import { analyzeBias as analyzeTextBias } from '../tools/analyzeBias';
 import { BiasBusterResponse } from '../types/biasbuster';
 
 export const createAnalysis = async (req: IUserRequest, res: Response): Promise<void> => {
@@ -112,7 +112,7 @@ export const getUserAnalyses = async (req: IUserRequest, res: Response): Promise
     }
 };
 
-export const analyzeBiasText = async (req: IUserRequest, res: Response): Promise<void> => {
+export const analyzeBias = async (req: IUserRequest, res: Response): Promise<void> => {
     try {
         const { text } = req.body;
         const userId = req.user?._id;
@@ -123,7 +123,7 @@ export const analyzeBiasText = async (req: IUserRequest, res: Response): Promise
         }
 
         // Analyze the text for bias
-        const biasAnalysis: BiasBusterResponse = await analyzeBias(text);
+        const biasAnalysis: BiasBusterResponse = await analyzeTextBias(text);
 
         // Create a new analysis record
         const analysis = await Analysis.create({

@@ -1,7 +1,5 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
 
 // Load environment variables
 dotenv.config();
@@ -101,8 +99,6 @@ export async function callAI(
     maxTokens?: number;
   } = {}
 ): Promise<BiasBusterResponse> {
-  const aiService = process.env.AI_SERVICE || 'mock'; 
-  
   // Auto-select model based on text length, capabilities needed, and user preferences
   const selectedModel = selectBestModel(prompt.length, options);
   console.log(`Selected AI model: ${selectedModel.name} (${selectedModel.provider})`);
@@ -509,8 +505,8 @@ async function callOpenAI(
  * Call Google AI with given prompt - implementation stub
  */
 async function callGoogleAI(
-  prompt: string,
-  options: {
+  _prompt: string,
+  _options: {
     language?: string;
     includeSentiment?: boolean;
     includeCredibility?: boolean;

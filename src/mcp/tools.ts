@@ -12,8 +12,8 @@ const BIAS_TYPES = {
     CONFIRMATION: 'Selective use of information to confirm existing beliefs'
 };
 
-// AI prompt templates
-const PROMPT_TEMPLATES = {
+// AI prompt templates (commented out to avoid unused variable warning)
+/* const PROMPT_TEMPLATES = {
     BIAS_DETECTION: `
         Analyze the following text for potential bias:
         TEXT: {{text}}
@@ -36,10 +36,10 @@ const PROMPT_TEMPLATES = {
         3. Use neutral language
         4. Preserve factual content
     `
-};
+}; */
 
 // Helper function to detect sentence-level bias
-function detectSentenceBias(sentence: string, options?: AnalysisOptions): BiasInstance | null {
+function detectSentenceBias(sentence: string, _options?: AnalysisOptions): BiasInstance | null {
     // TODO: Integrate with actual AI model
     // For now, using mock implementation
     const biasTypes = Object.keys(BIAS_TYPES);
@@ -91,13 +91,13 @@ export async function analyzeBias(text: string, options?: AnalysisOptions): Prom
         BiasDetected: biasInstances.length > 0 ? "yes" : "no",
         BiasInstances: biasInstances,
         BiasSummary: generateBiasSummary(biasInstances, averageSeverity),
-        TrustedSources: generateTrustedSources(uniqueBiasTypes),
+        TrustedSources: generateTrustedSources([]),
         EducationalContent: educationalContent
     };
 }
 
 // Helper function to detect main topic
-function detectMainTopic(text: string): string {
+function detectMainTopic(_text: string): string {
     // TODO: Implement topic detection with AI
     return "General Analysis";
 }
@@ -114,7 +114,7 @@ function generateBiasSummary(instances: BiasInstance[], averageSeverity: number)
 }
 
 // Helper function to generate trusted sources
-function generateTrustedSources(biasTypes: string[]): string[] {
+function generateTrustedSources(_biasTypes: string[]): string[] {
     // TODO: Implement dynamic trusted sources based on bias types
     return [
         "https://www.mediabiasfactcheck.com/",
@@ -126,7 +126,7 @@ function generateTrustedSources(biasTypes: string[]): string[] {
 export async function analyzeBiasWithFeedback(
     text: string,
     options?: AnalysisOptions,
-    previousFeedback?: any
+    _previousFeedback?: any
 ): Promise<BiasBusterResponse> {
     // TODO: Implement feedback-aware analysis
     return analyzeBias(text, options);

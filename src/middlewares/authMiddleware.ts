@@ -34,8 +34,11 @@ export const protect = async (req: IUserRequest, res: Response, next: NextFuncti
             return;
         }
 
-        // Attach user to request object
-        req.user = user;
+        // Attach user to request object - convert _id to string
+        req.user = {
+            ...user.toObject(),
+            _id: user._id.toString()
+        };
         next();
     } catch (error) {
         res.status(401).json({ message: 'Not authorized, invalid token' });

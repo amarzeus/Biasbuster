@@ -1,6 +1,6 @@
 import { BiasBusterResponse, AnalysisOptions } from '../types/biasbuster';
 
-export async function analyzeBias(text: string, options?: AnalysisOptions): Promise<BiasBusterResponse> {
+export async function analyzeBias(text: string, _options?: AnalysisOptions): Promise<BiasBusterResponse> {
     // This is a mock implementation. Replace with actual AI integration.
     return {
         MainTopic: "Sample Analysis",

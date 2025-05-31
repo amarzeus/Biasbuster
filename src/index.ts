@@ -26,12 +26,12 @@ app.use('/api/analysis', analysisRoutes);
 app.use('/api/mcp', mcpServer);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Serve index.html for all other routes (SPA support)
-app.get('*', (req, res) => {
+app.get('*', (_req, res) => {
     res.sendFile(path.join(__dirname, '../web-platform/index.html'));
 });
 
