@@ -1,0 +1,51 @@
+# Biasbuster Code Ownership Configuration
+# This file defines code ownership for the Biasbuster project
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @BiasbusterAdmin
+
+# Core infrastructure
+/.github/ @BiasbusterAdmin @DevOpsTeam
+/scripts/ @DevOpsTeam
+*.md @DocumentationTeam @BiasbusterAdmin
+
+# Backend code
+/src/ @BackendTeam
+/src/controllers/ @BackendTeam
+/src/models/ @BackendTeam @DatabaseTeam
+/src/middlewares/ @BackendTeam @SecurityTeam
+/src/services/ @BackendTeam
+/src/routes/ @BackendTeam @APITeam
+/src/config/ @DevOpsTeam @BackendTeam
+/src/tools/ @BackendTeam @AITeam
+/src/types/ @BackendTeam @AITeam @FrontendTeam
+
+# MCP (Model Control Process) code
+/src/mcp/ @AITeam @BackendTeam
+
+# Frontend code
+/web-platform/ @FrontendTeam
+/chrome-extension/ @FrontendTeam @BrowserExtensionTeam
+
+# Tests
+/__tests__/ @QATeam @BackendTeam @FrontendTeam
+/playwright/ @QATeam
+
+# Security-sensitive files
+/src/middlewares/authMiddleware.ts @SecurityTeam
+**/auth*.ts @SecurityTeam
+**/security*.ts @SecurityTeam
+
+# Documentation
+/docs/ @DocumentationTeam
+/*.md @DocumentationTeam
+
+# Configuration files
+/package.json @DevOpsTeam @BackendTeam
+/package-lock.json @DevOpsTeam
+/tsconfig.json @BackendTeam @FrontendTeam
+/.eslintrc* @BackendTeam @FrontendTeam
+/.prettierrc* @BackendTeam @FrontendTeam
+/jest.config.js @QATeam
+/.env.example @DevOpsTeam @SecurityTeam 

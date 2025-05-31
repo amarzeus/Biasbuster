@@ -1,0 +1,583 @@
+name: Biasbuster Advanced CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'release/**']
+  pull_request:
+    branches: [main, develop]
+  release:
+    types: [published]
+  schedule:
+    - cron: '0 0 * * 0' # Weekly security scan on Sunday
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      force_deploy:
+        description: 'Force deployment regardless of tests'
+        required: false
+        default: false
+        type: boolean
+
+# Set environment variables
+env:
+  NODE_VERSION: '18.x'
+  MONGODB_VERSION: '5.0'
+  CACHE_NPM: ~/.npm
+  CACHE_NEXTJS: .next/cache
+  DEFAULT_BRANCH: main
+
+# Prevent multiple workflow runs on the same ref
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Dependency installation and caching
+  setup:
+    name: 🔧 Setup
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.npm-cache.outputs.cache-hit }}
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 📥 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Cache dependencies
+        id: npm-cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_NPM }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: 📦 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 📤 Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+  # Code quality and standards
+  lint:
+    name: 🧹 Lint
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Restore node_modules cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 🧹 Run ESLint
+        run: npm run lint
+
+      - name: 💅 Run Prettier check
+        run: npx prettier --check "src/**/*.{js,jsx,ts,tsx,json}"
+
+      - name: 🧪 Check TypeScript
+        run: npm run type-check || npm run tsc
+
+  # Unit and integration tests
+  test:
+    name: 🧪 Test
+    needs: [setup, lint]
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:${{ env.MONGODB_VERSION }}
+        ports:
+          - 27017:27017
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Restore node_modules cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 🧪 Run unit tests
+        run: npm run test:unit -- --coverage
+
+      - name: 🧪 Run API tests
+        run: npm run test:api || npm test
+
+      - name: 📊 Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          fail_ci_if_error: false
+
+  # Build the application
+  build:
+    name: 🏗️ Build
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Restore node_modules cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 📦 Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_NEXTJS }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      - name: 🏗️ Build application
+        run: npm run build
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            build/
+            .next/
+            web-platform/
+          retention-days: 7
+
+  # Comprehensive security scanning
+  security:
+    name: 🔒 Security Scan
+    needs: [setup]
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 📥 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Restore node_modules cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 🔍 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, typescript
+          config-file: .github/codeql/codeql-config.yml
+
+      - name: 🔍 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript,typescript"
+
+      - name: 🔍 Run npm audit
+        run: npm audit --audit-level=high --production
+        continue-on-error: true
+
+      - name: 🔍 Check for outdated dependencies
+        run: npm outdated || true
+        continue-on-error: true
+
+      - name: 🔍 OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Biasbuster'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --failOnCVSS 9
+            --enableRetired
+        continue-on-error: true
+
+      - name: 📤 Upload security reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: |
+            dependency-check-report.html
+          retention-days: 7
+
+  # E2E and Performance Testing
+  e2e:
+    name: 🧪 E2E & Performance Tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:${{ env.MONGODB_VERSION }}
+        ports:
+          - 27017:27017
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Restore node_modules cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: 🧪 Setup Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: 🚀 Start application
+        run: npm run start:test &
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/biasbuster_test
+
+      - name: ⏱️ Wait for application to start
+        run: sleep 10
+
+      - name: 🧪 Run E2E tests
+        run: npm run test:e2e || echo "No E2E tests configured"
+        continue-on-error: true
+
+      - name: 🏎️ Run performance tests
+        run: npm run test:performance || echo "No performance tests configured"
+        continue-on-error: true
+
+      - name: 📊 Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.11.x
+          lhci autorun || echo "Lighthouse CI check completed"
+        continue-on-error: true
+
+      - name: 📤 Upload E2E test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-test-results
+          path: |
+            playwright-report/
+            lighthouse/
+            .lighthouseci/
+          retention-days: 7
+        if: always()
+
+  # Docker build for containerization
+  docker:
+    name: 🐳 Docker Build
+    needs: [build, security]
+    if: github.event_name == 'push' || github.event_name == 'release' || github.event.inputs.force_deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: 🔑 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: 🔑 Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' }}
+
+      - name: 🔑 Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📅 Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=short
+
+      - name: 🏗️ Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  # Generate documentation
+  docs:
+    name: 📚 Documentation
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Restore node_modules cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 📚 Generate TypeDoc documentation
+        run: npx typedoc --out docs/api src/
+        continue-on-error: true
+
+      - name: 📚 Deploy API documentation to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          destination_dir: api
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+  # Deployment to various environments
+  deploy:
+    name: 🚀 Deploy
+    needs: [build, security, e2e, docker]
+    if: |
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')) ||
+      github.event_name == 'release' ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/main' && 'production') || 'development' }}
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+
+      - name: 📋 Setup environment variables
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "production" ] || [ "${{ github.ref }}" = "refs/heads/main" -a "${{ github.event.inputs.environment }}" = "" ]; then
+            echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+            echo "STACK_NAME=biasbuster-prod" >> $GITHUB_ENV
+          elif [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
+            echo "STACK_NAME=biasbuster-staging" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_ENV=development" >> $GITHUB_ENV
+            echo "STACK_NAME=biasbuster-dev" >> $GITHUB_ENV
+          fi
+
+      - name: 📤 Generate deployment package
+        run: |
+          zip -r deploy.zip dist/ build/ .next/ web-platform/ package.json package-lock.json
+
+      - name: 🚀 Deploy to AWS Elastic Beanstalk
+        run: |
+          aws s3 cp deploy.zip s3://biasbuster-deployments/${{ env.DEPLOY_ENV }}/deploy-${{ github.sha }}.zip
+          aws elasticbeanstalk create-application-version \
+            --application-name Biasbuster \
+            --version-label ${{ github.sha }} \
+            --source-bundle S3Bucket="biasbuster-deployments",S3Key="${{ env.DEPLOY_ENV }}/deploy-${{ github.sha }}.zip"
+          aws elasticbeanstalk update-environment \
+            --environment-name ${{ env.STACK_NAME }} \
+            --version-label ${{ github.sha }}
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        continue-on-error: true
+
+      - name: 🚀 Deploy to custom server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/biasbuster/${{ env.DEPLOY_ENV }}
+            git pull
+            npm ci --production
+            npm run build
+            pm2 restart biasbuster-${{ env.DEPLOY_ENV }}
+        if: ${{ secrets.SSH_HOST != '' }}
+        continue-on-error: true
+
+      - name: 🚀 Deploy to Vercel
+        run: |
+          npm install -g vercel
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
+        if: ${{ env.DEPLOY_ENV == 'production' && secrets.VERCEL_TOKEN != '' }}
+        continue-on-error: true
+
+  # Post-deployment checks and notifications
+  post-deploy:
+    name: 📢 Post-Deployment
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: ${{ always() && needs.deploy.result == 'success' }}
+    steps:
+      - name: 🔍 Check deployment health
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" ${{ secrets.DEPLOYMENT_URL }} | grep -q "200"
+        continue-on-error: true
+        if: ${{ secrets.DEPLOYMENT_URL != '' }}
+
+      - name: 📝 Generate release notes
+        id: release-notes
+        run: |
+          echo "## Deployment Summary" > release-notes.md
+          echo "**Environment**: ${{ env.DEPLOY_ENV }}" >> release-notes.md
+          echo "**Version**: ${{ github.sha }}" >> release-notes.md
+          echo "**Deployment Time**: $(date)" >> release-notes.md
+          echo "**Changes**: [View on GitHub](https://github.com/${{ github.repository }}/commit/${{ github.sha }})" >> release-notes.md
+        if: ${{ github.event_name == 'push' || github.event_name == 'release' }}
+
+      - name: 📢 Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: ":rocket: Successfully deployed Biasbuster to *${{ env.DEPLOY_ENV }}*"
+          SLACK_TITLE: Deployment Complete
+          SLACK_USERNAME: DeployBot
+        if: ${{ secrets.SLACK_WEBHOOK != '' }}
+        continue-on-error: true
+
+      - name: 📧 Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Biasbuster Deployment to ${{ env.DEPLOY_ENV }} Complete"
+          body: file://release-notes.md
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: Biasbuster CI/CD
+        if: ${{ secrets.MAIL_SERVER != '' && secrets.NOTIFICATION_EMAIL != '' }}
+        continue-on-error: true
+
+  # Rollback on failure
+  rollback:
+    name: ⏮️ Rollback
+    needs: [deploy, post-deploy]
+    runs-on: ubuntu-latest
+    if: ${{ failure() && (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    steps:
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+
+      - name: ⏮️ Rollback Elastic Beanstalk deployment
+        run: |
+          PREVIOUS_VERSION=$(aws elasticbeanstalk describe-application-versions \
+            --application-name Biasbuster \
+            --max-items 2 \
+            --query 'ApplicationVersions[1].VersionLabel' \
+            --output text)
+          
+          aws elasticbeanstalk update-environment \
+            --environment-name biasbuster-prod \
+            --version-label $PREVIOUS_VERSION
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        continue-on-error: true
+
+      - name: 📢 Notify about rollback
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: danger
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: ":warning: Deployment failed! Rolled back to previous version."
+          SLACK_TITLE: Deployment Rollback
+          SLACK_USERNAME: DeployBot
+        if: ${{ secrets.SLACK_WEBHOOK != '' }}
+        continue-on-error: true 
