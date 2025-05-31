@@ -1,416 +1,133 @@
-import { BiasBusterResponse } from '../services/aiService';
-import { analyzeBias } from '../tools/analyzeBias';
+import { BiasBusterResponse, AnalysisOptions, BiasInstance } from '../types/biasbuster';
 
-/**
- * MCP Tool Context type
- */
-interface ToolContext {
-  userId?: string;
-  requestId?: string;
-  metadata?: Record<string, any>;
-}
+// Bias types and their descriptions
+const BIAS_TYPES = {
+    POLITICAL: 'Political bias in presenting partisan viewpoints',
+    GENDER: 'Gender-based stereotypes or discrimination',
+    RACIAL: 'Racial prejudice or stereotyping',
+    CULTURAL: 'Cultural insensitivity or ethnocentrism',
+    SOCIOECONOMIC: 'Class-based prejudice or economic bias',
+    RELIGIOUS: 'Religious prejudice or sectarian bias',
+    AGEISM: 'Age-based discrimination or stereotyping',
+    CONFIRMATION: 'Selective use of information to confirm existing beliefs'
+};
 
-/**
- * Base Tool Request type
- */
-interface BaseToolRequest {
-  [key: string]: any;
-}
+// AI prompt templates
+const PROMPT_TEMPLATES = {
+    BIAS_DETECTION: `
+        Analyze the following text for potential bias:
+        TEXT: {{text}}
+        
+        Consider these aspects:
+        1. Type of bias (political, gender, racial, etc.)
+        2. Severity of bias (1-5 scale)
+        3. Impact on readers
+        4. Supporting evidence
+        5. Suggested improvements
+    `,
+    MITIGATION: `
+        Provide an unbiased alternative to the following text:
+        BIASED TEXT: {{text}}
+        BIAS TYPE: {{biasType}}
+        
+        Requirements:
+        1. Maintain core message
+        2. Remove identified bias
+        3. Use neutral language
+        4. Preserve factual content
+    `
+};
 
-/**
- * Base Tool Response type
- */
-interface BaseToolResponse {
-  success: boolean;
-  message: string;
-  metadata?: Record<string, any>;
-  [key: string]: any;
-}
+// Helper function to detect sentence-level bias
+function detectSentenceBias(sentence: string, options?: AnalysisOptions): BiasInstance | null {
+    // TODO: Integrate with actual AI model
+    // For now, using mock implementation
+    const biasTypes = Object.keys(BIAS_TYPES);
+    const randomBias = Math.random() > 0.7;
 
-/**
- * Bias Analysis Tool Request
- */
-interface BiasAnalysisRequest extends BaseToolRequest {
-  articleText: string;
-  options?: {
-    includeSentiment?: boolean;
-    includeCredibility?: boolean;
-    preferredModel?: string;
-    language?: string;
-    maxTokens?: number;
-  };
-}
-
-/**
- * Bias Analysis Tool Response
- */
-interface BiasAnalysisResponse extends BaseToolResponse {
-  analysis: BiasBusterResponse;
-}
-
-/**
- * Perspective Analysis Tool Request
- */
-interface PerspectiveAnalysisRequest extends BaseToolRequest {
-  articleText: string;
-  topic?: string;
-  viewpoints?: string[];
-}
-
-/**
- * Perspective Analysis Tool Response
- */
-interface PerspectiveAnalysisResponse extends BaseToolResponse {
-  perspectives: Array<{
-    viewpoint: string;
-    summary: string;
-    keyPoints: string[];
-    potentialBiases: string[];
-  }>;
-}
-
-/**
- * Code Analysis Tool Request
- */
-interface CodeAnalysisRequest extends BaseToolRequest {
-  codeText: string;
-  language: string;
-  checkForBias?: boolean;
-}
-
-/**
- * Code Analysis Tool Response
- */
-interface CodeAnalysisResponse extends BaseToolResponse {
-  analysis: {
-    biasDetected: boolean;
-    biasInstances: Array<{
-      line: number;
-      code: string;
-      biasType: string;
-      explanation: string;
-      recommendation: string;
-    }>;
-    summary: string;
-    bestPractices: string[];
-  };
-}
-
-/**
- * Document Annotation Tool Request
- */
-interface DocumentAnnotationRequest extends BaseToolRequest {
-  documentText: string;
-  annotationType: 'bias' | 'sentiment' | 'claims' | 'sources';
-}
-
-/**
- * Document Annotation Tool Response
- */
-interface DocumentAnnotationResponse extends BaseToolResponse {
-  annotations: Array<{
-    startIndex: number;
-    endIndex: number;
-    type: string;
-    text: string;
-    notes: string;
-  }>;
-}
-
-/**
- * Analyze article text for bias
- */
-export async function biasAnalysisTool(
-  context: ToolContext,
-  request: BiasAnalysisRequest
-): Promise<BiasAnalysisResponse> {
-  try {
-    const { articleText, options } = request;
-    
-    if (!articleText) {
-      return {
-        success: false,
-        message: "Missing required field: articleText",
-        analysis: {} as BiasBusterResponse
-      };
+    if (randomBias) {
+        const biasType = biasTypes[Math.floor(Math.random() * biasTypes.length)];
+        return {
+            Sentence: sentence,
+            BiasType: biasType,
+            Explanation: `Detected ${biasType.toLowerCase()} bias in the text.`,
+            Severity: Math.ceil(Math.random() * 5).toString(),
+            Justification: `The text shows characteristics of ${biasType.toLowerCase()} bias.`,
+            Mitigation: `Consider rephrasing to remove ${biasType.toLowerCase()} bias.`
+        };
     }
-    
-    // Call the analyzeBias function
-    const result = await analyzeBias(articleText, options);
-    
-    return {
-      success: true,
-      message: "Bias analysis complete",
-      analysis: result,
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString()
-      }
-    };
-  } catch (error: any) {
-    console.error('Error in bias analysis tool:', error);
-    return {
-      success: false,
-      message: `Analysis failed: ${error.message}`,
-      analysis: {} as BiasBusterResponse,
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        error: error.message
-      }
-    };
-  }
+
+    return null;
 }
 
-/**
- * Analyze code for potential bias in variable names, comments, or algorithms
- */
-export async function codeAnalysisTool(
-  context: ToolContext,
-  request: CodeAnalysisRequest
-): Promise<CodeAnalysisResponse> {
-  try {
-    const { codeText, language, checkForBias = true } = request;
+// Main analysis function
+export async function analyzeBias(text: string, options?: AnalysisOptions): Promise<BiasBusterResponse> {
+    // Split text into sentences (basic implementation)
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
     
-    if (!codeText) {
-      return {
-        success: false,
-        message: "Missing required field: codeText",
-        analysis: {
-          biasDetected: false,
-          biasInstances: [],
-          summary: "",
-          bestPractices: []
+    // Analyze each sentence
+    const biasInstances: BiasInstance[] = [];
+    
+    for (const sentence of sentences) {
+        const bias = detectSentenceBias(sentence.trim(), options);
+        if (bias) {
+            biasInstances.push(bias);
         }
-      };
     }
-    
-    // This is a placeholder - in a real implementation, we would analyze the code
-    // using specialized algorithms or AI models trained for code analysis
-    const mockAnalysis = {
-      biasDetected: false,
-      biasInstances: [],
-      summary: "Code analysis complete. No bias detected in the provided code.",
-      bestPractices: [
-        "Use inclusive variable naming",
-        "Consider accessibility in UI components",
-        "Document assumptions in algorithms"
-      ]
-    };
-    
-    // For demo purposes, if checkForBias is true and the code contains certain keywords,
-    // we'll simulate finding bias
-    if (checkForBias) {
-      const biasKeywords = [
-        'blacklist', 'whitelist', 'master', 'slave', 'guys', 'manpower',
-        'mankind', 'manmade', 'chairman', 'policeman', 'fireman'
-      ];
-      
-      const lines = codeText.split('\n');
-      let lineNumber = 0;
-      
-      for (const line of lines) {
-        lineNumber++;
-        for (const keyword of biasKeywords) {
-          if (line.toLowerCase().includes(keyword)) {
-            mockAnalysis.biasDetected = true;
-            mockAnalysis.biasInstances.push({
-              line: lineNumber,
-              code: line.trim(),
-              biasType: "Terminology bias",
-              explanation: `The term '${keyword}' may be considered non-inclusive language.`,
-              recommendation: `Consider using more inclusive alternatives.`
-            });
-          }
-        }
-      }
-      
-      if (mockAnalysis.biasDetected) {
-        mockAnalysis.summary = "Potential bias detected in code terminology. See recommendations for more inclusive alternatives.";
-      }
-    }
-    
+
+    // Generate educational content based on found biases
+    const uniqueBiasTypes = [...new Set(biasInstances.map(b => b.BiasType))];
+    const educationalContent = uniqueBiasTypes
+        .map(type => BIAS_TYPES[type as keyof typeof BIAS_TYPES])
+        .join('\n\n');
+
+    // Calculate overall bias severity
+    const averageSeverity = biasInstances.length > 0
+        ? biasInstances.reduce((acc, curr) => acc + parseInt(curr.Severity), 0) / biasInstances.length
+        : 0;
+
     return {
-      success: true,
-      message: "Code analysis complete",
-      analysis: mockAnalysis,
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        language
-      }
+        MainTopic: detectMainTopic(text),
+        BiasDetected: biasInstances.length > 0 ? "yes" : "no",
+        BiasInstances: biasInstances,
+        BiasSummary: generateBiasSummary(biasInstances, averageSeverity),
+        TrustedSources: generateTrustedSources(uniqueBiasTypes),
+        EducationalContent: educationalContent
     };
-  } catch (error: any) {
-    console.error('Error in code analysis tool:', error);
-    return {
-      success: false,
-      message: `Code analysis failed: ${error.message}`,
-      analysis: {
-        biasDetected: false,
-        biasInstances: [],
-        summary: "",
-        bestPractices: []
-      },
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        error: error.message
-      }
-    };
-  }
 }
 
-/**
- * Analyze text from multiple perspectives or viewpoints
- */
-export async function perspectiveAnalysisTool(
-  context: ToolContext,
-  request: PerspectiveAnalysisRequest
-): Promise<PerspectiveAnalysisResponse> {
-  try {
-    const { articleText, topic, viewpoints = ['liberal', 'conservative', 'neutral'] } = request;
-    
-    if (!articleText) {
-      return {
-        success: false,
-        message: "Missing required field: articleText",
-        perspectives: []
-      };
-    }
-    
-    // This is a placeholder - in a real implementation, we would analyze the text
-    // from different perspectives using specialized AI models
-    const mockPerspectives = viewpoints.map(viewpoint => {
-      return {
-        viewpoint,
-        summary: `Analysis from ${viewpoint} perspective: This is a placeholder summary.`,
-        keyPoints: [
-          "Key point 1 from this perspective",
-          "Key point 2 from this perspective",
-          "Key point 3 from this perspective"
-        ],
-        potentialBiases: [
-          "Potential bias 1 from this perspective",
-          "Potential bias 2 from this perspective"
-        ]
-      };
-    });
-    
-    return {
-      success: true,
-      message: "Perspective analysis complete",
-      perspectives: mockPerspectives,
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        topic: topic || "Not specified"
-      }
-    };
-  } catch (error: any) {
-    console.error('Error in perspective analysis tool:', error);
-    return {
-      success: false,
-      message: `Perspective analysis failed: ${error.message}`,
-      perspectives: [],
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        error: error.message
-      }
-    };
-  }
+// Helper function to detect main topic
+function detectMainTopic(text: string): string {
+    // TODO: Implement topic detection with AI
+    return "General Analysis";
 }
 
-/**
- * Annotate a document with bias, sentiment, or source information
- */
-export async function documentAnnotationTool(
-  context: ToolContext,
-  request: DocumentAnnotationRequest
-): Promise<DocumentAnnotationResponse> {
-  try {
-    const { documentText, annotationType } = request;
-    
-    if (!documentText) {
-      return {
-        success: false,
-        message: "Missing required field: documentText",
-        annotations: []
-      };
+// Helper function to generate bias summary
+function generateBiasSummary(instances: BiasInstance[], averageSeverity: number): string {
+    if (instances.length === 0) {
+        return "No significant bias detected in the text.";
     }
-    
-    // This is a placeholder - in a real implementation, we would analyze the document
-    // and create appropriate annotations based on the requested type
-    const mockAnnotations = [];
-    
-    // Create some example annotations based on the type
-    if (annotationType === 'bias') {
-      // Find some sentences and create bias annotations
-      const sentences = documentText.match(/[^.!?]+[.!?]+/g) || [];
-      for (let i = 0; i < Math.min(3, sentences.length); i++) {
-        const sentence = sentences[i];
-        const startIndex = documentText.indexOf(sentence);
-        mockAnnotations.push({
-          startIndex,
-          endIndex: startIndex + sentence.length,
-          type: 'bias',
-          text: sentence.trim(),
-          notes: `Example bias annotation ${i+1}`
-        });
-      }
-    } else if (annotationType === 'sentiment') {
-      // Create sentiment annotations
-      const paragraphs = documentText.split('\n\n');
-      for (let i = 0; i < Math.min(2, paragraphs.length); i++) {
-        const paragraph = paragraphs[i];
-        const startIndex = documentText.indexOf(paragraph);
-        mockAnnotations.push({
-          startIndex,
-          endIndex: startIndex + paragraph.length,
-          type: 'sentiment',
-          text: paragraph.trim(),
-          notes: `Example sentiment annotation: ${Math.random() > 0.5 ? 'Positive' : 'Negative'}`
-        });
-      }
-    } else if (annotationType === 'claims' || annotationType === 'sources') {
-      // Find quoted text or numbers as potential claims or sources
-      const regex = annotationType === 'claims' 
-        ? /([^.!?]+with[^.!?]*claim[^.!?]*[.!?]+)/gi 
-        : /([^.!?]+according to[^.!?]*[.!?]+)/gi;
-      
-      let match;
-      while ((match = regex.exec(documentText)) !== null) {
-        mockAnnotations.push({
-          startIndex: match.index,
-          endIndex: match.index + match[0].length,
-          type: annotationType,
-          text: match[0].trim(),
-          notes: `Example ${annotationType} annotation`
-        });
-      }
-    }
-    
-    return {
-      success: true,
-      message: `Document annotation (${annotationType}) complete`,
-      annotations: mockAnnotations,
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        annotationType
-      }
-    };
-  } catch (error: any) {
-    console.error('Error in document annotation tool:', error);
-    return {
-      success: false,
-      message: `Document annotation failed: ${error.message}`,
-      annotations: [],
-      metadata: {
-        requestId: context.requestId,
-        timestamp: new Date().toISOString(),
-        error: error.message
-      }
-    };
-  }
-} 
+
+    const biasTypes = [...new Set(instances.map(i => i.BiasType))];
+    return `Detected ${instances.length} instance(s) of bias, primarily ${biasTypes.join(', ')}. ` +
+           `Average severity: ${averageSeverity.toFixed(1)}/5.`;
+}
+
+// Helper function to generate trusted sources
+function generateTrustedSources(biasTypes: string[]): string[] {
+    // TODO: Implement dynamic trusted sources based on bias types
+    return [
+        "https://www.mediabiasfactcheck.com/",
+        "https://www.allsides.com/unbiased-balanced-news",
+        "https://www.poynter.org/media-news/fact-checking/"
+    ];
+}
+
+export async function analyzeBiasWithFeedback(
+    text: string,
+    options?: AnalysisOptions,
+    previousFeedback?: any
+): Promise<BiasBusterResponse> {
+    // TODO: Implement feedback-aware analysis
+    return analyzeBias(text, options);
+}

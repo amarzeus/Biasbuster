@@ -1,131 +1,67 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import User, { IUser } from '../models/User';
+import jwt from 'jsonwebtoken';
+import { IUser } from '../models/User';
+import User from '../models/User';
 
-// Extend Express Request interface to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: IUser;
-    }
-  }
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+export interface IUserRequest extends Request {
+    user?: IUser & { _id: string };
 }
 
-// JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET || 'biasbuster-super-secret-key';
+interface JwtPayload {
+    id: string;
+}
 
-// Protect routes - require authentication
-export const protect = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    let token: string | undefined;
-    
-    // Get token from Authorization header or cookies
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      // Get token from header
-      token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.jwt) {
-      // Get token from cookie
-      token = req.cookies.jwt;
+export const protect = async (req: IUserRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Get token from header
+        const authHeader = req.headers.authorization;
+        if (!authHeader?.startsWith('Bearer ')) {
+            res.status(401).json({ message: 'Not authorized, no token' });
+            return;
+        }
+
+        const token = authHeader.split(' ')[1];
+
+        // Verify token
+        const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+
+        // Get user from token
+        const user = await User.findById(decoded.id).select('-password');
+        if (!user) {
+            res.status(401).json({ message: 'Not authorized, user not found' });
+            return;
+        }
+
+        // Attach user to request object
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({ message: 'Not authorized, invalid token' });
     }
-    
-    // Check if token exists
-    if (!token) {
-      res.status(401).json({
-        status: 'error',
-        message: 'You are not logged in. Please log in to get access.'
-      });
-      return;
-    }
-    
-    // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    
-    // Check if user still exists
-    const currentUser = await User.findById(decoded.id);
-    if (!currentUser) {
-      res.status(401).json({
-        status: 'error',
-        message: 'The user belonging to this token no longer exists.'
-      });
-      return;
-    }
-    
-    // Grant access to protected route
-    req.user = currentUser;
-    next();
-    
-  } catch (error) {
-    res.status(401).json({
-      status: 'error',
-      message: 'Invalid token. Please log in again.'
-    });
-  }
 };
 
-// Restrict access to certain roles
-export const restrictTo = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    // Check if user has required role
-    if (!req.user || !roles.includes(req.user.role)) {
-      res.status(403).json({
-        status: 'error',
-        message: 'You do not have permission to perform this action'
-      });
-      return;
+export const requireAdmin = async (req: IUserRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        if (!req.user?.isAdmin) {
+            res.status(403).json({ message: 'Not authorized, admin access required' });
+            return;
+        }
+        next();
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
     }
-    
-    next();
-  };
 };
 
-// Optional authentication - user is attached to req if authenticated but route doesn't require auth
-export const optionalAuth = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    let token: string | undefined;
-    
-    // Get token from Authorization header or cookies
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      // Get token from header
-      token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.jwt) {
-      // Get token from cookie
-      token = req.cookies.jwt;
+export const requireAnalyst = async (req: IUserRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        if (!req.user?.isAnalyst && !req.user?.isAdmin) {
+            res.status(403).json({ message: 'Not authorized, analyst access required' });
+            return;
+        }
+        next();
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
     }
-    
-    // If no token, just continue (no authentication required)
-    if (!token) {
-      next();
-      return;
-    }
-    
-    // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    
-    // Check if user still exists
-    const currentUser = await User.findById(decoded.id);
-    if (currentUser) {
-      // Attach user to request
-      req.user = currentUser;
-    }
-    
-    next();
-    
-  } catch (error) {
-    // Even if there's an error, just continue without authentication
-    next();
-  }
-}; 
+};

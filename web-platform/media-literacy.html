@@ -3,201 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media Literacy - Biasbuster</title>
-    <meta name="description" content="Learn essential media literacy skills and critical thinking techniques to identify bias in news and media.">
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <title>Media Literacy - BiasBuster</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar__content">
-                <a href="/" class="navbar__logo">
-                    <img src="assets/logo.svg" alt="Biasbuster Logo" height="40">
-                </a>
-                <div class="navbar__menu">
-                    <a href="index.html" class="navbar__link">Home</a>
-                    <a href="#courses" class="navbar__link">Courses</a>
-                    <a href="#resources" class="navbar__link">Resources</a>
-                    <a href="#tools" class="navbar__link">Tools</a>
-                    <a href="#download" class="btn btn--primary">Get Started</a>
-                </div>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/logo.svg" alt="BiasBuster Logo">
+                <span>BiasBuster</span>
             </div>
-        </div>
-    </nav>
+            <ul>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#demo">Try Demo</a></li>
+                <li><a href="ai-literacy.html">AI Literacy</a></li>
+                <li><a href="media-literacy.html" class="active">Media Literacy</a></li>
+                <li><a href="documentation.html">Docs</a></li>
+                <li><a href="#download" class="cta-button">Download Extension</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <main>
-        <section class="hero hero--media">
-            <div class="container">
-                <div class="hero__content">
-                    <h1 class="hero__title">Master Media Literacy</h1>
-                    <p class="hero__description">
-                        Develop critical thinking skills to navigate today's complex media landscape. Learn to identify bias, verify sources, and make informed decisions.
-                    </p>
-                    <div class="hero__cta">
-                        <a href="#courses" class="btn btn--primary">Start Learning</a>
-                        <a href="#resources" class="btn btn--secondary">View Resources</a>
+        <section class="hero-section">
+            <h1>Understanding Media Bias</h1>
+            <p>Learn to identify, analyze, and overcome media bias in the digital age</p>
+        </section>
+
+        <section class="content-section">
+            <div class="content-grid">
+                <article class="content-card">
+                    <h2>Types of Media Bias</h2>
+                    <div class="bias-types">
+                        <div class="bias-type">
+                            <h3>Selection Bias</h3>
+                            <p>Stories chosen or ignored to promote a certain narrative</p>
+                        </div>
+                        <div class="bias-type">
+                            <h3>Placement Bias</h3>
+                            <p>Story positioning to influence perceived importance</p>
+                        </div>
+                        <div class="bias-type">
+                            <h3>Language Bias</h3>
+                            <p>Word choice that affects story interpretation</p>
+                        </div>
+                        <div class="bias-type">
+                            <h3>Source Bias</h3>
+                            <p>Selective quoting to support specific viewpoints</p>
+                        </div>
                     </div>
-                </div>
+                </article>
+
+                <article class="content-card">
+                    <h2>Identifying Bias</h2>
+                    <div class="checklist">
+                        <h3>Key Questions to Ask:</h3>
+                        <ul>
+                            <li>Who created this content?</li>
+                            <li>What is their motivation?</li>
+                            <li>What facts or perspectives are missing?</li>
+                            <li>How does the language influence interpretation?</li>
+                            <li>Are sources credible and diverse?</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="content-card">
+                    <h2>Common Bias Indicators</h2>
+                    <div class="indicators">
+                        <ul>
+                            <li>Emotional language</li>
+                            <li>Loaded words</li>
+                            <li>Oversimplification</li>
+                            <li>False equivalence</li>
+                            <li>Cherry-picked data</li>
+                            <li>Lack of context</li>
+                            <li>One-sided reporting</li>
+                            <li>Ad hominem attacks</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="content-card">
+                    <h2>Fact-Checking Tools</h2>
+                    <div class="tools-list">
+                        <ul>
+                            <li>Primary source verification</li>
+                            <li>Cross-reference multiple sources</li>
+                            <li>Fact-checking websites</li>
+                            <li>Academic databases</li>
+                            <li>BiasBuster AI analysis</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="content-card full-width">
+                    <h2>Interactive Learning</h2>
+                    <div class="interactive-demo">
+                        <h3>Practice Bias Detection</h3>
+                        <div class="example-text">
+                            <p>Click on any text below to analyze it for potential bias:</p>
+                            <div class="bias-examples">
+                                <div class="example" onclick="analyzeExample(this)">
+                                    "The controversial politician's radical agenda has sparked outrage among concerned citizens."
+                                </div>
+                                <div class="example" onclick="analyzeExample(this)">
+                                    "Studies suggest the innovative policy could benefit economic growth."
+                                </div>
+                                <div class="example" onclick="analyzeExample(this)">
+                                    "Experts warn that the proposed changes might have unintended consequences."
+                                </div>
+                            </div>
+                            <div id="example-analysis" class="analysis-result"></div>
+                        </div>
+                    </div>
+                </article>
             </div>
         </section>
 
-        <section id="courses" class="courses-section">
-            <div class="container">
-                <h2 class="section__title text-gradient">Interactive Courses</h2>
-                <div class="courses-grid">
-                    <div class="course-card">
-                        <div class="course-card__image">
-                            <img src="assets/course-basics.svg" alt="Media Literacy Basics">
-                        </div>
-                        <div class="course-card__content">
-                            <h3>Media Literacy Fundamentals</h3>
-                            <p>Learn the basics of critical media consumption and analysis.</p>
-                            <ul class="course-features">
-                                <li>Understanding Media Types</li>
-                                <li>Source Verification</li>
-                                <li>Basic Fact-Checking</li>
-                            </ul>
-                            <a href="#" class="btn btn--secondary">Start Course</a>
-                        </div>
-                    </div>
-
-                    <div class="course-card">
-                        <div class="course-card__image">
-                            <img src="assets/course-advanced.svg" alt="Advanced Analysis">
-                        </div>
-                        <div class="course-card__content">
-                            <h3>Advanced Media Analysis</h3>
-                            <p>Deep dive into complex media analysis techniques.</p>
-                            <ul class="course-features">
-                                <li>Bias Detection Methods</li>
-                                <li>Context Analysis</li>
-                                <li>Cross-Reference Techniques</li>
-                            </ul>
-                            <a href="#" class="btn btn--secondary">Start Course</a>
-                        </div>
-                    </div>
-
-                    <div class="course-card">
-                        <div class="course-card__image">
-                            <img src="assets/course-digital.svg" alt="Digital Media">
-                        </div>
-                        <div class="course-card__content">
-                            <h3>Digital Media Literacy</h3>
-                            <p>Navigate the challenges of online information.</p>
-                            <ul class="course-features">
-                                <li>Social Media Analysis</li>
-                                <li>Digital Verification</li>
-                                <li>Online Source Evaluation</li>
-                            </ul>
-                            <a href="#" class="btn btn--secondary">Start Course</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="tools" class="tools-section">
-            <div class="container">
-                <h2 class="section__title">Essential Tools</h2>
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <h3>Bias Checker</h3>
-                        <p>Analyze articles for potential bias in real-time.</p>
-                        <a href="#" class="btn btn--primary">Try Now</a>
-                    </div>
-                    <div class="tool-card">
-                        <h3>Source Verifier</h3>
-                        <p>Verify the credibility of news sources.</p>
-                        <a href="#" class="btn btn--primary">Try Now</a>
-                    </div>
-                    <div class="tool-card">
-                        <h3>Fact Checker</h3>
-                        <p>Cross-reference claims with trusted sources.</p>
-                        <a href="#" class="btn btn--primary">Try Now</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="resources" class="resources-section">
-            <div class="container">
-                <h2 class="section__title">Learning Resources</h2>
-                <div class="resources-grid">
-                    <a href="#" class="resource-card">
-                        <div class="resource-card__icon">
-                            <img src="assets/icon-guide.svg" alt="Guides">
-                        </div>
-                        <h3>Practice Guides</h3>
-                        <p>Step-by-step tutorials for media analysis</p>
-                    </a>
-                    <a href="#" class="resource-card">
-                        <div class="resource-card__icon">
-                            <img src="assets/icon-video.svg" alt="Videos">
-                        </div>
-                        <h3>Video Tutorials</h3>
-                        <p>Visual lessons on media literacy concepts</p>
-                    </a>
-                    <a href="#" class="resource-card">
-                        <div class="resource-card__icon">
-                            <img src="assets/icon-quiz.svg" alt="Quizzes">
-                        </div>
-                        <h3>Interactive Quizzes</h3>
-                        <p>Test your media literacy knowledge</p>
-                    </a>
-                    <a href="#" class="resource-card">
-                        <div class="resource-card__icon">
-                            <img src="assets/icon-community.svg" alt="Community">
-                        </div>
-                        <h3>Community Forum</h3>
-                        <p>Discuss and share insights with others</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="cta-section">
-            <div class="container">
-                <div class="cta-content">
-                    <h2 class="cta-title">Ready to Become a Critical Media Consumer?</h2>
-                    <p class="cta-description">
-                        Join thousands of users who are mastering media literacy with Biasbuster.
-                    </p>
-                    <div class="cta-buttons">
-                        <a href="#courses" class="btn btn--primary">Start Learning</a>
-                        <a href="contact.html" class="btn btn--secondary">Get Support</a>
-                    </div>
-                </div>
+        <section class="resources-section">
+            <h2>Additional Resources</h2>
+            <div class="resources-grid">
+                <a href="#" class="resource-card">
+                    <h3>Media Bias Chart</h3>
+                    <p>Download our comprehensive media bias classification chart</p>
+                </a>
+                <a href="#" class="resource-card">
+                    <h3>Bias Detection Guide</h3>
+                    <p>Step-by-step guide for identifying different types of bias</p>
+                </a>
+                <a href="#" class="resource-card">
+                    <h3>Case Studies</h3>
+                    <p>Real-world examples of media bias analysis</p>
+                </a>
+                <a href="#" class="resource-card">
+                    <h3>Educational Videos</h3>
+                    <p>Video tutorials on media literacy and bias detection</p>
+                </a>
             </div>
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__grid">
-                <div class="footer__brand">
-                    <img src="assets/logo.svg" alt="Biasbuster Logo" height="30">
-                    <p>Making media literacy accessible to everyone.</p>
-                </div>
-                <div class="footer__links">
-                    <div class="footer__column">
-                        <h4>Learn</h4>
-                        <a href="#courses">Courses</a>
-                        <a href="#resources">Resources</a>
-                        <a href="#tools">Tools</a>
-                    </div>
-                    <div class="footer__column">
-                        <h4>Support</h4>
-                        <a href="contact.html">Contact Us</a>
-                        <a href="#faq">FAQ</a>
-                        <a href="#community">Community</a>
-                    </div>
-                </div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>BiasBuster</h4>
+                <p>Making media literacy accessible to everyone through AI-powered bias detection.</p>
             </div>
-            <div class="footer__bottom">
-                <p>&copy; 2024 Biasbuster. All rights reserved.</p>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#demo">Demo</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
             </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="ai-literacy.html">AI Literacy</a></li>
+                    <li><a href="media-literacy.html">Media Literacy</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BiasBuster. All rights reserved.</p>
         </div>
     </footer>
 

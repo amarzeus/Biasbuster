@@ -1,68 +1,52 @@
-/**
- * Basic tests for Biasbuster web platform
- */
+import puppeteer from 'puppeteer';
 
-// Mock DOM elements for testing
-document.body.innerHTML = `
-  <div id="article-text"></div>
-  <div id="status"></div>
-  <div id="results-container" class="hidden"></div>
-  <div id="bias-summary"></div>
-  <div id="main-topic"><span></span></div>
-`;
+describe('Web Platform End-to-End Tests', () => {
+  let browser;
+  let page;
 
-// Mock functions
-const mockGenerateResponse = (text) => {
-  return {
-    MainTopic: 'Test Topic',
-    BiasAnalysis: {
-      OverallBias: 'No significant bias detected',
-      BiasScore: 0.1,
-      Details: []
-    },
-    SentimentAnalysis: {
-      Overall: 'neutral',
-      Score: 0.2,
-      EmotionalTone: ['informative']
-    },
-    Suggestions: ['Test suggestion']
-  };
-};
-
-// Tests
-describe('Biasbuster Web Platform', () => {
-  test('should detect topic correctly', () => {
-    // This is a simplified test that would check the topic detection functionality
-    const text = 'This is a political article about government policies.';
-    const topic = detectTopic ? detectTopic(text) : 'Politics & Government';
-    
-    expect(topic).toBe('Politics & Government');
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    page = await browser.newPage();
   });
-  
-  test('should generate mock response', () => {
-    // Test the mock response generation
-    const text = 'Test article content';
-    const response = mockGenerateResponse(text);
-    
-    expect(response).toHaveProperty('MainTopic');
-    expect(response).toHaveProperty('BiasAnalysis');
-    expect(response).toHaveProperty('SentimentAnalysis');
+
+  afterAll(async () => {
+    await browser.close();
   });
-  
-  test('should handle empty text input', () => {
-    // Test handling of empty input
-    const text = '';
-    const response = mockGenerateResponse(text);
-    
-    // Even with empty text, the mock response should have the expected structure
-    expect(response).toHaveProperty('MainTopic');
+
+  it('should load the homepage and display key elements', async () => {
+    await page.goto('http://localhost:3000/web-platform/index.html');
+    await page.waitForSelector('header nav');
+    const title = await page.title();
+    expect(title).toBe('BiasBuster - AI-Powered Media Bias Detection');
+    const heroText = await page.$eval('#hero h1', el => el.textContent);
+    expect(heroText).toContain('Detect Media Bias in Real-Time');
+  });
+
+  it('should navigate to media literacy page and verify content', async () => {
+    await page.goto('http://localhost:3000/web-platform/media-literacy.html');
+    await page.waitForSelector('main');
+    const heading = await page.$eval('main h1', el => el.textContent);
+    expect(heading).toBe('Understanding Media Bias');
+  });
+
+  it('should perform demo text analysis and display results', async () => {
+    await page.goto('http://localhost:3000/web-platform/index.html#demo');
+    await page.waitForSelector('#analysis-input');
+    await page.type('#analysis-input', 'This is a test news article with potential bias.');
+    await page.click('#analyze-button');
+    await page.waitForSelector('.analysis-results-container', { timeout: 5000 });
+    const resultExists = await page.$('.analysis-results-container') !== null;
+    expect(resultExists).toBe(true);
+  });
+
+  it('should verify navigation links work', async () => {
+    await page.goto('http://localhost:3000/web-platform/index.html');
+    await page.click('nav ul li a[href="media-literacy.html"]');
+    await page.waitForNavigation();
+    const url = page.url();
+    expect(url).toContain('media-literacy.html');
   });
 });
-
-// Global function mocks (these would be implemented in the actual application)
-global.detectTopic = (text) => {
-  if (text.includes('political') || text.includes('government')) {
-    return 'Politics & Government';
-  }
-  return 'General News';
-}; 

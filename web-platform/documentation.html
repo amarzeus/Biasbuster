@@ -1,223 +1,211 @@
-yes go on, add and implement all whatever is required.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Documentation - Biasbuster</title>
-    <meta name="description" content="Comprehensive documentation for Biasbuster's bias detection platform and Chrome extension" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="stylesheet" href="style.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - BiasBuster</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar__content">
-                <a href="/" class="navbar__logo">
-                    <img src="assets/logo.svg" alt="Biasbuster Logo" height="40" />
-                </a>
-                <div class="navbar__menu">
-                    <a href="index.html" class="navbar__link">Home</a>
-                    <a href="#getting-started" class="navbar__link">Getting Started</a>
-                    <a href="#api-reference" class="navbar__link">API</a>
-                    <a href="#extension" class="navbar__link">Extension</a>
-                    <a href="contact.html" class="btn btn--primary">Get Support</a>
-                </div>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/logo.svg" alt="BiasBuster Logo">
+                <span>BiasBuster</span>
             </div>
+            <ul>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#demo">Try Demo</a></li>
+                <li><a href="ai-literacy.html">AI Literacy</a></li>
+                <li><a href="media-literacy.html">Media Literacy</a></li>
+                <li><a href="documentation.html" class="active">Docs</a></li>
+                <li><a href="#download" class="cta-button">Download Extension</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="documentation">
+        <aside class="doc-sidebar">
+            <nav>
+                <h3>Getting Started</h3>
+                <ul>
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li><a href="#quick-start">Quick Start Guide</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                </ul>
+
+                <h3>Features</h3>
+                <ul>
+                    <li><a href="#bias-detection">Bias Detection</a></li>
+                    <li><a href="#analysis-types">Analysis Types</a></li>
+                    <li><a href="#browser-extension">Browser Extension</a></li>
+                    <li><a href="#api-reference">API Reference</a></li>
+                </ul>
+
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="#user-guide">User Guide</a></li>
+                    <li><a href="#developer-guide">Developer Guide</a></li>
+                    <li><a href="#best-practices">Best Practices</a></li>
+                </ul>
+
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#troubleshooting">Troubleshooting</a></li>
+                    <li><a href="#support">Support</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="doc-content">
+            <section id="introduction">
+                <h1>BiasBuster Documentation</h1>
+                <p>Welcome to the BiasBuster documentation. This guide will help you understand and utilize our AI-powered bias detection platform effectively.</p>
+            </section>
+
+            <section id="quick-start">
+                <h2>Quick Start Guide</h2>
+                <div class="quick-start-steps">
+                    <div class="step">
+                        <h3>1. Install the Extension</h3>
+                        <p>Download and install the BiasBuster Chrome extension from the Chrome Web Store.</p>
+                    </div>
+                    <div class="step">
+                        <h3>2. Create an Account</h3>
+                        <p>Sign up for a free account to access all features and save your analysis history.</p>
+                    </div>
+                    <div class="step">
+                        <h3>3. Start Analyzing</h3>
+                        <p>Click the BiasBuster icon while reading any news article to analyze it for bias.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="bias-detection">
+                <h2>Bias Detection</h2>
+                <h3>How It Works</h3>
+                <p>BiasBuster uses advanced natural language processing and machine learning to identify various types of bias in text:</p>
+                <ul>
+                    <li>Political bias</li>
+                    <li>Gender bias</li>
+                    <li>Racial bias</li>
+                    <li>Cultural bias</li>
+                    <li>Socioeconomic bias</li>
+                </ul>
+
+                <h3>Analysis Process</h3>
+                <ol>
+                    <li>Text extraction and preprocessing</li>
+                    <li>Sentiment analysis</li>
+                    <li>Bias pattern recognition</li>
+                    <li>Context evaluation</li>
+                    <li>Source credibility assessment</li>
+                </ol>
+            </section>
+
+            <section id="api-reference">
+                <h2>API Reference</h2>
+                <div class="api-endpoints">
+                    <h3>Authentication</h3>
+                    <pre><code>
+POST /api/auth/register
+POST /api/auth/login
+GET /api/auth/me
+                    </code></pre>
+
+                    <h3>Analysis</h3>
+                    <pre><code>
+POST /api/analysis/analyze
+GET /api/analysis/{id}
+GET /api/analysis/user/analyses
+                    </code></pre>
+
+                    <h3>Example Request</h3>
+                    <pre><code>
+curl -X POST https://api.biasbuster.com/analysis/analyze \
+-H "Authorization: Bearer YOUR_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{"text": "Your text here"}'
+                    </code></pre>
+                </div>
+            </section>
+
+            <section id="best-practices">
+                <h2>Best Practices</h2>
+                <div class="best-practices">
+                    <h3>For Users</h3>
+                    <ul>
+                        <li>Always verify results with multiple sources</li>
+                        <li>Consider context and intent</li>
+                        <li>Report false positives to improve accuracy</li>
+                        <li>Use the educational resources provided</li>
+                    </ul>
+
+                    <h3>For Developers</h3>
+                    <ul>
+                        <li>Implement rate limiting for API calls</li>
+                        <li>Cache analysis results when appropriate</li>
+                        <li>Handle errors gracefully</li>
+                        <li>Follow security best practices</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="support">
+                <h2>Support</h2>
+                <div class="support-options">
+                    <div class="support-card">
+                        <h3>Community Forum</h3>
+                        <p>Join our community forum for discussions and peer support.</p>
+                        <a href="#forum" class="button">Visit Forum</a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Technical Support</h3>
+                        <p>Contact our technical team for implementation assistance.</p>
+                        <a href="#support" class="button">Get Help</a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Feature Requests</h3>
+                        <p>Submit and vote on new feature requests.</p>
+                        <a href="#features" class="button">Submit Request</a>
+                    </div>
+                </div>
+            </section>
         </div>
-    </nav>
-
-    <main>
-        <section class="hero hero--docs">
-            <div class="container">
-                <div class="hero__content">
-                    <h1 class="hero__title">Documentation</h1>
-                    <p class="hero__description">
-                        Everything you need to know about using Biasbuster's bias detection platform and Chrome extension.
-                    </p>
-                    <div class="search-container">
-                        <input type="text" placeholder="Search documentation..." class="search-input" />
-                        <button class="btn btn--primary">Search</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="docs-content">
-            <div class="container">
-                <div class="docs-grid">
-                    <aside class="docs-sidebar">
-                        <nav class="docs-nav">
-                            <div class="docs-nav__section">
-                                <h3>Getting Started</h3>
-                                <ul>
-                                    <li><a href="#installation">Installation</a></li>
-                                    <li><a href="#quick-start">Quick Start Guide</a></li>
-                                    <li><a href="#basic-usage">Basic Usage</a></li>
-                                </ul>
-                            </div>
-                            <div class="docs-nav__section">
-                                <h3>Chrome Extension</h3>
-                                <ul>
-                                    <li><a href="#extension-setup">Setup</a></li>
-                                    <li><a href="#extension-features">Features</a></li>
-                                    <li><a href="#configuration">Configuration</a></li>
-                                </ul>
-                            </div>
-                            <div class="docs-nav__section">
-                                <h3>API Reference</h3>
-                                <ul>
-                                    <li><a href="#authentication">Authentication</a></li>
-                                    <li><a href="#endpoints">Endpoints</a></li>
-                                    <li><a href="#response-format">Response Format</a></li>
-                                </ul>
-                            </div>
-                            <div class="docs-nav__section">
-                                <h3>Advanced Topics</h3>
-                                <ul>
-                                    <li><a href="#customization">Customization</a></li>
-                                    <li><a href="#integration">Integration Guide</a></li>
-                                    <li><a href="#best-practices">Best Practices</a></li>
-                                </ul>
-                            </div>
-                        </nav>
-                    </aside>
-
-                    <div class="docs-content__main">
-                        <section id="installation" class="docs-section">
-                            <h2>Installation</h2>
-                            <div class="code-block">
-                                <pre><code>npm install biasbuster-extension</code></pre>
-                                <button class="btn btn--copy">Copy</button>
-                            </div>
-                            <p>Follow these steps to get started with Biasbuster:</p>
-                            <ol>
-                                <li>Install the Chrome extension from the Chrome Web Store</li>
-                                <li>Create an account on our platform</li>
-                                <li>Configure your API keys and preferences</li>
-                            </ol>
-                        </section>
-
-                        <section id="quick-start" class="docs-section">
-                            <h2>Quick Start Guide</h2>
-                            <div class="quick-start-card">
-                                <h3>1. Basic Setup</h3>
-                                <p>Install and configure the extension in your Chrome browser.</p>
-                                <div class="code-block">
-                                    <pre><code>// Example configuration
-{
-  "apiKey": "your-api-key",
-  "sensitivity": "medium",
-  "features": ["realtime", "suggestions"]
-}</code></pre>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section id="api-reference" class="docs-section">
-                            <h2>API Reference</h2>
-                            <div class="api-endpoint">
-                                <h3>Analyze Text</h3>
-                                <p class="endpoint-url">POST /api/analyze</p>
-                                <div class="endpoint-details">
-                                    <h4>Request Body</h4>
-                                    <div class="code-block">
-                                        <pre><code>{
-  "text": "string",
-  "options": {
-    "sensitivity": "high" | "medium" | "low",
-    "features": ["bias", "sentiment", "suggestions"]
-  }
-}</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section id="extension-features" class="docs-section">
-                            <h2>Extension Features</h2>
-                            <div class="features-grid">
-                                <div class="feature-card">
-                                    <h3>Real-time Analysis</h3>
-                                    <p>Instant bias detection as you browse news articles.</p>
-                                </div>
-                                <div class="feature-card">
-                                    <h3>Custom Highlighting</h3>
-                                    <p>Visual indicators for different types of bias.</p>
-                                </div>
-                                <div class="feature-card">
-                                    <h3>Suggestions</h3>
-                                    <p>Get alternative phrasing recommendations.</p>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__grid">
-                <div class="footer__brand">
-                    <img src="assets/logo.svg" alt="Biasbuster Logo" height="30" />
-                    <p>Making media literacy accessible to everyone.</p>
-                </div>
-                <div class="footer__links">
-                    <div class="footer__column">
-                        <h4>Documentation</h4>
-                        <a href="#getting-started">Getting Started</a>
-                        <a href="#api-reference">API Reference</a>
-                        <a href="#extension">Extension Guide</a>
-                    </div>
-                    <div class="footer__column">
-                        <h4>Support</h4>
-                        <a href="contact.html">Contact Us</a>
-                        <a href="#faq">FAQ</a>
-                        <a href="#community">Community</a>
-                    </div>
-                </div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>BiasBuster</h4>
+                <p>Making media literacy accessible to everyone through AI-powered bias detection.</p>
             </div>
-            <div class="footer__bottom">
-                <p>&copy; 2024 Biasbuster. All rights reserved.</p>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#demo">Demo</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
             </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="ai-literacy.html">AI Literacy</a></li>
+                    <li><a href="media-literacy.html">Media Literacy</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BiasBuster. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // Documentation-specific JavaScript
-        document.addEventListener('DOMContentLoaded', () => {
-            // Smooth scrolling for documentation links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-
-            // Copy code blocks
-            document.querySelectorAll('.btn--copy').forEach(button => {
-                button.addEventListener('click', function() {
-                    const code = this.previousElementSibling.textContent;
-                    navigator.clipboard.writeText(code);
-                    this.textContent = 'Copied!';
-                    setTimeout(() => {
-                        this.textContent = 'Copy';
-                    }, 2000);
-                });
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-input');
-            searchInput.addEventListener('input', function() {
-                // Implement search functionality here
-                console.log('Searching:', this.value);
-            });
-        });
-    </script>
 </body>
 </html>

@@ -1,74 +1,72 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import { BiasBusterResponse } from '../services/aiService';
+import { Document, Schema, model, Model } from 'mongoose';
 
-export interface IAnalysis extends Document {
-  user: mongoose.Types.ObjectId;
-  title: string;
-  originalText: string;
-  result: BiasBusterResponse;
-  model: string;
-  processingTime: number;
-  createdAt: Date;
-  tags: string[];
-  notes: string;
-  isFavorite: boolean;
-  isPublic: boolean;
+export interface IBiasInstance {
+    line: number;
+    code: string;
+    biasType: string;
+    explanation: string;
+    recommendation: string;
 }
 
-const AnalysisSchema = new Schema<IAnalysis>({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-    default: 'Untitled Analysis'
-  },
-  originalText: {
-    type: String,
-    required: true
-  },
-  result: {
-    type: Schema.Types.Mixed,
-    required: true
-  },
-  model: {
-    type: String,
-    required: true
-  },
-  processingTime: {
-    type: Number,
-    default: 0
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  tags: [{
-    type: String,
-    trim: true
-  }],
-  notes: {
-    type: String,
-    default: ''
-  },
-  isFavorite: {
-    type: Boolean,
-    default: false
-  },
-  isPublic: {
-    type: Boolean,
-    default: false
-  }
+export interface IAnalysis {
+    user: Schema.Types.ObjectId;
+    text: string;
+    url?: string;
+    biasInstances: IBiasInstance[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IAnalysisMethods {
+    addBiasInstance(biasInstance: IBiasInstance): Promise<void>;
+}
+
+export type IAnalysisModel = Model<IAnalysis, {}, IAnalysisMethods>;
+
+const AnalysisSchema = new Schema<IAnalysis, IAnalysisModel>({
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    text: {
+        type: String,
+        required: true
+    },
+    url: {
+        type: String
+    },
+    biasInstances: [{
+        line: {
+            type: Number,
+            required: true
+        },
+        code: {
+            type: String,
+            required: true
+        },
+        biasType: {
+            type: String,
+            required: true
+        },
+        explanation: {
+            type: String,
+            required: true
+        },
+        recommendation: {
+            type: String,
+            required: true
+        }
+    }]
+}, {
+    timestamps: true
 });
 
-// Index for faster searches
-AnalysisSchema.index({ user: 1, createdAt: -1 });
-AnalysisSchema.index({ title: 'text', tags: 'text', notes: 'text' });
+// Add methods
+AnalysisSchema.methods.addBiasInstance = async function(biasInstance: IBiasInstance): Promise<void> {
+    this.biasInstances.push(biasInstance);
+    await this.save();
+};
 
-const Analysis = mongoose.model<IAnalysis>('Analysis', AnalysisSchema);
-
-export default Analysis; 
+const Analysis = model<IAnalysis, IAnalysisModel>('Analysis', AnalysisSchema);
+export default Analysis;

@@ -54,6 +54,38 @@ jobs:
           exit 1
         fi
 
+    - name: Run API tests
+      run: |
+        npm run test:api
+        if [ $? -ne 0 ]; then
+          echo "::error::API tests failed"
+          exit 1
+        fi
+
+    - name: Run Unit tests
+      run: |
+        npm run test:unit
+        if [ $? -ne 0 ]; then
+          echo "::error::Unit tests failed"
+          exit 1
+        fi
+
+    - name: Run E2E tests
+      run: |
+        npm run test:e2e
+        if [ $? -ne 0 ]; then
+          echo "::error::E2E tests failed"
+          exit 1
+        fi
+
+    - name: Run Performance tests
+      run: |
+        npm run test:performance
+        if [ $? -ne 0 ]; then
+          echo "::error::Performance tests failed"
+          exit 1
+        fi
+
     - name: Cache build artifacts
       uses: actions/cache@v3
       with:

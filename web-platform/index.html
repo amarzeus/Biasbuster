@@ -3,442 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biasbuster - AI-Powered Media Literacy Tool</title>
+    <title>BiasBuster - AI-Powered Media Bias Detection</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="assets/favicon.png" type="image/png">
-    <meta name="description" content="Biasbuster is an AI-powered tool that detects, explains, and helps mitigate bias and misinformation in news articles in real time.">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
-<body data-theme="light">
+<body>
     <header>
-        <div class="container">
+        <nav>
             <div class="logo">
-                <img src="assets/logo.svg" alt="Biasbuster Logo">
-                <div>
-                    <h1>Biasbuster</h1>
-                    <div class="tagline">AI-Powered Media Literacy Tool</div>
-                </div>
+                <img src="assets/logo.svg" alt="BiasBuster Logo">
+                <span>BiasBuster</span>
             </div>
-            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu">
-                <i class="fas fa-bars"></i>
-            </button>
-            <nav class="main-nav" id="main-nav">
-                <button class="mobile-menu-close" id="mobile-menu-close">
-                    <i class="fas fa-times"></i>
-                </button>
-                <a href="index.html" class="active">Home</a>
-                <a href="#demo">Demo</a>
-                <a href="ai-literacy.html">AI Literacy Hub</a>
-                <a href="media-literacy.html">Media Literacy</a>
-                <a href="ethics-committee.html">Ethics Committee</a>
-                <a href="about.html">About</a>
-                <a href="pricing.html">Pricing</a>
-                <a href="documentation.html">Documentation</a>
-                <a href="contact.html">Contact</a>
-                <a href="auth.html" class="btn-login-nav">Sign In</a>
-            </nav>
-            <div class="user-nav" id="user-nav">
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div id="user-menu" class="hidden">
-                    <a href="auth.html" class="btn-login">Sign In</a>
-                </div>
-            </div>
-        </div>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#demo">Try Demo</a></li>
+                <li><a href="ai-literacy.html">AI Literacy</a></li>
+                <li><a href="media-literacy.html">Media Literacy</a></li>
+                <li><a href="documentation.html">Docs</a></li>
+                <li><a href="#download" class="cta-button">Download Extension</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="container">
-        <section class="intro">
-            <h2>Detect Media Bias with AI</h2>
-            <p>Biasbuster is an advanced tool that helps detect, explain, and mitigate bias in news articles and media content, empowering you to make more informed decisions.</p>
-            <div class="flex gap-2 justify-center">
-                <a href="#demo" class="btn primary-btn">Try the Demo</a>
-                <a href="auth.html" class="btn secondary-btn">Create Account</a>
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h1>Detect Media Bias in Real-Time</h1>
+                <p>BiasBuster uses advanced AI to analyze news articles, identify potential biases, and provide balanced perspectives. Make informed decisions with our powerful bias detection tools.</p>
+                <div class="cta-group">
+                    <button class="primary-cta">Try Demo</button>
+                    <button class="secondary-cta">Watch Video</button>
+                </div>
             </div>
             <div class="hero-image">
-                <img src="assets/hero-illustration.svg" alt="Media bias detection illustration">
+                <img src="assets/hero-illustration.svg" alt="BiasBuster in action">
             </div>
         </section>
 
-        <section id="demo" class="demo">
-            <h3 class="mb-3">Try Biasbuster Now</h3>
-            <p class="mb-3">Paste a news article or any text below to analyze it for potential bias:</p>
-            
-            <div class="example-buttons">
-                <button id="example1-btn" class="secondary-btn">Load Example 1</button>
-                <button id="example2-btn" class="secondary-btn">Load Example 2</button>
-                <button id="example3-btn" class="secondary-btn">Load Example 3</button>
-            </div>
-            
-            <div class="input-container">
-                <textarea id="article-text" placeholder="Paste news article or any text here to analyze for bias..."></textarea>
-                <div class="flex gap-2">
-                    <button id="analyze-btn">Analyze for Bias</button>
-                    <button id="clear-btn" class="secondary-btn">Clear</button>
-                </div>
-            </div>
-            
-            <div id="status" class="status">Ready to analyze. Enter text above and click "Analyze for Bias".</div>
-            
-            <div id="results-container" class="results-container hidden">
-                <div class="results-header">
-                    <h3>Bias Analysis Results</h3>
-                </div>
-                
-                <div class="summary-box">
-                    <div id="main-topic">Topic: <span></span></div>
-                    <div id="bias-summary"></div>
-                </div>
-                
-                <div class="tab-navigation">
-                    <button class="view-tab active" data-tab="bias-tab">Bias Analysis</button>
-                    <button class="view-tab" data-tab="visual-tab">Visual Representation</button>
-                    <button class="view-tab" data-tab="sentiment-tab">Sentiment Analysis</button>
-                    <button class="view-tab" data-tab="suggestions-tab">Suggestions</button>
-                    <button class="view-tab" data-tab="credibility-tab">Source Credibility</button>
-                    <button class="view-tab" data-tab="perspectives-tab">Alternative Perspectives</button>
-                </div>
-                
-                <div class="tab-content">
-                    <div id="bias-tab" class="tab-pane active">
-                        <p class="tab-description">Detailed breakdown of bias detected in the content:</p>
-                        <div id="bias-details"></div>
-                    </div>
-                    
-                    <div id="visual-tab" class="tab-pane hidden">
-                        <p class="tab-description">Visual representation of bias distribution:</p>
-                        <div id="bias-visualization"></div>
-                    </div>
-                    
-                    <div id="sentiment-tab" class="tab-pane hidden">
-                        <p class="tab-description">Sentiment and emotional tone analysis:</p>
-                        <div id="sentiment-analysis"></div>
-                    </div>
-                    
-                    <div id="suggestions-tab" class="tab-pane hidden">
-                        <p class="tab-description">Suggestions for obtaining a more balanced perspective:</p>
-                        <div id="bias-suggestions"></div>
-                    </div>
-                    
-                    <div id="credibility-tab" class="tab-pane hidden">
-                        <p class="tab-description">Analysis of source credibility and fact-checking:</p>
-                        <div id="credibility-score"></div>
-                    </div>
-
-                    <div id="perspectives-tab" class="tab-pane hidden">
-                        <p class="tab-description">Discover alternative perspectives on this topic from various sources:</p>
-                        <div id="alternative-perspectives"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="features">
-            <h3 class="text-center mb-4">Key Features</h3>
-            
+        <section id="features">
+            <h2>Key Features</h2>
             <div class="feature-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <h4>AI-Powered Bias Detection</h4>
-                    <p>Advanced algorithms analyze text for political, ideological, and other types of bias.</p>
+                    <img src="assets/feature-realtime.svg" alt="Real-time Analysis">
+                    <h3>Real-time Analysis</h3>
+                    <p>Instant bias detection as you browse news articles</p>
                 </div>
-                
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h4>Visual Analysis</h4>
-                    <p>Clear visualization of bias using heatmaps and other visual indicators.</p>
+                    <img src="assets/feature-ai.svg" alt="Advanced AI">
+                    <h3>Advanced AI</h3>
+                    <p>State-of-the-art machine learning for accurate bias detection</p>
                 </div>
-                
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h4>AI Literacy Hub</h4>
-                    <p>Interactive lessons, quizzes, and resources to build your AI and media literacy skills.</p>
+                    <img src="assets/feature-education.svg" alt="Educational Resources">
+                    <h3>Educational Resources</h3>
+                    <p>Learn about different types of bias and how to identify them</p>
                 </div>
-                
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users-cog"></i>
-                    </div>
-                    <h4>Ethics & AI Committee</h4>
-                    <p>Join discussions on AI ethics, participate in debates, and help shape responsible AI practices.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h4>Multilingual Support</h4>
-                    <p>Analyze content in multiple languages with automatic detection.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-puzzle-piece"></i>
-                    </div>
-                    <h4>Browser Extension</h4>
-                    <p>Analyze news articles directly in your browser with our Chrome extension.</p>
+                    <img src="assets/feature-perspectives.svg" alt="Multiple Perspectives">
+                    <h3>Multiple Perspectives</h3>
+                    <p>Get balanced viewpoints on controversial topics</p>
                 </div>
             </div>
         </section>
 
-        <!-- New Advanced ML Features Section -->
-        <section class="advanced-ml">
-            <div class="section-header">
-                <h3 class="text-center mb-4">Advanced Machine Learning Features</h3>
-                <p class="text-center mb-5">Powered by state-of-the-art machine learning models and natural language processing</p>
-            </div>
-            
-            <div class="ml-grid">
-                <div class="ml-card">
-                    <div class="ml-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h4>Neural Network Analysis</h4>
-                    <p>Uses transformer-based neural networks to understand context and nuance in text.</p>
-                    <div class="tech-badge">LLaMA3</div>
-                    <div class="tech-badge">Claude</div>
+        <section id="demo">
+            <h2>Try BiasBuster Now</h2>
+            <div class="demo-container">
+                <div class="input-section">
+                    <textarea id="analysis-input" placeholder="Paste any news article or text here to analyze for bias..."></textarea>
+                    <button id="analyze-button" onclick="analyzeText()">Analyze Text</button>
                 </div>
-                
-                <div class="ml-card">
-                    <div class="ml-icon">
-                        <i class="fas fa-language"></i>
+                <div class="results-section">
+                    <div id="analysis-results">
+                        <p class="placeholder">Results will appear here...</p>
                     </div>
-                    <h4>Advanced NLP</h4>
-                    <p>Employs named entity recognition, part-of-speech tagging, and dependency parsing.</p>
-                    <div class="tech-badge">spaCy</div>
-                    <div class="tech-badge">NLTK</div>
                 </div>
-                
-                <div class="ml-card">
-                    <div class="ml-icon">
-                        <i class="fas fa-project-diagram"></i>
-                    </div>
-                    <h4>Semantic Analysis</h4>
-                    <p>Performs deep semantic analysis with sentence embeddings and contextual understanding.</p>
-                    <div class="tech-badge">Sentence Transformers</div>
-                </div>
-                
-                <div class="ml-card">
-                    <div class="ml-icon">
-                        <i class="fas fa-cubes"></i>
-                    </div>
-                    <h4>Multi-model Ensemble</h4>
-                    <p>Combines results from multiple models for higher accuracy and resilience.</p>
-                    <div class="tech-badge">Ensemble Learning</div>
-                </div>
-            </div>
-            
-            <div class="ml-visual">
-                <img src="assets/ml-architecture.svg" alt="Machine Learning Architecture" class="ml-diagram">
             </div>
         </section>
 
-        <section class="awards-section">
-            <h3 class="text-center mb-4">Recognition & Startupathon Entry</h3>
-            <div class="awards-container">
-                <div class="award">
-                    <img src="assets/award1.svg" alt="Startupathon Finalist">
-                    <h4>Startupathon Challenge Entry</h4>
-                    <p>AI-powered media literacy innovation</p>
+        <section id="testimonials">
+            <h2>What Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p>"BiasBuster has completely changed how I consume news. It's like having a personal bias detector!"</p>
+                    <cite>- Sarah Johnson, Journalist</cite>
                 </div>
-                <div class="award">
-                    <img src="assets/award2.svg" alt="AI Ethics Award">
-                    <h4>AI Ethics Innovation</h4>
-                    <p>Responsible AI implementation</p>
+                <div class="testimonial-card">
+                    <p>"An essential tool for modern media literacy education. My students love using it!"</p>
+                    <cite>- Prof. Michael Chen, Media Studies</cite>
                 </div>
-                <div class="award">
-                    <img src="assets/award3.svg" alt="Media Innovation Prize">
-                    <h4>Media Literacy Innovation</h4>
-                    <p>Pioneering technology in media literacy</p>
+                <div class="testimonial-card">
+                    <p>"The real-time analysis and educational resources make this tool invaluable for fact-checking."</p>
+                    <cite>- David Miller, Fact Checker</cite>
                 </div>
-            </div>
-            <div class="text-center mt-4">
-                <a href="judge-dashboard.html" class="primary-btn">View Judge's Dashboard</a>
             </div>
         </section>
     </main>
 
     <footer>
-        <div class="container">
-            <div class="footer-container">
-                <div>
-                    <div class="footer-logo">
-                        <img src="assets/logo.svg" alt="Biasbuster Logo" width="40">
-                        <span>Biasbuster</span>
-                    </div>
-                    <p class="footer-description">
-                        Advanced AI-powered media literacy tool that helps detect bias in news articles and media content.
-                    </p>
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="footer-heading">Product</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="index.html#demo">Demo</a></li>
-                        <li><a href="chrome-extension.html">Chrome Extension</a></li>
-                        <li><a href="api-docs.html">API</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="footer-heading">Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="documentation.html">Documentation</a></li>
-                        <li><a href="ai-literacy.html">AI Literacy Hub</a></li>
-                        <li><a href="media-literacy.html">Media Literacy</a></li>
-                        <li><a href="ethics-committee.html">Ethics Committee</a></li>
-                        <li><a href="support.html">Support</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="footer-heading">Company</h3>
-                    <ul class="footer-links">
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="pricing.html">Pricing</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="careers.html">Careers</a></li>
-                    </ul>
-                </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>BiasBuster</h4>
+                <p>Making media literacy accessible to everyone through AI-powered bias detection.</p>
             </div>
-            
-            <div class="footer-bottom">
-                <div>© 2024 Biasbuster. All rights reserved.</div>
-                <div class="footer-nav">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                    <a href="cookies.html">Cookie Policy</a>
-                </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
             </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="ai-literacy.html">AI Literacy</a></li>
+                    <li><a href="media-literacy.html">Media Literacy</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BiasBuster. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Global Footer -->
-    <div class="global-footer">
-        <div class="global-footer-content">
-            <a href="https://github.com/amarzeus/" target="_blank" rel="noopener noreferrer" class="github-link">
-                <i class="fab fa-github github-icon"></i>
-                <span>GitHub</span>
-            </a>
-            <div class="heart-text">
-                Made with <i class="fas fa-heart heart-icon"></i> by 
-                <a href="https://www.linkedin.com/in/amarmahakal/" target="_blank" rel="noopener noreferrer" class="linkedin-link">Amar</a>
-            </div>
-            <a href="https://buymeacoffee.com/amarmahakal" target="_blank" rel="noopener noreferrer" class="buy-coffee-link">
-                <i class="fas fa-coffee coffee-icon"></i>
-                <span>Buy me a coffee</span>
-            </a>
-        </div>
-    </div>
-
     <script src="script.js"></script>
-    <script>
-        // Theme Toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const body = document.body;
-        const icon = themeToggle.querySelector('i');
-        
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        body.setAttribute('data-theme', savedTheme);
-        
-        // Update icon based on current theme
-        if (savedTheme === 'dark') {
-            icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
-        }
-        
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Toggle icon
-            if (newTheme === 'dark') {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
-        });
-        
-        // Mobile Menu
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenuClose = document.getElementById('mobile-menu-close');
-        const mainNav = document.getElementById('main-nav');
-        
-        mobileMenuToggle.addEventListener('click', () => {
-            mainNav.classList.add('active');
-        });
-        
-        mobileMenuClose.addEventListener('click', () => {
-            mainNav.classList.remove('active');
-        });
-        
-        // Tab Switching
-        const tabBtns = document.querySelectorAll('.view-tab');
-        const tabPanes = document.querySelectorAll('.tab-pane');
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class from all tabs
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabPanes.forEach(p => p.classList.add('hidden'));
-                
-                // Add active class to clicked tab
-                btn.classList.add('active');
-                const tabId = btn.getAttribute('data-tab');
-                document.getElementById(tabId).classList.remove('hidden');
-            });
-        });
-        
-        // Check for logged in user
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userMenu = document.getElementById('user-menu');
-        
-        if (user) {
-            userMenu.innerHTML = `
-                <div class="user-info">
-                    <span>Welcome, ${user.name || user.email}</span>
-                    <button id="logout-btn" class="btn-logout">Logout</button>
-                </div>
-            `;
-            userMenu.classList.remove('hidden');
-            
-            // Add logout functionality
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.removeItem('user');
-                window.location.reload();
-            });
-        } else {
-            userMenu.classList.remove('hidden');
-        }
-    </script>
 </body>
-</html> 
+</html>
