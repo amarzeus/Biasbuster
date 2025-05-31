@@ -1,0 +1,74 @@
+name: Test Workflows
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/codeql/**'
+
+jobs:
+  test-ci:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # Test npm commands
+    - name: Test npm installation
+      run: |
+        npm install
+        if [ $? -ne 0 ]; then
+          echo "::error::npm install failed"
+          exit 1
+        fi
+
+    # Test build process
+    - name: Test build process
+      run: |
+        npm run build
+        if [ $? -ne 0 ]; then
+          echo "::error::build failed"
+          exit 1
+        fi
+
+  test-codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+    - uses: actions/checkout@v3
+
+    # Validate CodeQL config
+    - name: Validate CodeQL config
+      run: |
+        if [ ! -f .github/codeql/codeql-config.yml ]; then
+          echo "::error::CodeQL config file missing"
+          exit 1
+        fi
+        
+    # Test CodeQL initialization
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+        config-file: .github/codeql/codeql-config.yml
+
+  test-dependency-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Test npm audit
+      run: |
+        npm install
+        # Run audit but don't fail on vulnerabilities - this is just a test
+        npm audit || true
+        
+    - name: Validate workflow schedules
+      run: |
+        if ! grep -q "cron: '0 0 \* \* 0'" .github/workflows/dependency-scan.yml; then
+          echo "::error::Weekly schedule not properly configured"
+          exit 1
+        fi

@@ -1,0 +1,26 @@
+# Branch Protection Rules Configuration
+# This file documents the required status checks for the main branch
+# To be configured in GitHub repository settings
+
+main:
+  protection:
+    required_status_checks:
+      strict: true
+      contexts:
+        - "build"
+        - "security"
+        - "test-ci"
+        - "test-codeql"
+        - "test-dependency-scan"
+    
+    required_pull_request_reviews:
+      required_approving_review_count: 1
+      dismiss_stale_reviews: true
+      require_code_owner_reviews: true
+
+    enforce_admins: true
+    
+    restrictions:
+      apps: []
+      users: []
+      teams: []

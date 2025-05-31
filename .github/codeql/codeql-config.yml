@@ -1,0 +1,18 @@
+name: "CodeQL Config"
+
+queries:
+  - uses: security-and-quality
+
+paths:
+  - src
+  - web-platform
+  - chrome-extension
+  - scripts
+
+paths-ignore:
+  - '**/node_modules'
+  - '**/dist'
+  - '**/build'
+  - '**/*.test.js'
+  - '**/*.spec.js'
+  - '**/coverage'
