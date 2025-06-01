@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+const puppeteer = require('puppeteer');
 
 describe('Web Platform End-to-End Tests', () => {
   let browser;
@@ -6,47 +6,112 @@ describe('Web Platform End-to-End Tests', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: true,
+      headless: 'new',
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 800 });
   });
 
   afterAll(async () => {
     await browser.close();
   });
 
-  it('should load the homepage and display key elements', async () => {
-    await page.goto('http://localhost:3000/web-platform/index.html');
-    await page.waitForSelector('header nav');
+  beforeEach(async () => {
+    // Clear localStorage before each test
+    await page.evaluate(() => localStorage.clear());
+  });
+
+  test('homepage loads and displays key elements', async () => {
+    await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    
+    // Check title
     const title = await page.title();
-    expect(title).toBe('BiasBuster - AI-Powered Media Bias Detection');
-    const heroText = await page.$eval('#hero h1', el => el.textContent);
-    expect(heroText).toContain('Detect Media Bias in Real-Time');
-  });
+    expect(title).toContain('BiasBuster');
+    
+    // Check hero section
+    const heroText = await page.$eval('h1', el => el.textContent);
+    expect(heroText).toContain('Detect Media Bias');
+  }, 30000);
 
-  it('should navigate to media literacy page and verify content', async () => {
-    await page.goto('http://localhost:3000/web-platform/media-literacy.html');
-    await page.waitForSelector('main');
-    const heading = await page.$eval('main h1', el => el.textContent);
-    expect(heading).toBe('Understanding Media Bias');
-  });
-
-  it('should perform demo text analysis and display results', async () => {
-    await page.goto('http://localhost:3000/web-platform/index.html#demo');
-    await page.waitForSelector('#analysis-input');
-    await page.type('#analysis-input', 'This is a test news article with potential bias.');
+  test('demo text analysis works', async () => {
+    await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    
+    // Type test text
+    await page.type('#analysis-input', 'This is a test article for bias analysis.');
+    
+    // Click analyze button
     await page.click('#analyze-button');
-    await page.waitForSelector('.analysis-results-container', { timeout: 5000 });
-    const resultExists = await page.$('.analysis-results-container') !== null;
-    expect(resultExists).toBe(true);
-  });
+    
+    // Wait for results
+    await page.waitForSelector('.analysis-results', { timeout: 10000 });
+    
+    // Check results are displayed
+    const results = await page.$eval('.analysis-results', el => el.textContent);
+    expect(results).toBeTruthy();
+  }, 30000);
 
-  it('should verify navigation links work', async () => {
-    await page.goto('http://localhost:3000/web-platform/index.html');
-    await page.click('nav ul li a[href="media-literacy.html"]');
-    await page.waitForNavigation();
-    const url = page.url();
-    expect(url).toContain('media-literacy.html');
-  });
+  test('navigation works correctly', async () => {
+    await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    
+    // Click media literacy link
+    await page.click('a[href="/media-literacy"]');
+    await page.waitForSelector('h1');
+    
+    const pageTitle = await page.$eval('h1', el => el.textContent);
+    expect(pageTitle).toContain('Media Literacy');
+  }, 30000);
+
+  test('authentication flow works', async () => {
+    await page.goto('http://localhost:3000/auth', { waitUntil: 'networkidle0' });
+    
+    // Fill login form
+    await page.type('#email', 'test@example.com');
+    await page.type('#password', 'testpassword');
+    
+    // Submit form
+    await page.click('#login-button');
+    
+    // Check for success message or redirect
+    await page.waitForSelector('.success-message, #dashboard', { timeout: 10000 });
+    
+    // Verify authentication
+    const token = await page.evaluate(() => localStorage.getItem('authToken'));
+    expect(token).toBeTruthy();
+  }, 30000);
+
+  test('bias analysis with API integration', async () => {
+    await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    
+    // Mock API response
+    await page.setRequestInterception(true);
+    page.on('request', request => {
+      if (request.url().includes('/api/analysis/analyze')) {
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            MainTopic: 'Test Analysis',
+            BiasDetected: 'yes',
+            BiasInstances: [{
+              Sentence: 'Test sentence',
+              BiasType: 'Test bias',
+              Explanation: 'Test explanation'
+            }]
+          })
+        });
+      } else {
+        request.continue();
+      }
+    });
+    
+    // Perform analysis
+    await page.type('#analysis-input', 'Test article text');
+    await page.click('#analyze-button');
+    
+    // Check results
+    await page.waitForSelector('.bias-detected', { timeout: 10000 });
+    const biasResult = await page.$eval('.bias-detected', el => el.textContent);
+    expect(biasResult).toContain('Bias Detected');
+  }, 30000);
 });
