@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
 import User from '../models/User';
 import { IUserRequest } from '../middlewares/authMiddleware';
 
@@ -14,6 +15,11 @@ const signToken = (userId: string): string => {
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const { name, email, password } = req.body;
 
         // Check if user already exists
@@ -50,6 +56,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const { email, password } = req.body;
 
         // Check if user exists

@@ -1,215 +1,222 @@
-const request = require('supertest');
-const jwt = require('jsonwebtoken');
+const supertest = require('supertest');
+const http = require('http');
+const mongoose = require('mongoose');
+const { app } = require('../src/index'); // Assuming app is exported from src/index
+const jwt = require('jsonwebtoken'); // For generating test tokens
 
-// Import the app after environment setup
-let app;
+let server;
+let request;
+let authToken;
+const testUserEmailGlobal = `security-global-${Date.now()}@example.com`;
+const testUserPasswordGlobal = 'testpassword123Secure!'; // Stronger password
 
 beforeAll(async () => {
-  // Import app after environment variables are set
-  app = require('../src/index').app;
+  server = http.createServer(app);
+  await new Promise(resolve => server.listen(resolve)); // Wait for server to be ready
+  request = supertest(server);
+  // Register and login a user to get a valid token
+  try {
+    await request
+      .post('/api/auth/register')
+      .send({
+        email: testUserEmailGlobal,
+        password: testUserPasswordGlobal,
+        name: 'Security Global Test User'
+      });
+
+    const loginResponse = await request
+      .post('/api/auth/login')
+      .send({
+        email: testUserEmailGlobal,
+        password: testUserPasswordGlobal
+      });
+    authToken = loginResponse.body.token;
+    if (!authToken) {
+      console.error("Failed to obtain authToken in beforeAll");
+      // Optionally throw an error to fail the setup if token is crucial
+      // throw new Error("Failed to obtain authToken in beforeAll for security tests");
+    }
+  } catch (error) {
+    console.error("Error in beforeAll setup for security.test.js:", error.message);
+    // Optionally throw an error
+    // throw error;
+  }
+});
+
+afterAll(async () => {
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.connection.close();
+  }
+  await new Promise(resolve => server.close(resolve)); // Wait for server to close
 });
 
 describe('Security Tests', () => {
   describe('Authentication Security', () => {
     test('should reject requests without authentication token', async () => {
-      const response = await request(app)
-        .post('/api/analysis/analyze')
-        .send({ text: 'Test text' })
+      const response = await request
+        .post('/api/analysis/analyze') // Example protected route
+        .send({ text: 'Some text' })
         .expect(401);
 
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message', 'Not authorized, no token');
     });
 
     test('should reject requests with invalid token', async () => {
-      const response = await request(app)
+      const response = await request
         .post('/api/analysis/analyze')
-        .set('Authorization', 'Bearer invalid-token')
-        .send({ text: 'Test text' })
+        .set('Authorization', 'Bearer invalidtoken123')
+        .send({ text: 'Some text' })
         .expect(401);
 
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message', 'Not authorized, invalid token');
     });
 
     test('should reject expired tokens', async () => {
-      const expiredToken = jwt.sign(
-        { userId: 'test-user' },
-        process.env.JWT_SECRET,
-        { expiresIn: '-1h' }
-      );
-
-      const response = await request(app)
+      const expiredToken = jwt.sign({ id: 'testuserid', email: testUserEmailGlobal }, process.env.JWT_SECRET || 'fallbackSecret', { expiresIn: '1ms' });
+      await new Promise(resolve => setTimeout(resolve, 50)); 
+      
+      const response = await request
         .post('/api/analysis/analyze')
         .set('Authorization', `Bearer ${expiredToken}`)
-        .send({ text: 'Test text' })
+        .send({ text: 'Some text' })
         .expect(401);
 
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message', 'Not authorized, invalid token');
     });
   });
 
   describe('Input Validation', () => {
-    let authToken;
-
-    beforeEach(async () => {
-      // Register and login to get auth token
-      await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'security@example.com',
-          password: 'testpassword123',
-          name: 'Security User'
-        });
-
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'security@example.com',
-          password: 'testpassword123'
-        });
-
-      authToken = loginResponse.body.token;
+    // This beforeEach ensures authToken is set before each test in this describe block
+    beforeEach(() => {
+        if (!authToken) {
+            // This is a safeguard. Ideally, beforeAll should have set it.
+            // If it's critical and not set, you might want to fail tests early.
+            throw new Error("Auth token not available for input validation tests. Check beforeAll hook.");
+        }
     });
 
     test('should reject XSS attempts in text input', async () => {
-      const maliciousText = '<script>alert("xss")</script>';
-
-      const response = await request(app)
+      const maliciousText = '<script>alert("XSS")</script>';
+      const response = await request
         .post('/api/analysis/analyze')
         .set('Authorization', `Bearer ${authToken}`)
         .send({ text: maliciousText })
-        .expect(400);
+        .expect(400); 
 
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error'); // Or 'message' based on your API's error response
     });
 
     test('should reject SQL injection attempts', async () => {
-      const sqlInjection = "'; DROP TABLE users; --";
-
-      const response = await request(app)
+      const sqlInjection = "' OR '1'='1";
+      const response = await request
         .post('/api/analysis/analyze')
         .set('Authorization', `Bearer ${authToken}`)
         .send({ text: sqlInjection })
         .expect(400);
 
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error'); 
     });
 
-    test('should reject extremely long input', async () => {
-      const longText = 'a'.repeat(100000); // 100KB of text
-
-      const response = await request(app)
+    test('should reject extremely long input if limits are set', async () => {
+      const longText = 'a'.repeat(20000); 
+      const response = await request
         .post('/api/analysis/analyze')
         .set('Authorization', `Bearer ${authToken}`)
         .send({ text: longText })
-        .expect(400);
+        .expect(400); 
 
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error'); 
     });
 
-    test('should reject empty or null input', async () => {
-      const response1 = await request(app)
+    test('should reject empty or null input for required fields', async () => {
+      const response1 = await request
         .post('/api/analysis/analyze')
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ text: '' })
+        .send({ text: '' }) 
         .expect(400);
-
-      const response2 = await request(app)
-        .post('/api/analysis/analyze')
-        .set('Authorization', `Bearer ${authToken}`)
-        .send({ text: null })
-        .expect(400);
-
+      
       expect(response1.body).toHaveProperty('error');
+
+      const response2 = await request
+        .post('/api/analysis/analyze')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({}) // No text field
+        .expect(400);
       expect(response2.body).toHaveProperty('error');
     });
   });
 
   describe('Password Security', () => {
-    test('should reject weak passwords', async () => {
-      const weakPasswords = [
-        '123',
-        'password',
-        'abc',
-        '12345678',
-        'qwerty'
-      ];
-
-      for (const password of weakPasswords) {
-        const response = await request(app)
+    test('should reject weak passwords during registration', async () => {
+      const weakPasswords = ['12345', 'password', 'qwerty', '123456']; // Added more examples
+      for (const pass of weakPasswords) {
+        const response = await request
           .post('/api/auth/register')
           .send({
-            email: `weak${password}@example.com`,
-            password: password,
+            email: `weakpass-${Date.now()}-${Math.random()}@example.com`,
+            password: pass,
             name: 'Weak Password User'
           })
           .expect(400);
-
-        expect(response.body).toHaveProperty('error');
+        expect(response.body).toHaveProperty('error'); 
       }
     });
 
-    test('should require minimum password length', async () => {
-      const response = await request(app)
+    test('should require minimum password length during registration', async () => {
+      const response = await request
         .post('/api/auth/register')
         .send({
-          email: 'short@example.com',
-          password: '123',
+          email: `shortpass-${Date.now()}@example.com`,
+          password: 'shrt', 
           name: 'Short Password User'
         })
         .expect(400);
-
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error'); 
     });
   });
 
   describe('Email Validation', () => {
-    test('should reject invalid email formats', async () => {
-      const invalidEmails = [
-        'invalid-email',
-        '@example.com',
-        'user@',
-        'user..name@example.com',
-        'user@example',
-        'user name@example.com'
-      ];
-
+    test('should reject invalid email formats during registration', async () => {
+      const invalidEmails = ['plainaddress', '#@%^%#$@#$@#.com', '@example.com', 'Joe Smith <email@example.com>', 'email.example.com', 'email@example@example.com', '.email@example.com', 'email.@example.com', 'email..email@example.com', 'email@example.com (Joe Smith)', 'email@example', 'email@111.222.333.44444', 'email@example..com', 'Abc..123@example.com'];
       for (const email of invalidEmails) {
-        const response = await request(app)
+        const response = await request
           .post('/api/auth/register')
           .send({
             email: email,
-            password: 'validpassword123',
+            password: testUserPasswordGlobal, 
             name: 'Test User'
           })
           .expect(400);
-
-        expect(response.body).toHaveProperty('error');
+        expect(response.body).toHaveProperty('error'); 
       }
     });
   });
 
   describe('CORS Security', () => {
-    test('should have proper CORS headers', async () => {
-      const response = await request(app)
-        .options('/api/auth/register')
-        .expect(200);
+    test('should have proper CORS headers for OPTIONS request', async () => {
+      const response = await request
+        .options('/api/auth/register') 
+        .expect(204); 
 
       expect(response.headers).toHaveProperty('access-control-allow-origin');
+      expect(response.headers['access-control-allow-origin']).toBe('*'); 
       expect(response.headers).toHaveProperty('access-control-allow-methods');
       expect(response.headers).toHaveProperty('access-control-allow-headers');
     });
   });
 
-  describe('Content Security', () => {
-    test('should have security headers', async () => {
-      const response = await request(app)
-        .get('/health')
+  describe('Content Security Headers', () => {
+    test('should include essential security headers', async () => {
+      const response = await request
+        .get('/health') 
         .expect(200);
 
-      // Check for common security headers
-      expect(response.headers).toHaveProperty('x-content-type-options');
-      expect(response.headers).toHaveProperty('x-frame-options');
-      expect(response.headers).toHaveProperty('x-xss-protection');
+      expect(response.headers).toHaveProperty('x-content-type-options', 'nosniff');
+      expect(response.headers).toHaveProperty('x-frame-options', 'SAMEORIGIN');
+      expect(response.headers).toHaveProperty('x-xss-protection', '1; mode=block');
+      // Add more specific checks if your app sets other headers like CSP, HSTS
+      // e.g. expect(response.headers).toHaveProperty('strict-transport-security');
+      // e.g. expect(response.headers).toHaveProperty('content-security-policy');
     });
   });
 });

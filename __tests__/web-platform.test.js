@@ -1,29 +1,38 @@
 const puppeteer = require('puppeteer');
+const http = require('http');
+const { app } = require('../src/index'); // Import the Express app
 
 describe('Web Platform End-to-End Tests', () => {
   let browser;
   let page;
+  let server;
 
   beforeAll(async () => {
+    // Start the server
+    server = http.createServer(app);
+    await new Promise(resolve => server.listen(3000, resolve)); // Listen on port 3000
+
     browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      headless: 'new', // Or true for older versions
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--remote-debugging-port=9222']
     });
     page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
-  });
+  }, 30000); // Increased timeout for beforeAll
 
   afterAll(async () => {
     await browser.close();
-  });
+    await new Promise(resolve => server.close(resolve)); // Stop the server
+  }, 30000); // Increased timeout for afterAll
 
   beforeEach(async () => {
-    // Clear localStorage before each test
-    await page.evaluate(() => localStorage.clear());
+    // Ensure page is available, navigation will happen in tests
+    // Clearing localStorage is now done after page.goto in each test
   });
 
   test('homepage loads and displays key elements', async () => {
     await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    await page.evaluate(() => localStorage.clear()); // Clear LS after page load
     
     // Check title
     const title = await page.title();
@@ -36,6 +45,7 @@ describe('Web Platform End-to-End Tests', () => {
 
   test('demo text analysis works', async () => {
     await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    await page.evaluate(() => localStorage.clear()); // Clear LS after page load
     
     // Type test text
     await page.type('#analysis-input', 'This is a test article for bias analysis.');
@@ -64,6 +74,7 @@ describe('Web Platform End-to-End Tests', () => {
 
   test('authentication flow works', async () => {
     await page.goto('http://localhost:3000/auth', { waitUntil: 'networkidle0' });
+    await page.evaluate(() => localStorage.clear()); // Clear LS after page load
     
     // Fill login form
     await page.type('#email', 'test@example.com');
@@ -82,6 +93,7 @@ describe('Web Platform End-to-End Tests', () => {
 
   test('bias analysis with API integration', async () => {
     await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+    await page.evaluate(() => localStorage.clear()); // Clear LS after page load
     
     // Mock API response
     await page.setRequestInterception(true);
