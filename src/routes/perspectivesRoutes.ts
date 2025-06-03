@@ -1,12 +1,16 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { getAlternativePerspectives, getPerspectivesByTopic } from '../controllers/perspectivesController';
-import { body, param, validationResult } from 'express-validator'; // Import param and validationResult
 
+const validator = require('express-validator');
 const router = express.Router();
 
-// Middleware to handle validation results (can be used by multiple routes)
-const handleValidationErrors = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const errors = validationResult(req);
+// Middleware to handle validation results
+const handleValidationErrors = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void | Response => {
+    const errors = validator.validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -15,14 +19,34 @@ const handleValidationErrors = (req: express.Request, res: express.Response, nex
 
 // Validation rules for POST /
 const postPerspectivesValidationRules = [
-    body('text').optional({ checkFalsy: true }).isString().trim().isLength({ min: 1, max: 10000 }).withMessage('Text must be between 1 and 10000 characters.').escape(),
-    body('topic').optional({ checkFalsy: true }).isString().trim().isLength({ min: 1, max: 255 }).withMessage('Topic must be between 1 and 255 characters.').escape(),
-    body().custom((value: any, { req }: { req: express.Request }) => { // Added types for value and req
-        if (!req.body.text && !req.body.topic) {
-            throw new Error('Either text or topic must be provided for perspectives.');
-        }
-        return true;
-    })
+    validator.check('text')
+        .optional({ checkFalsy: true })
+        .isString().withMessage('Text must be a string.')
+        .trim()
+        .isLength({ min: 1, max: 10000 }).withMessage('Text must be between 1 and 10000 characters.')
+        .escape(),
+    validator.check('topic')
+        .optional({ checkFalsy: true })
+        .isString().withMessage('Topic must be a string.')
+        .trim()
+        .isLength({ min: 1, max: 255 }).withMessage('Topic must be between 1 and 255 characters.')
+        .escape(),
+    validator.check()
+        .custom((value: any, { req }: { req: Request }) => {
+            if (!req.body.text && !req.body.topic) {
+                throw new Error('Either text or topic must be provided for perspectives.');
+            }
+            return true;
+        })
+];
+
+// Validation rules for GET /:topic
+const getPerspectivesByTopicValidationRules = [
+    validator.param('topic')
+        .trim()
+        .notEmpty().withMessage('Topic parameter cannot be empty.')
+        .isLength({ min: 1, max: 255 }).withMessage('Topic must be between 1 and 255 characters.')
+        .escape()
 ];
 
 /**
@@ -41,42 +65,18 @@ const postPerspectivesValidationRules = [
  *               text:
  *                 type: string
  *                 description: The text content to find alternative perspectives for.
- *                 example: "The new government policy has sparked widespread debate among economists."
  *               topic:
  *                 type: string
  *                 description: Optional. A specific topic to focus the search on.
- *                 example: "Economic Policy"
  *     responses:
  *       200:
  *         description: Successfully fetched alternative perspectives
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 data:  // Note: this route returns 'data', the GET route returns 'perspectives'
- *                   type: array
- *                   items:
- *                     type: object // Define item structure if known
  *       400:
  *         description: Bad request (e.g., missing text and topic, or validation errors)
  *       500:
  *         description: Internal server error
  */
 router.post('/', postPerspectivesValidationRules, handleValidationErrors, getAlternativePerspectives);
-
-
-// Validation rules for GET /:topic
-const getPerspectivesByTopicValidationRules = [
-    param('topic')
-        .trim()
-        .notEmpty().withMessage('Topic parameter cannot be empty.')
-        .isLength({ min: 1, max: 255 }).withMessage('Topic must be between 1 and 255 characters.')
-        .escape(),
-];
 
 /**
  * @swagger
@@ -91,19 +91,9 @@ const getPerspectivesByTopicValidationRules = [
  *         schema:
  *           type: string
  *         description: The topic to find alternative perspectives for.
- *         example: "climate change"
  *     responses:
  *       200:
  *         description: Successfully fetched alternative perspectives
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 perspectives: # Note: this route returns 'perspectives'
- *                   type: array
- *                   items:
- *                     type: object // Define item structure if known
  *       400:
  *         description: Bad request (e.g., invalid topic or validation errors)
  *       500:

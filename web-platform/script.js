@@ -1,220 +1,230 @@
-// API endpoints
-const API_BASE_URL = '/api';
-const ENDPOINTS = {
-    ANALYZE: `${API_BASE_URL}/analysis/analyze`,
-    LOGIN: `${API_BASE_URL}/auth/login`,
-    REGISTER: `${API_BASE_URL}/auth/register`,
-    USER_ANALYSES: `${API_BASE_URL}/analysis/user/analyses`
-};
-
-// DOM Elements
-const analysisInput = document.getElementById('analysis-input');
-const analyzeButton = document.getElementById('analyze-button');
-const resultsSection = document.getElementById('analysis-results');
-
-// State management
-let currentUser = null;
-let analysisHistory = [];
-
-// Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
-    checkAuthStatus();
+// Main application script
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize components
+    initializeComponents();
     setupEventListeners();
-    initializeDemo();
+    setupModalHandlers();
 });
 
-// Event Listeners
-function setupEventListeners() {
-    if (analyzeButton) {
-        analyzeButton.addEventListener('click', handleAnalysis);
+function initializeComponents() {
+    // Initialize RealTimeAnalyzer
+    window.realTimeAnalyzer = new RealTimeAnalyzer();
+    window.realTimeAnalyzer.init();
+
+    // Initialize ResultsDashboard if user is authenticated
+    if (localStorage.getItem('authToken')) {
+        window.resultsDashboard = new ResultsDashboard();
+        window.resultsDashboard.init();
     }
 
-    // Handle smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
+    // Initialize ToastNotification
+    window.toast = new ToastNotification({
+        position: 'top-right',
+        duration: 3000
+    });
+
+    // Initialize ThemeToggle
+    window.themeToggle = new ThemeToggle({
+        storageKey: 'biasbuster-theme',
+        defaultTheme: 'light'
     });
 }
 
-// Analysis Functions
-async function analyzeText() {
-    try {
-        const text = analysisInput.value.trim();
-        
-        if (!text) {
-            showError('Please enter some text to analyze');
-            return;
-        }
+function setupEventListeners() {
+    // Clear button functionality
+    const clearButton = document.getElementById('clear-button');
+    const textInput = document.getElementById('analysis-input');
+    const resultsContainer = document.getElementById('analysis-results');
 
-        // Show loading state
-        showLoading();
-
-        // Make API request
-        const response = await fetch(ENDPOINTS.ANALYZE, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
-            body: JSON.stringify({ text })
+    if (clearButton && textInput && resultsContainer) {
+        clearButton.addEventListener('click', () => {
+            textInput.value = '';
+            resultsContainer.innerHTML = '<p class="placeholder">Results will appear here...</p>';
+            window.toast.info('Text cleared');
         });
-
-        if (!response.ok) {
-            throw new Error('Analysis failed');
-        }
-
-        const result = await response.json();
-        displayResults(result);
-
-    } catch (error) {
-        showError('Failed to analyze text. Please try again.');
-        console.error('Analysis error:', error);
-    }
-}
-
-// Display Functions
-function displayResults(analysis) {
-    if (!resultsSection) return;
-
-    // Clear loading state
-    resultsSection.innerHTML = '';
-
-    // Create results container
-    const container = document.createElement('div');
-    container.className = 'analysis-results-container';
-
-    // Add bias summary
-    const summary = document.createElement('div');
-    summary.className = 'bias-summary';
-    summary.innerHTML = `
-        <h3>Analysis Summary</h3>
-        <p>${analysis.BiasSummary}</p>
-    `;
-    container.appendChild(summary);
-
-    // Add bias instances
-    if (analysis.BiasInstances.length > 0) {
-        const instances = document.createElement('div');
-        instances.className = 'bias-instances';
-        instances.innerHTML = `
-            <h3>Detected Biases</h3>
-            ${analysis.BiasInstances.map(instance => `
-                <div class="bias-instance">
-                    <p class="bias-text">${instance.Sentence}</p>
-                    <div class="bias-details">
-                        <span class="bias-type">${instance.BiasType}</span>
-                        <span class="bias-severity">Severity: ${instance.Severity}/5</span>
-                    </div>
-                    <p class="bias-explanation">${instance.Explanation}</p>
-                    <p class="bias-mitigation">Suggestion: ${instance.Mitigation}</p>
-                </div>
-            `).join('')}
-        `;
-        container.appendChild(instances);
     }
 
-    // Add educational content
-    if (analysis.EducationalContent) {
-        const education = document.createElement('div');
-        education.className = 'educational-content';
-        education.innerHTML = `
-            <h3>Learn More</h3>
-            <p>${analysis.EducationalContent}</p>
-        `;
-        container.appendChild(education);
-    }
-
-    // Add trusted sources
-    if (analysis.TrustedSources && analysis.TrustedSources.length > 0) {
-        const sources = document.createElement('div');
-        sources.className = 'trusted-sources';
-        sources.innerHTML = `
-            <h3>Trusted Sources</h3>
-            <ul>
-                ${analysis.TrustedSources.map(source => `
-                    <li><a href="${source}" target="_blank" rel="noopener noreferrer">${source}</a></li>
-                `).join('')}
-            </ul>
-        `;
-        container.appendChild(sources);
-    }
-
-    resultsSection.appendChild(container);
-}
-
-function showLoading() {
-    if (!resultsSection) return;
-    resultsSection.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Analyzing text for bias...</p>
-        </div>
-    `;
-}
-
-function showError(message) {
-    if (!resultsSection) return;
-    resultsSection.innerHTML = `
-        <div class="error-message">
-            <p>${message}</p>
-        </div>
-    `;
-}
-
-// Authentication Functions
-function getAuthToken() {
-    return localStorage.getItem('authToken');
-}
-
-async function checkAuthStatus() {
-    const token = getAuthToken();
-    if (token) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/auth/me`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (response.ok) {
-                currentUser = await response.json();
-                updateUIForAuthenticatedUser();
+    // Manual analysis button
+    const analyzeButton = document.getElementById('analyze-button');
+    if (analyzeButton && window.realTimeAnalyzer) {
+        analyzeButton.addEventListener('click', () => {
+            const text = textInput?.value || '';
+            if (text.trim()) {
+                window.realTimeAnalyzer.analyzeText(text);
             } else {
-                localStorage.removeItem('authToken');
+                window.toast.warning('Please enter some text to analyze');
             }
-        } catch (error) {
-            console.error('Auth check failed:', error);
+        });
+    }
+
+    // Real-time toggle
+    const realtimeToggle = document.getElementById('realtime-toggle');
+    if (realtimeToggle) {
+        realtimeToggle.addEventListener('change', (e) => {
+            const isEnabled = e.target.checked;
+            window.toast.info(`Real-time analysis ${isEnabled ? 'enabled' : 'disabled'}`);
+            if (window.realTimeAnalyzer) {
+                window.realTimeAnalyzer.toggleRealTimeAnalysis(isEnabled);
+            }
+        });
+    }
+
+    // Sensitivity level
+    const sensitivitySelect = document.getElementById('sensitivity-level');
+    if (sensitivitySelect) {
+        sensitivitySelect.addEventListener('change', (e) => {
+            const level = e.target.value;
+            window.toast.info(`Sensitivity level set to ${level}`);
+            if (window.realTimeAnalyzer) {
+                window.realTimeAnalyzer.updateSensitivity(level);
+            }
+        });
+    }
+}
+
+function setupModalHandlers() {
+    // Color customization modal
+    setupModal('customize-colors', 'color-modal', {
+        onSave: (modal) => {
+            const biasColor = document.getElementById('bias-highlight-color').value;
+            const suggestionColor = document.getElementById('suggestion-highlight-color').value;
+            
+            document.documentElement.style.setProperty('--bias-highlight-color', biasColor);
+            document.documentElement.style.setProperty('--suggestion-highlight-color', suggestionColor);
+            
+            localStorage.setItem('biasbuster-colors', JSON.stringify({ biasColor, suggestionColor }));
+            window.toast.success('Colors updated successfully');
+            closeModal(modal);
         }
+    });
+
+    // Bias settings modal
+    setupModal('customize-bias', 'bias-modal', {
+        onSave: (modal) => {
+            const customWords = document.getElementById('custom-bias-input').value
+                .split('\n')
+                .map(word => word.trim())
+                .filter(word => word);
+
+            const categories = {};
+            document.querySelectorAll('.category-toggles input[type="checkbox"]').forEach(checkbox => {
+                categories[checkbox.value] = checkbox.checked;
+            });
+
+            if (window.realTimeAnalyzer) {
+                window.realTimeAnalyzer.updateCustomBiasWords('custom', customWords);
+                Object.entries(categories).forEach(([category, enabled]) => {
+                    window.realTimeAnalyzer.toggleCategory(category, enabled);
+                });
+            }
+
+            localStorage.setItem('biasbuster-custom-words', JSON.stringify(customWords));
+            localStorage.setItem('biasbuster-categories', JSON.stringify(categories));
+            window.toast.success('Bias settings updated successfully');
+            closeModal(modal);
+        }
+    });
+
+    // Load saved settings
+    loadSavedSettings();
+}
+
+function setupModal(triggerButtonId, modalId, { onSave }) {
+    const modal = document.getElementById(modalId);
+    const trigger = document.getElementById(triggerButtonId);
+    const saveButton = modal?.querySelector(`#save-${modalId.replace('-modal', '')}`);
+    const cancelButton = modal?.querySelector(`#cancel-${modalId.replace('-modal', '')}`);
+
+    if (!modal || !trigger) return;
+
+    trigger.addEventListener('click', () => openModal(modal));
+    
+    if (saveButton) {
+        saveButton.addEventListener('click', () => onSave(modal));
+    }
+
+    if (cancelButton) {
+        cancelButton.addEventListener('click', () => closeModal(modal));
+    }
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal(modal);
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+            closeModal(modal);
+        }
+    });
+}
+
+function openModal(modal) {
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modal) {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function loadSavedSettings() {
+    // Load saved colors
+    try {
+        const savedColors = JSON.parse(localStorage.getItem('biasbuster-colors'));
+        if (savedColors) {
+            document.documentElement.style.setProperty('--bias-highlight-color', savedColors.biasColor);
+            document.documentElement.style.setProperty('--suggestion-highlight-color', savedColors.suggestionColor);
+            
+            const biasColorInput = document.getElementById('bias-highlight-color');
+            const suggestionColorInput = document.getElementById('suggestion-highlight-color');
+            
+            if (biasColorInput) biasColorInput.value = savedColors.biasColor;
+            if (suggestionColorInput) suggestionColorInput.value = savedColors.suggestionColor;
+        }
+    } catch (error) {
+        console.error('Error loading saved colors:', error);
+    }
+
+    // Load saved bias settings
+    try {
+        const savedWords = JSON.parse(localStorage.getItem('biasbuster-custom-words'));
+        const savedCategories = JSON.parse(localStorage.getItem('biasbuster-categories'));
+        
+        const customWordsInput = document.getElementById('custom-bias-input');
+        if (customWordsInput && savedWords) {
+            customWordsInput.value = savedWords.join('\n');
+        }
+
+        if (savedCategories) {
+            document.querySelectorAll('.category-toggles input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = savedCategories[checkbox.value] ?? true;
+            });
+        }
+
+        if (window.realTimeAnalyzer) {
+            if (savedWords) {
+                window.realTimeAnalyzer.updateCustomBiasWords('custom', savedWords);
+            }
+            if (savedCategories) {
+                Object.entries(savedCategories).forEach(([category, enabled]) => {
+                    window.realTimeAnalyzer.toggleCategory(category, enabled);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading saved bias settings:', error);
     }
 }
 
-function updateUIForAuthenticatedUser() {
-    // Update navigation
-    const nav = document.querySelector('nav ul');
-    if (nav) {
-        nav.innerHTML += `
-            <li><a href="dashboard.html">Dashboard</a></li>
-            <li><a href="#" onclick="logout()">Logout</a></li>
-        `;
-    }
-}
-
-// Demo Initialization
-function initializeDemo() {
-    if (analysisInput) {
-        analysisInput.value = `In a controversial move that has sparked debate, the government's new policy has been criticized by opposition leaders as "reckless" and "ill-conceived." Supporters argue that the measures are necessary for progress, while critics claim it will disproportionately affect certain communities.`;
-    }
-}
-
-// Export functions for use in other scripts
-window.analyzeText = analyzeText;
-window.logout = () => {
-    localStorage.removeItem('authToken');
-    window.location.href = '/';
+// Export for use in other files
+window.BiasBuster = {
+    realTimeAnalyzer: window.realTimeAnalyzer,
+    resultsDashboard: window.resultsDashboard,
+    toast: window.toast,
+    themeToggle: window.themeToggle
 };

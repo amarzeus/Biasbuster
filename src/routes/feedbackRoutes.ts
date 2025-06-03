@@ -1,43 +1,46 @@
-import express from 'express';
-import { body, validationResult } from 'express-validator';
-import { submitFeedback } from '../controllers/feedbackController';
-import { protect } from '../middlewares/authMiddleware'; // Assuming feedback requires authentication
+import express, { Request, Response, NextFunction } from 'express';
+import { submitFeedback, getFeedback } from '../controllers/feedbackController';
+import { protect } from '../middlewares/authMiddleware';
 
+const validator = require('express-validator');
 const router = express.Router();
 
 // Middleware to handle validation results
-const handleValidationErrors = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const errors = validationResult(req);
+const handleValidationErrors = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void | Response => {
+    const errors = validator.validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
     next();
 };
 
-const feedbackValidationRules = [
-    body('type')
+// Validation rules for submitting feedback
+const submitFeedbackValidationRules = [
+    validator.check('content')
         .trim()
-        .isIn(['general', 'bug', 'suggestion', 'accuracy'])
-        .withMessage('Invalid feedback type. Must be one of: general, bug, suggestion, accuracy.'),
-    body('comment')
+        .notEmpty().withMessage('Feedback content is required.')
+        .isLength({ min: 1, max: 5000 }).withMessage('Feedback must be between 1 and 5000 characters.')
+        .escape(),
+    validator.check('type')
         .trim()
-        .notEmpty().withMessage('Feedback comment cannot be empty.')
-        .isLength({ min: 10, max: 5000 }).withMessage('Comment must be between 10 and 5000 characters.'),
-    body('context')
-        .optional({ checkFalsy: true })
+        .notEmpty().withMessage('Feedback type is required.')
+        .isIn(['bug', 'feature', 'improvement', 'other']).withMessage('Invalid feedback type.'),
+    validator.check('priority')
+        .optional()
+        .isIn(['low', 'medium', 'high']).withMessage('Invalid priority level.'),
+    validator.check('category')
+        .optional()
+        .isString().withMessage('Category must be a string.')
         .trim()
-        .isString()
-        .isLength({ max: 2000 }).withMessage('Context, if provided, must be a string up to 2000 characters.')
-        .escape(), // Basic XSS protection
+        .isLength({ min: 1, max: 100 }).withMessage('Category must be between 1 and 100 characters.')
+        .escape()
 ];
 
-// Apply protect middleware to ensure user is authenticated
-router.post(
-    '/',
-    protect, // User must be logged in to submit feedback
-    feedbackValidationRules,
-    handleValidationErrors, // This will pass errors to the response if any
-    submitFeedback
-);
+router.post('/', protect, submitFeedbackValidationRules, handleValidationErrors, submitFeedback);
+router.get('/', protect, getFeedback);
 
 export default router;

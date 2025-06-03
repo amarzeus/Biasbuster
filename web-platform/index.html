@@ -3,133 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiasBuster - AI-Powered Media Bias Detection</title>
+    <title>BiasBuster - Detect Media Bias in Real-Time</title>
+    <meta name="description" content="Empower yourself with BiasBuster's AI-powered bias detection. Analyze news articles and content for potential biases in real-time.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="styles/components/common.css">
+    <link rel="stylesheet" href="styles/components/analysis.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <header>
-        <nav>
+    <!-- Header -->
+    <header class="site-header">
+        <nav class="main-nav">
             <div class="logo">
-                <img src="assets/logo.svg" alt="BiasBuster Logo">
-                <span>BiasBuster</span>
+                <a href="/">
+                    <img src="assets/images/logo.svg" alt="BiasBuster Logo" width="40" height="40">
+                    <span>BiasBuster</span>
+                </a>
             </div>
-            <ul>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#demo">Try Demo</a></li>
-                <li><a href="ai-literacy.html">AI Literacy</a></li>
-                <li><a href="media-literacy.html">Media Literacy</a></li>
-                <li><a href="documentation.html">Docs</a></li>
-                <li><a href="#download" class="cta-button">Download Extension</a></li>
+            <ul class="nav-links">
+                <li><a href="/features">Features</a></li>
+                <li><a href="/ai-literacy">AI Literacy</a></li>
+                <li><a href="/docs">Docs</a></li>
+                <li><a href="/try-demo" class="try-demo-link">Try Demo</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <section id="hero">
-            <div class="hero-content">
-                <h1>Detect Media Bias in Real-Time</h1>
-                <p>BiasBuster uses advanced AI to analyze news articles, identify potential biases, and provide balanced perspectives. Make informed decisions with our powerful bias detection tools.</p>
-                <div class="cta-group">
-                    <button class="primary-cta">Try Demo</button>
-                    <button class="secondary-cta">Watch Video</button>
-                </div>
-            </div>
-            <div class="hero-image">
-                <img src="assets/hero-illustration.svg" alt="BiasBuster in action">
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="hero-section">
+            <h1>Detect Media Bias in Real-Time</h1>
+            <p class="subtitle">BiasBuster uses advanced AI to analyze news articles, identify potential biases, and provide balanced perspectives. Make informed decisions with our powerful bias detection tools.</p>
+            
+            <div class="cta-buttons">
+                <button class="primary-button">Try Demo</button>
+                <button class="secondary-button">Watch Video</button>
             </div>
         </section>
 
-        <section id="features">
-            <h2>Key Features</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <img src="assets/feature-realtime.svg" alt="Real-time Analysis">
-                    <h3>Real-time Analysis</h3>
-                    <p>Instant bias detection as you browse news articles</p>
-                </div>
-                <div class="feature-card">
-                    <img src="assets/feature-ai.svg" alt="Advanced AI">
-                    <h3>Advanced AI</h3>
-                    <p>State-of-the-art machine learning for accurate bias detection</p>
-                </div>
-                <div class="feature-card">
-                    <img src="assets/feature-education.svg" alt="Educational Resources">
-                    <h3>Educational Resources</h3>
-                    <p>Learn about different types of bias and how to identify them</p>
-                </div>
-                <div class="feature-card">
-                    <img src="assets/feature-perspectives.svg" alt="Multiple Perspectives">
-                    <h3>Multiple Perspectives</h3>
-                    <p>Get balanced viewpoints on controversial topics</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="demo">
-            <h2>Try BiasBuster Now</h2>
-            <div class="demo-container">
+        <section class="analysis-container">
+            <div class="side-by-side-view">
+                <!-- Input Section -->
                 <div class="input-section">
-                    <textarea id="analysis-input" placeholder="Paste any news article or text here to analyze for bias..."></textarea>
-                    <button id="analyze-button" onclick="analyzeText()">Analyze Text</button>
+                    <div class="input-header">
+                        <h3>Original Text</h3>
+                        <div class="analysis-options">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="realtime-toggle" checked>
+                                <span class="toggle-slider"></span>
+                                Real-time Analysis
+                            </label>
+                            <select id="sensitivity-level" class="sensitivity-select">
+                                <option value="low">Low Sensitivity</option>
+                                <option value="medium" selected>Medium Sensitivity</option>
+                                <option value="high">High Sensitivity</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <textarea id="analysis-input" class="enhanced-textarea" placeholder="Paste any news article or text here to analyze for bias..."></textarea>
+                    
+                    <div class="analysis-controls">
+                        <button id="analyze-button" class="primary-button">
+                            <span class="button-icon">📊</span>
+                            Analyze Text
+                        </button>
+                        <button id="clear-button" class="secondary-button">
+                            <span class="button-icon">🗑️</span>
+                            Clear
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Results Section -->
                 <div class="results-section">
+                    <div class="results-header">
+                        <h3>Analysis Results</h3>
+                        <div class="customization-options">
+                            <button id="customize-colors" class="tool-button">
+                                <span class="button-icon">🎨</span>
+                                Customize Colors
+                            </button>
+                            <button id="customize-bias" class="tool-button">
+                                <span class="button-icon">⚙️</span>
+                                Bias Settings
+                            </button>
+                            <button id="theme-toggle" class="tool-button" aria-label="Toggle theme">
+                                <span class="button-icon">🌞</span>
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div id="analysis-results">
                         <p class="placeholder">Results will appear here...</p>
                     </div>
                 </div>
             </div>
         </section>
-
-        <section id="testimonials">
-            <h2>What Users Say</h2>
-            <div class="testimonial-grid">
-                <div class="testimonial-card">
-                    <p>"BiasBuster has completely changed how I consume news. It's like having a personal bias detector!"</p>
-                    <cite>- Sarah Johnson, Journalist</cite>
-                </div>
-                <div class="testimonial-card">
-                    <p>"An essential tool for modern media literacy education. My students love using it!"</p>
-                    <cite>- Prof. Michael Chen, Media Studies</cite>
-                </div>
-                <div class="testimonial-card">
-                    <p>"The real-time analysis and educational resources make this tool invaluable for fact-checking."</p>
-                    <cite>- David Miller, Fact Checker</cite>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>BiasBuster</h4>
-                <p>Making media literacy accessible to everyone through AI-powered bias detection.</p>
+    <!-- Modals -->
+    <div id="color-modal" class="modal">
+        <div class="modal-content">
+            <h3>Customize Colors</h3>
+            <div class="color-options">
+                <div class="color-option">
+                    <label for="bias-highlight-color">Bias Highlight Color</label>
+                    <input type="color" id="bias-highlight-color" value="#ff0000">
+                </div>
+                <div class="color-option">
+                    <label for="suggestion-highlight-color">Suggestion Highlight Color</label>
+                    <input type="color" id="suggestion-highlight-color" value="#00ff00">
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#demo">Demo</a></li>
-                    <li><a href="documentation.html">Documentation</a></li>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="ai-literacy.html">AI Literacy</a></li>
-                    <li><a href="media-literacy.html">Media Literacy</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
+            <div class="modal-buttons">
+                <button id="save-color" class="primary-button">Save Changes</button>
+                <button id="cancel-color" class="secondary-button">Cancel</button>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 BiasBuster. All rights reserved.</p>
-        </div>
-    </footer>
+    </div>
 
+    <div id="bias-modal" class="modal">
+        <div class="modal-content">
+            <h3>Bias Detection Settings</h3>
+            <div class="bias-settings">
+                <div class="custom-bias-words">
+                    <h4>Custom Bias Words</h4>
+                    <textarea id="custom-bias-input" placeholder="Add custom words (one per line)"></textarea>
+                </div>
+                <div class="bias-categories">
+                    <h4>Categories to Detect</h4>
+                    <div class="category-toggles">
+                        <label>
+                            <input type="checkbox" value="political" checked>
+                            Political Bias
+                        </label>
+                        <label>
+                            <input type="checkbox" value="gender" checked>
+                            Gender Bias
+                        </label>
+                        <label>
+                            <input type="checkbox" value="racial" checked>
+                            Racial Bias
+                        </label>
+                        <label>
+                            <input type="checkbox" value="cultural" checked>
+                            Cultural Bias
+                        </label>
+                        <label>
+                            <input type="checkbox" value="socioeconomic" checked>
+                            Socioeconomic Bias
+                        </label>
+                        <label>
+                            <input type="checkbox" value="religious" checked>
+                            Religious Bias
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="save-bias" class="primary-button">Save Changes</button>
+                <button id="cancel-bias" class="secondary-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="components/Common/LoadingSpinner.js"></script>
+    <script src="components/Common/ToastNotification.js"></script>
+    <script src="components/Common/ThemeToggle.js"></script>
+    <script src="components/Analysis/BiasVisualizer.js"></script>
+    <script src="components/Analysis/RealTimeAnalyzer.js"></script>
+    <script src="components/Analysis/ResultsDashboard.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

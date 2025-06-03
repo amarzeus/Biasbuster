@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { validationResult } from 'express-validator';
 import User from '../models/User';
 import { IUserRequest } from '../middlewares/authMiddleware';
+
+const validator = require('express-validator');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = '30d';
@@ -13,9 +14,9 @@ const signToken = (userId: string): string => {
     });
 };
 
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const register = async (req: Request, res: Response): Promise<Response | void> => {
     try {
-        const errors = validationResult(req);
+        const errors = validator.validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
@@ -25,8 +26,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            res.status(400).json({ message: 'User already exists' });
-            return;
+            return res.status(400).json({ message: 'User already exists' });
         }
 
         // Create new user
@@ -39,7 +39,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         // Generate token
         const token = signToken(user._id.toString());
 
-        res.status(201).json({
+        return res.status(201).json({
             token,
             user: {
                 id: user._id,
@@ -50,13 +50,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        return res.status(500).json({ message: 'Server error', error });
     }
 };
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (req: Request, res: Response): Promise<Response | void> => {
     try {
-        const errors = validationResult(req);
+        const errors = validator.validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
@@ -66,21 +66,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         // Check if user exists
         const user = await User.findOne({ email }).select('+password');
         if (!user) {
-            res.status(401).json({ message: 'Invalid credentials' });
-            return;
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Check password
         const isValidPassword = await user.comparePassword(password);
         if (!isValidPassword) {
-            res.status(401).json({ message: 'Invalid credentials' });
-            return;
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Generate token
         const token = signToken(user._id.toString());
 
-        res.status(200).json({
+        return res.status(200).json({
             token,
             user: {
                 id: user._id,
@@ -91,19 +89,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        return res.status(500).json({ message: 'Server error', error });
     }
 };
 
-export const getCurrentUser = async (req: IUserRequest, res: Response): Promise<void> => {
+export const getCurrentUser = async (req: IUserRequest, res: Response): Promise<Response | void> => {
     try {
         const user = await User.findById(req.user?._id);
         if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             user: {
                 id: user._id,
                 name: user.name,
@@ -113,6 +110,6 @@ export const getCurrentUser = async (req: IUserRequest, res: Response): Promise<
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        return res.status(500).json({ message: 'Server error', error });
     }
 };

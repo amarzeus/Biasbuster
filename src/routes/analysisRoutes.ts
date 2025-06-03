@@ -1,48 +1,45 @@
-import express from 'express';
-import { body } from 'express-validator';
-import { 
-    createAnalysis, 
-    getAnalysis, 
-    updateAnalysis, 
-    deleteAnalysis, 
-    getUserAnalyses,
-    analyzeBias,
-    batchAnalysis // Import the new handler
-} from '../controllers/analysisController';
+import express, { Request, Response, NextFunction } from 'express';
+import { analyze, saveAnalysis } from '../controllers/analysisController';
 import { protect } from '../middlewares/authMiddleware';
 
+const validator = require('express-validator');
 const router = express.Router();
 
-// Protected routes - require authentication
-router.use(protect);
+// Middleware to handle validation results
+const handleValidationErrors = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void | Response => {
+    const errors = validator.validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+};
 
-router.post('/', createAnalysis); 
-router.get('/:id', getAnalysis);
-router.put('/:id', updateAnalysis); 
-router.delete('/:id', deleteAnalysis);
-router.get('/user/analyses', getUserAnalyses);
-
-// Validation for /analyze route
-const analyzeBiasValidationRules = [
-    body('text')
+// Validation rules for analyzing text
+const analyzeValidationRules = [
+    validator.check('text')
         .trim()
-        .notEmpty().withMessage('Text for analysis cannot be empty.')
+        .notEmpty().withMessage('Text is required.')
+        .isLength({ min: 1, max: 15000 }).withMessage('Text must be between 1 and 15000 characters.')
+        .escape()
+];
+
+// Validation rules for saving analysis
+const saveAnalysisValidationRules = [
+    validator.check('text')
+        .trim()
+        .notEmpty().withMessage('Text is required.')
         .isLength({ min: 1, max: 15000 }).withMessage('Text must be between 1 and 15000 characters.')
         .escape(),
+    validator.check('result')
+        .notEmpty().withMessage('Analysis result is required.')
+        .isObject().withMessage('Analysis result must be an object.')
 ];
 
-router.post('/analyze', analyzeBiasValidationRules, analyzeBias);
-
-// Validation for /batch route (assuming 'texts' is an array of strings)
-const batchAnalysisValidationRules = [
-    body('texts')
-        .isArray({ min: 1, max: 10 }).withMessage('Texts must be an array with 1 to 10 items.')
-        .custom((texts) => texts.every(text => typeof text === 'string' && text.trim().length > 0 && text.trim().length <= 15000))
-        .withMessage('Each text in the array must be a non-empty string up to 15000 characters.'),
-    // Apply sanitization to each text in the array
-    body('texts.*').trim().escape()
-];
-
-router.post('/batch', batchAnalysisValidationRules, batchAnalysis); // Add the new batch route
+router.post('/analyze', analyzeValidationRules, handleValidationErrors, analyze);
+router.post('/save', protect, saveAnalysisValidationRules, handleValidationErrors, saveAnalysis);
 
 export default router;

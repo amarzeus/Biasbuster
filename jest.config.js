@@ -1,23 +1,45 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
-  testMatch: [
-    '**/__tests__/**/*.test.(ts|tsx|js|jsx)',
-  ],
-  moduleNameMapper: {
-    // Handle module aliases and static file imports
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
-  },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(uuid)/)'
+  projects: [
+    {
+      displayName: 'frontend',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '**/__tests__/script.test.(ts|tsx|js|jsx)',
+        '**/__tests__/web-platform.test.(ts|tsx|js|jsx)'
+      ],
+      setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+      transform: {
+        '^.+\\.(ts|tsx)$': ['ts-jest', {
+          tsconfig: 'tsconfig.json'
+        }]
+      },
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+        '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
+      }
+    },
+    {
+      displayName: 'backend',
+      testEnvironment: 'node',
+      testMatch: [
+        '**/__tests__/api.test.(ts|tsx|js|jsx)',
+        '**/__tests__/security.test.(ts|tsx|js|jsx)',
+        '**/__tests__/performance.test.(ts|tsx|js|jsx)'
+      ],
+      setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+      transform: {
+        '^.+\\.(ts|tsx)$': ['ts-jest', {
+          tsconfig: 'tsconfig.json'
+        }]
+      },
+      transformIgnorePatterns: [
+        'node_modules/(?!(uuid)/)'
+      ]
+    }
   ],
   collectCoverage: true,
   collectCoverageFrom: [
@@ -27,14 +49,6 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'clover'],
-  testTimeout: 30000,
   verbose: true,
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/'
-  ],
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname'
-  ]
+  testTimeout: 30000
 };
