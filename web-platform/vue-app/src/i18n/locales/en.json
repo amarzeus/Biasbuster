@@ -1,0 +1,60 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "more": "More",
+    "less": "Less",
+    "all": "All",
+    "none": "None",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "rememberMe": "Remember Me"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "features": "Features",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "errors": {
+    "required": "{field} is required",
+    "email": "Please enter a valid email address",
+    "minLength": "{field} must be at least {length} characters",
+    "maxLength": "{field} must be at most {length} characters",
+    "passwordMatch": "Passwords do not match",
+    "invalidCredentials": "Invalid email or password",
+    "serverError": "Server error occurred",
+    "networkError": "Network error occurred"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "minLength": "Must be at least {length} characters",
+    "maxLength": "Must be at most {length} characters",
+    "passwordMatch": "Passwords do not match",
+    "invalidFormat": "Invalid format"
+  }
+} 

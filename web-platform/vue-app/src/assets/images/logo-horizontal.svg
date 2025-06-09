@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="45" fill="#2A5C8A" />
+  
+  <!-- Inner Circle -->
+  <circle cx="50" cy="50" r="37" fill="#2EC4B6" />
+  
+  <!-- Star Shape -->
+  <path d="M50 10 L57 35 L85 35 L62 50 L70 85 L50 65 L30 85 L38 50 L15 35 L43 35 Z" 
+        fill="#FFD700" 
+        stroke="#FFFFFF" 
+        stroke-width="1" />
+  
+  <!-- Shield Shape -->
+  <path d="M50 15 L70 22 L70 42 C70 55 60 65 50 65 C40 65 30 55 30 42 L30 22 Z" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="1.5" />
+  
+  <!-- Text Elements -->
+  <text x="120" y="45" 
+        font-family="Arial, sans-serif" 
+        font-size="32" 
+        font-weight="bold" 
+        fill="#2A5C8A" 
+        text-anchor="start">BIAS</text>
+  <text x="120" y="75" 
+        font-family="Arial, sans-serif" 
+        font-size="32" 
+        font-weight="bold" 
+        fill="#FFD700" 
+        text-anchor="start">BUSTER</text>
+  
+  <!-- Tagline -->
+  <text x="120" y="90" 
+        font-family="Arial, sans-serif" 
+        font-size="12" 
+        fill="#666666" 
+        text-anchor="start">Gold Standard Bias Detection</text>
+</svg> 

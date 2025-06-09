@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="400" cy="300" r="200" 
+          fill="#2EC4B6" 
+          opacity="0.1"/>
+  
+  <!-- Unauthorized Message -->
+  <g transform="translate(400, 300)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="48" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#1A1A1A">
+      Unauthorized
+    </text>
+    
+    <text x="0" y="60" 
+          font-family="Arial, sans-serif" 
+          font-size="24" 
+          text-anchor="middle" 
+          fill="#666666">
+      You don't have permission to access this page
+    </text>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <g transform="translate(400, 300)">
+    <!-- Lock Icon -->
+    <g transform="translate(-100, -100)">
+      <rect x="-30" y="-40" width="60" height="40" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4" 
+            rx="5"/>
+      <circle cx="0" cy="-20" r="15" 
+              fill="none" 
+              stroke="#2EC4B6" 
+              stroke-width="4"/>
+    </g>
+    
+    <!-- Shield Icon -->
+    <g transform="translate(100, -100)">
+      <path d="M0,-40 L-30,0 L-30,20 L0,40 L30,20 L30,0 Z" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+    </g>
+  </g>
+  
+  <!-- Navigation -->
+  <g transform="translate(400, 500)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      Please
+    </text>
+    
+    <text x="0" y="30" 
+          font-family="Arial, sans-serif" 
+          font-size="18" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#2EC4B6">
+      Sign In
+    </text>
+  </g>
+</svg> 

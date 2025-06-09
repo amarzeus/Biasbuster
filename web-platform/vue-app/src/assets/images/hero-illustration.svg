@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="white"/>
+  <!-- Background Elements -->
+  <circle cx="150" cy="400" r="200" fill="#f0f4ff" />
+  <circle cx="650" cy="100" r="150" fill="#e6f7ff" />
+  
+  <!-- Main Content Frame -->
+  <rect x="180" y="100" width="440" height="300" rx="16" fill="#ffffff" stroke="#4361ee" stroke-width="3"/>
+  
+  <!-- Screen Header -->
+  <rect x="180" y="100" width="440" height="40" rx="16" fill="#4361ee"/>
+  <circle cx="205" cy="120" r="8" fill="#ff5a5a"/>
+  <circle cx="230" cy="120" r="8" fill="#ffbd4c"/>
+  <circle cx="255" cy="120" r="8" fill="#00ca4e"/>
+  
+  <!-- News Article Text -->
+  <rect x="210" y="165" width="380" height="12" rx="2" fill="#e2e8f0"/>
+  <rect x="210" y="185" width="340" height="12" rx="2" fill="#e2e8f0"/>
+  <rect x="210" y="205" width="360" height="12" rx="2" fill="#e2e8f0"/>
+  <rect x="210" y="225" width="280" height="12" rx="2" fill="#e2e8f0"/>
+  
+  <!-- Bias Detection Overlay -->
+  <rect x="180" y="260" width="440" height="100" rx="8" fill="rgba(67, 97, 238, 0.1)" stroke="#4361ee" stroke-width="2"/>
+  <text x="210" y="290" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#4361ee">Bias Analysis Result</text>
+  
+  <!-- Bias Meter -->
+  <rect x="210" y="310" width="380" height="14" rx="7" fill="#f8f9fa" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="210" y="310" width="190" height="14" rx="7" fill="#4361ee"/>
+  <circle cx="400" cy="317" r="8" fill="white" stroke="#4361ee" stroke-width="2"/>
+  
+  <!-- Analyzer Elements -->
+  <path d="M600 200 L730 80" stroke="#4361ee" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="730" cy="80" r="40" fill="#4361ee"/>
+  <text x="730" y="85" font-family="Inter, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">AI</text>
+  
+  <path d="M600 300 L730 400" stroke="#ef476f" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="730" cy="400" r="40" fill="#ef476f"/>
+  <text x="730" y="405" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">BIAS</text>
+  
+  <!-- ML Analysis Path -->
+  <path d="M70 150 C150 50, 300 200, 180 250" stroke="#06d6a0" stroke-width="3" stroke-dasharray="10 5"/>
+  <circle cx="70" cy="150" r="25" fill="#06d6a0"/>
+  <text x="70" y="155" font-family="Inter, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">ML</text>
+  
+  <!-- Floating Labels -->
+  <rect x="60" y="200" width="120" height="40" rx="20" fill="#4361ee"/>
+  <text x="120" y="225" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">Detect</text>
+  
+  <rect x="100" y="260" width="120" height="40" rx="20" fill="#ef476f"/>
+  <text x="160" y="285" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">Analyze</text>
+  
+  <rect x="50" y="320" width="120" height="40" rx="20" fill="#06d6a0"/>
+  <text x="110" y="345" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">Mitigate</text>
+</svg> 

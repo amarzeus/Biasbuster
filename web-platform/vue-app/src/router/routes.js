@@ -51,6 +51,70 @@ const routes = [
     }
   },
   {
+    path: '/how-it-works',
+    name: 'HowItWorks',
+    component: () => import('@/views/HowItWorks.vue'),
+    meta: {
+      title: 'How It Works - BiasBuster'
+    }
+  },
+  {
+    path: '/analytics-dashboard',
+    name: 'AnalyticsDashboard',
+    component: () => import('@/views/AnalyticsDashboard.vue'),
+    meta: {
+      title: 'Analytics Dashboard - BiasBuster'
+    }
+  },
+  {
+    path: '/transparency-reports',
+    name: 'TransparencyReports',
+    component: () => import('@/views/TransparencyReports.vue'),
+    meta: {
+      title: 'Transparency Reports - BiasBuster'
+    }
+  },
+  {
+    path: '/ai-ethics-governance',
+    name: 'AIEthicsGovernance',
+    component: () => import('@/views/AIEthicsGovernance.vue'),
+    meta: {
+      title: 'AI Ethics & Governance - BiasBuster'
+    }
+  },
+  {
+    path: '/knowledge-base',
+    name: 'KnowledgeBase',
+    component: () => import('@/views/KnowledgeBase.vue'),
+    meta: {
+      title: 'Knowledge Base - BiasBuster'
+    }
+  },
+  {
+    path: '/testimonials-partners',
+    name: 'TestimonialsPartners',
+    component: () => import('@/views/TestimonialsPartners.vue'),
+    meta: {
+      title: 'Testimonials & Partners - BiasBuster'
+    }
+  },
+  {
+    path: '/press-kit',
+    name: 'PressKit',
+    component: () => import('@/views/PressKit.vue'),
+    meta: {
+      title: 'Press Kit - BiasBuster'
+    }
+  },
+  {
+    path: '/careers',
+    name: 'Careers',
+    component: () => import('@/views/Careers.vue'),
+    meta: {
+      title: 'Careers - BiasBuster'
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/NotFound.vue'),

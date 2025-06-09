@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="200" fill="#F5F5F5" />
+  
+  <!-- Decorative Elements -->
+  <rect x="50" y="50" width="200" height="100" fill="#2EC4B6" rx="6" />
+  
+  <!-- Icon -->
+  <rect x="130" y="80" width="40" height="40" fill="#FFFFFF" rx="4" />
+  <line x1="140" y1="100" x2="160" y2="100" stroke="#2EC4B6" stroke-width="4" />
+  <line x1="150" y1="90" x2="150" y2="110" stroke="#2EC4B6" stroke-width="4" />
+  
+  <!-- Text Elements -->
+  <text x="150" y="170" 
+        font-family="Arial, sans-serif" 
+        font-size="16" 
+        fill="#1A1A1A" 
+        text-anchor="middle">Resource 2</text>
+</svg> 

@@ -1,0 +1,124 @@
+name: PRD Compliance Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday
+
+jobs:
+  prd-compliance:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run PRD compliance check
+      run: node scripts/check-prd-compliance.js
+    
+    - name: Upload compliance report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: prd-compliance-report
+        path: prd-compliance-report.json
+    
+    - name: Create PRD compliance issue
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('prd-compliance-report.json', 'utf-8'));
+          
+          const issueTitle = 'PRD Compliance Issues Detected';
+          const issueBody = `
+            ## PRD Compliance Report
+            
+            ### Summary
+            - Total Issues: ${report.summary.totalIssues}
+            - Total Warnings: ${report.summary.totalWarnings}
+            - Total Success: ${report.summary.totalSuccess}
+            
+            ### Issues
+            ${report.issues.map(issue => `- ${issue}`).join('\n')}
+            
+            ### Warnings
+            ${report.warnings.map(warning => `- ${warning}`).join('\n')}
+            
+            ### Next Steps
+            1. Review the issues and warnings above
+            2. Create tasks for addressing critical issues
+            3. Update the codebase to meet PRD requirements
+            4. Run the compliance check again after fixes
+            
+            _Report generated on ${report.timestamp}_
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: issueTitle,
+            body: issueBody,
+            labels: ['prd-compliance', 'needs-attention']
+          });
+    
+    - name: Update PRD compliance status
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('prd-compliance-report.json', 'utf-8'));
+          
+          const statusBody = `
+            ## PRD Compliance Status
+            
+            ### Summary
+            - Total Issues: ${report.summary.totalIssues}
+            - Total Warnings: ${report.summary.totalWarnings}
+            - Total Success: ${report.summary.totalSuccess}
+            
+            ### Warnings
+            ${report.warnings.map(warning => `- ${warning}`).join('\n')}
+            
+            _Last updated on ${report.timestamp}_
+          `;
+          
+          // Update or create status issue
+          const statusTitle = 'PRD Compliance Status';
+          const issues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: ['prd-compliance-status']
+          });
+          
+          const statusIssue = issues.data.find(issue => issue.title === statusTitle);
+          
+          if (statusIssue) {
+            github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: statusIssue.number,
+              body: statusBody
+            });
+          } else {
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: statusTitle,
+              body: statusBody,
+              labels: ['prd-compliance-status']
+            });
+          } 

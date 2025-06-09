@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="400" cy="300" r="200" 
+          fill="#2EC4B6" 
+          opacity="0.1"/>
+  
+  <!-- 404 Text -->
+  <g transform="translate(400, 300)">
+    <!-- Large 404 -->
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="120" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#2EC4B6">
+      404
+    </text>
+    
+    <!-- Error Message -->
+    <text x="0" y="100" 
+          font-family="Arial, sans-serif" 
+          font-size="24" 
+          text-anchor="middle" 
+          fill="#1A1A1A">
+      Page Not Found
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="0" y="140" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      The page you're looking for doesn't exist
+    </text>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <g transform="translate(400, 300)">
+    <!-- Search Icon -->
+    <g transform="translate(-100, -200)">
+      <circle cx="0" cy="0" r="30" 
+              fill="none" 
+              stroke="#2EC4B6" 
+              stroke-width="4"/>
+      <line x1="20" y1="20" x2="40" y2="40" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+    </g>
+    
+    <!-- Question Mark -->
+    <g transform="translate(100, -200)">
+      <circle cx="0" cy="0" r="30" 
+              fill="none" 
+              stroke="#2EC4B6" 
+              stroke-width="4"/>
+      <text x="0" y="10" 
+            font-family="Arial, sans-serif" 
+            font-size="40" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            fill="#2EC4B6">
+        ?
+      </text>
+    </g>
+  </g>
+  
+  <!-- Navigation Hint -->
+  <g transform="translate(400, 500)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      Try going back to the
+    </text>
+    
+    <text x="0" y="30" 
+          font-family="Arial, sans-serif" 
+          font-size="18" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#2EC4B6">
+      Homepage
+    </text>
+  </g>
+</svg> 

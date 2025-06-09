@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="400" cy="300" r="200" 
+          fill="#2EC4B6" 
+          opacity="0.1"/>
+  
+  <!-- I'm a Teapot Message -->
+  <g transform="translate(400, 300)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="48" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#1A1A1A">
+      I'm a Teapot
+    </text>
+    
+    <text x="0" y="60" 
+          font-family="Arial, sans-serif" 
+          font-size="24" 
+          text-anchor="middle" 
+          fill="#666666">
+      The server is a teapot
+    </text>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <g transform="translate(400, 300)">
+    <!-- Teapot Icon -->
+    <g transform="translate(-100, -100)">
+      <path d="M-30,-20 Q-30,-40 0,-40 Q30,-40 30,-20 L30,20 Q30,40 0,40 Q-30,40 -30,20 Z" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+      <path d="M30,0 L50,0 L50,-20" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+    </g>
+    
+    <!-- Steam Icon -->
+    <g transform="translate(100, -100)">
+      <path d="M0,-40 Q-10,-30 0,-20 Q10,-30 0,-40" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+      <path d="M0,-30 Q-10,-20 0,-10 Q10,-20 0,-30" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+    </g>
+  </g>
+  
+  <!-- Status -->
+  <g transform="translate(400, 400)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="18" 
+          text-anchor="middle" 
+          fill="#666666">
+      This is a joke response
+    </text>
+    
+    <text x="0" y="40" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      Please try a different request
+    </text>
+  </g>
+  
+  <!-- Navigation -->
+  <g transform="translate(400, 500)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      Return to
+    </text>
+    
+    <text x="0" y="30" 
+          font-family="Arial, sans-serif" 
+          font-size="18" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#2EC4B6">
+      Homepage
+    </text>
+  </g>
+</svg> 

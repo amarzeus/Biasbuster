@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="90" cy="90" r="90" fill="#2A5C8A" />
+  
+  <!-- Inner Circle -->
+  <circle cx="90" cy="90" r="75" fill="#2EC4B6" />
+  
+  <!-- Star Shape -->
+  <path d="M90 20 L103 60 L150 60 L113 80 L125 140 L90 110 L55 140 L67 80 L30 60 L77 60 Z" 
+        fill="#FFD700" 
+        stroke="#FFFFFF" 
+        stroke-width="2" />
+  
+  <!-- Shield Shape -->
+  <path d="M90 30 L120 42 L120 72 C120 90 105 105 90 105 C75 105 60 90 60 72 L60 42 Z" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="3" />
+</svg> 

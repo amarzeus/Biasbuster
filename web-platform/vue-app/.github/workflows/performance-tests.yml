@@ -1,0 +1,60 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+
+    - name: Start server
+      run: npm run preview &
+      env:
+        PORT: 4173
+
+    - name: Run Lighthouse CI
+      run: |
+        npm install -g @lhci/cli@0.12.x
+        lhci autorun
+
+    - name: Run Web Vitals
+      run: npm run test:performance
+
+    - name: Upload performance report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: performance-report
+        path: |
+          .lighthouseci/
+          performance-report.json
+        retention-days: 30
+
+    - name: Check performance budget
+      run: |
+        if [ -f performance-report.json ]; then
+          npm run check:performance-budget
+        else
+          echo "No performance report found"
+          exit 1
+        fi 

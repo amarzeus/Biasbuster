@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Dashboard Elements -->
+  <g transform="translate(100, 100)">
+    <!-- Chart 1: Bias Distribution -->
+    <g transform="translate(0, 0)">
+      <rect width="250" height="200" 
+            fill="#FFFFFF" 
+            stroke="#2EC4B6" 
+            stroke-width="2" 
+            rx="10"/>
+      
+      <!-- Bar Chart -->
+      <g transform="translate(30, 30)">
+        <rect x="0" y="100" width="30" height="70" 
+              fill="#2EC4B6" 
+              opacity="0.8"/>
+        <rect x="40" y="60" width="30" height="110" 
+              fill="#2EC4B6" 
+              opacity="0.6"/>
+        <rect x="80" y="80" width="30" height="90" 
+              fill="#2EC4B6" 
+              opacity="0.8"/>
+        <rect x="120" y="40" width="30" height="130" 
+              fill="#2EC4B6" 
+              opacity="0.6"/>
+      </g>
+      
+      <text x="125" y="30" 
+            font-family="Arial, sans-serif" 
+            font-size="16" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            fill="#1A1A1A">
+        Bias Distribution
+      </text>
+    </g>
+    
+    <!-- Chart 2: Detection Accuracy -->
+    <g transform="translate(300, 0)">
+      <rect width="250" height="200" 
+            fill="#FFFFFF" 
+            stroke="#2EC4B6" 
+            stroke-width="2" 
+            rx="10"/>
+      
+      <!-- Line Chart -->
+      <g transform="translate(30, 30)">
+        <path d="M0,100 L50,80 L100,90 L150,60 L200,70" 
+              stroke="#2EC4B6" 
+              stroke-width="3" 
+              fill="none"/>
+        <circle cx="0" cy="100" r="4" fill="#2EC4B6"/>
+        <circle cx="50" cy="80" r="4" fill="#2EC4B6"/>
+        <circle cx="100" cy="90" r="4" fill="#2EC4B6"/>
+        <circle cx="150" cy="60" r="4" fill="#2EC4B6"/>
+        <circle cx="200" cy="70" r="4" fill="#2EC4B6"/>
+      </g>
+      
+      <text x="125" y="30" 
+            font-family="Arial, sans-serif" 
+            font-size="16" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            fill="#1A1A1A">
+        Detection Accuracy
+      </text>
+    </g>
+    
+    <!-- Chart 3: User Engagement -->
+    <g transform="translate(0, 250)">
+      <rect width="250" height="200" 
+            fill="#FFFFFF" 
+            stroke="#2EC4B6" 
+            stroke-width="2" 
+            rx="10"/>
+      
+      <!-- Pie Chart -->
+      <g transform="translate(125, 100)">
+        <path d="M0,0 L0,-60 A60,60 0 0,1 52,30 Z" 
+              fill="#2EC4B6" 
+              opacity="0.8"/>
+        <path d="M0,0 L52,30 A60,60 0 0,1 -52,30 Z" 
+              fill="#2EC4B6" 
+              opacity="0.6"/>
+        <path d="M0,0 L-52,30 A60,60 0 0,1 0,-60 Z" 
+              fill="#2EC4B6" 
+              opacity="0.4"/>
+      </g>
+      
+      <text x="125" y="30" 
+            font-family="Arial, sans-serif" 
+            font-size="16" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            fill="#1A1A1A">
+        User Engagement
+      </text>
+    </g>
+    
+    <!-- Chart 4: Performance Metrics -->
+    <g transform="translate(300, 250)">
+      <rect width="250" height="200" 
+            fill="#FFFFFF" 
+            stroke="#2EC4B6" 
+            stroke-width="2" 
+            rx="10"/>
+      
+      <!-- Radar Chart -->
+      <g transform="translate(125, 100)">
+        <path d="M0,-50 L43,-25 L43,25 L0,50 L-43,25 L-43,-25 Z" 
+              fill="#2EC4B6" 
+              opacity="0.2"/>
+        <path d="M0,-30 L26,-15 L26,15 L0,30 L-26,15 L-26,-15 Z" 
+              fill="#2EC4B6" 
+              opacity="0.4"/>
+        <path d="M0,-10 L8,-5 L8,5 L0,10 L-8,5 L-8,-5 Z" 
+              fill="#2EC4B6" 
+              opacity="0.6"/>
+      </g>
+      
+      <text x="125" y="30" 
+            font-family="Arial, sans-serif" 
+            font-size="16" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            fill="#1A1A1A">
+        Performance Metrics
+      </text>
+    </g>
+  </g>
+  
+  <!-- Title -->
+  <text x="400" y="50" 
+        font-family="Arial, sans-serif" 
+        font-size="32" 
+        font-weight="bold" 
+        text-anchor="middle" 
+        fill="#1A1A1A">
+    Analytics Dashboard
+  </text>
+</svg> 

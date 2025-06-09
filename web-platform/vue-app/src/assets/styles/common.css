@@ -1,0 +1,208 @@
+/* Theme Variables */
+:root {
+  --primary-color: #2A5C8A;
+  --secondary-color: #2EC4B6;
+  --success-color: #4CAF50;
+  --warning-color: #FFC107;
+  --error-color: #F44336;
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --background-color: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --text-color: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --background-color: #1A1A1A;
+  --bg-secondary: #2D2D2D;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle-icon {
+  font-size: 1.2rem;
+  transition: transform var(--transition-speed) ease;
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+  transform: rotate(360deg);
+}
+
+/* Theme Transition */
+.theme-transition {
+  transition: background-color var(--transition-speed) ease,
+              color var(--transition-speed) ease;
+}
+
+.theme-transition * {
+  transition: background-color var(--transition-speed) ease,
+              border-color var(--transition-speed) ease,
+              color var(--transition-speed) ease,
+              box-shadow var(--transition-speed) ease;
+}
+
+/* Dark Mode Enhancements */
+[data-theme="dark"] {
+  /* Card and Container Backgrounds */
+  .feature-card,
+  .testimonial-card,
+  .analysis-container,
+  .dashboard-card {
+    background-color: #2D2D2D;
+    border-color: #3D3D3D;
+  }
+
+  /* Input Elements */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    background-color: #2D2D2D;
+    border-color: #3D3D3D;
+    color: var(--text-color);
+  }
+
+  /* Buttons */
+  .secondary-button {
+    border-color: var(--primary-color);
+  }
+
+  /* Charts */
+  canvas {
+    filter: invert(0.9) hue-rotate(180deg);
+  }
+}
+
+/* Loading and Progress Indicators */
+.progress-bar {
+  height: 4px;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width var(--transition-speed) ease;
+}
+
+/* Tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip:hover::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.tooltip:hover::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% - 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--secondary-color) transparent transparent transparent;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.badge-primary { background-color: var(--primary-color); color: white; }
+.badge-success { background-color: var(--success-color); color: white; }
+.badge-warning { background-color: var(--warning-color); color: white; }
+.badge-error { background-color: var(--error-color); color: white; }
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .theme-toggle-icon {
+    font-size: 1rem;
+  }
+
+  .tooltip:hover::before {
+    display: none;
+  }
+
+  .tooltip:hover::after {
+    display: none;
+  }
+} 

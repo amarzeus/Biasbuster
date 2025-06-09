@@ -1,5 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { BiasAnalysisResult, BiasInstance, SentimentAnalysis, SourceCredibility } from '../types/bias';
 
 // Load environment variables
 dotenv.config();
@@ -42,6 +43,11 @@ interface AIModelConfig {
   contextWindow: number;
   costPerToken: number;
   strengths: string[];
+  maxTokens?: number;
+  temperature?: number;
+  topP?: number;
+  frequencyPenalty?: number;
+  presencePenalty?: number;
 }
 
 const AI_MODELS: AIModelConfig[] = [
@@ -52,7 +58,11 @@ const AI_MODELS: AIModelConfig[] = [
     apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
     contextWindow: 8192,
     costPerToken: 0.0000002,
-    strengths: ['fast', 'good-value', 'balanced-analysis']
+    strengths: ['fast', 'good-value', 'balanced-analysis'],
+    temperature: 0.7,
+    topP: 0.9,
+    frequencyPenalty: 0.1,
+    presencePenalty: 0.1
   },
   {
     name: 'llama3-70b-8192',
@@ -61,7 +71,11 @@ const AI_MODELS: AIModelConfig[] = [
     apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
     contextWindow: 8192,
     costPerToken: 0.0000009,
-    strengths: ['high-accuracy', 'nuanced-analysis', 'better-explanations']
+    strengths: ['high-accuracy', 'nuanced-analysis', 'better-explanations'],
+    temperature: 0.5,
+    topP: 0.95,
+    frequencyPenalty: 0.2,
+    presencePenalty: 0.2
   },
   {
     name: 'claude-3-opus-20240229',
@@ -70,7 +84,11 @@ const AI_MODELS: AIModelConfig[] = [
     apiEndpoint: 'https://api.anthropic.com/v1/messages',
     contextWindow: 200000,
     costPerToken: 0.000015,
-    strengths: ['highest-accuracy', 'deep-analysis', 'best-for-long-content']
+    strengths: ['highest-accuracy', 'deep-analysis', 'best-for-long-content'],
+    temperature: 0.3,
+    topP: 0.98,
+    frequencyPenalty: 0.3,
+    presencePenalty: 0.3
   },
   {
     name: 'gpt-4',
@@ -79,7 +97,11 @@ const AI_MODELS: AIModelConfig[] = [
     apiEndpoint: 'https://api.openai.com/v1/chat/completions',
     contextWindow: 8192,
     costPerToken: 0.00006,
-    strengths: ['highest-accuracy', 'nuanced-analysis', 'wide-knowledge']
+    strengths: ['highest-accuracy', 'nuanced-analysis', 'wide-knowledge'],
+    temperature: 0.4,
+    topP: 0.97,
+    frequencyPenalty: 0.25,
+    presencePenalty: 0.25
   }
 ];
 
@@ -97,23 +119,61 @@ export async function callAI(
     includeSentiment?: boolean;
     includeCredibility?: boolean;
     maxTokens?: number;
+    temperature?: number;
+    topP?: number;
+    frequencyPenalty?: number;
+    presencePenalty?: number;
   } = {}
 ): Promise<BiasBusterResponse> {
   // Auto-select model based on text length, capabilities needed, and user preferences
   const selectedModel = selectBestModel(prompt.length, options);
   console.log(`Selected AI model: ${selectedModel.name} (${selectedModel.provider})`);
 
-  switch(selectedModel.provider.toLowerCase()) {
-    case 'groq':
-      return await callGroqAI(prompt, selectedModel, options);
-    case 'anthropic':
-      return await callAnthropicAI(prompt, selectedModel, options);
-    case 'openai':
-      return await callOpenAI(prompt, selectedModel, options);
-    case 'google':
-      return await callGoogleAI(prompt, options);
-    default:
-      return await callMockAI(prompt, options);
+  // Enhance the prompt with additional instructions
+  const enhancedPrompt = enhancePrompt(prompt, options);
+
+  // Add system instructions for better response structure
+  const systemInstructions = `
+You are an expert bias detection AI. Your task is to analyze text for bias and provide a structured response.
+Follow these guidelines:
+1. Be objective and evidence-based
+2. Provide clear explanations for detected bias
+3. Include specific examples and context
+4. Suggest practical ways to mitigate bias
+5. Format your response as valid JSON
+6. Include all required fields in the response structure
+7. Use precise language and avoid ambiguity
+8. Consider multiple perspectives
+9. Be sensitive to cultural context
+10. Maintain professional tone`;
+
+  const fullPrompt = `${systemInstructions}\n\n${enhancedPrompt}`;
+
+  try {
+    let response: BiasBusterResponse;
+    
+    switch(selectedModel.provider.toLowerCase()) {
+      case 'groq':
+        response = await callGroqAI(fullPrompt, selectedModel, options);
+        break;
+      case 'anthropic':
+        response = await callAnthropicAI(fullPrompt, selectedModel, options);
+        break;
+      case 'openai':
+        response = await callOpenAI(fullPrompt, selectedModel, options);
+        break;
+      case 'google':
+        response = await callGoogleAI(fullPrompt, options);
+        break;
+      default:
+        response = await callMockAI(fullPrompt, options);
+    }
+
+    // Validate and format the response
+    return validateAndFormatResponse(response);
+  } catch (error) {
+    console.error('Error calling AI service:', error);
+    throw new Error('Failed to analyze text for bias');
   }
 }
 
@@ -145,7 +205,8 @@ function selectBestModel(
       apiEndpoint: '',
       contextWindow: 10000,
       costPerToken: 0,
-      strengths: ['testing']
+      strengths: ['testing'],
+      temperature: 0.7
     };
   }
   
@@ -185,7 +246,8 @@ function selectBestModel(
       apiEndpoint: '',
       contextWindow: 10000,
       costPerToken: 0,
-      strengths: ['testing']
+      strengths: ['testing'],
+      temperature: 0.7
     };
   }
   
@@ -257,21 +319,11 @@ function enhancePrompt(
     enhancedPrompt = enhancedPrompt.replace('ARTICLE TO ANALYZE:', credibilityInstructions + '\n\nARTICLE TO ANALYZE:');
   }
   
-  // Add language detection and instructions
-  if (options.language && options.language !== 'en') {
-    const languageInstructions = `
-LANGUAGE NOTE: The article may contain content in ${options.language}. Please process it accordingly and include:
-"LanguageDetected": "detected_language_code"
-`;
-    
-    enhancedPrompt = enhancedPrompt.replace('ARTICLE TO ANALYZE:', languageInstructions + '\n\nARTICLE TO ANALYZE:');
-  }
-  
   return enhancedPrompt;
 }
 
 /**
- * Call Groq AI with given prompt
+ * Call Groq AI API
  */
 async function callGroqAI(
   prompt: string, 
@@ -283,150 +335,69 @@ async function callGroqAI(
     maxTokens?: number;
   } = {}
 ): Promise<BiasBusterResponse> {
-  const apiKey = process.env.GROQ_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('GROQ_API_KEY environment variable not set');
-  }
-
-  try {
-    console.log('Calling Groq AI with enhanced prompt...');
-    
-    // Enhance the prompt with additional instructions
-    const enhancedPrompt = enhancePrompt(prompt, options);
-    
-    // Split prompt into system part and user part
-    const parts = enhancedPrompt.split('[Insert article text here]');
-    const systemContent = parts[0].trim();
-    const userContent = parts.length > 1 ? parts[1].trim() : '';
-
-    const requestBody = {
+  const response = await axios.post(
+    model.apiEndpoint,
+    {
       model: model.name,
       messages: [
-        {
-          role: 'system',
-          content: systemContent
-        },
-        {
-          role: 'user',
-          content: `Please analyze the following article based on the instructions you have been given:\n\n${userContent}`
-        }
+        { role: 'system', content: 'You are an expert bias detection AI.' },
+        { role: 'user', content: prompt }
       ],
-      temperature: 0.2, // Lower temperature for more deterministic outputs
-      max_tokens: options.maxTokens || 4096,
-      top_p: 1,
-      stream: false,
-      response_format: { type: "json_object" }
-    };
-
-    const response = await axios.post(
-      model.apiEndpoint,
-      requestBody,
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
+      temperature: model.temperature,
+      top_p: model.topP,
+      frequency_penalty: model.frequencyPenalty,
+      presence_penalty: model.presencePenalty,
+      max_tokens: options.maxTokens || 2000
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
       }
-    );
-    
-    // Extract the JSON from the response
-    const responseContent = response.data.choices[0].message.content;
-    
-    // Parse the response
-    try {
-      const parsedResponse = JSON.parse(responseContent);
-      console.log('Successfully parsed AI JSON response.');
-      return validateAndFormatResponse(parsedResponse);
-    } catch (e) {
-      console.error('Error parsing JSON response:', e);
-      throw new Error('Failed to parse AI response as JSON');
     }
-    
-  } catch (error: any) {
-    console.error('Error calling Groq AI:', error.response?.data || error.message);
-    throw new Error(`Groq AI call failed: ${error.message}`);
-  }
+  );
+
+  return parseAIResponse(response.data);
 }
 
 /**
- * Call Anthropic Claude AI with given prompt
+ * Call Anthropic AI API
  */
 async function callAnthropicAI(
   prompt: string,
   model: AIModelConfig,
   options: {
     language?: string;
-    includeSentiment?: boolean; 
+    includeSentiment?: boolean;
     includeCredibility?: boolean;
     maxTokens?: number;
   } = {}
 ): Promise<BiasBusterResponse> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('ANTHROPIC_API_KEY environment variable not set');
-  }
-
-  try {
-    console.log('Calling Anthropic Claude AI with enhanced prompt...');
-    
-    // Enhance the prompt with additional instructions
-    const enhancedPrompt = enhancePrompt(prompt, options);
-    
-    // For Anthropic, we combine system and user content
-    const parts = enhancedPrompt.split('[Insert article text here]');
-    const systemContent = parts[0].trim();
-    const userContent = parts.length > 1 ? parts[1].trim() : '';
-    
-    const combinedContent = `${systemContent}\n\nARTICLE TO ANALYZE:\n${userContent}`;
-
-    const requestBody = {
+  const response = await axios.post(
+    model.apiEndpoint,
+    {
       model: model.name,
       messages: [
-        {
-          role: 'user',
-          content: combinedContent
-        }
+        { role: 'user', content: prompt }
       ],
-      temperature: 0.2,
-      max_tokens: options.maxTokens || 4000,
-      system: "You are Biasbuster, an expert AI system specializing in detecting bias and misinformation in news articles. You analyze content carefully and provide structured, accurate feedback.",
-      response_format: { type: "json_object" }
-    };
-
-    const response = await axios.post(
-      model.apiEndpoint,
-      requestBody,
-      {
-        headers: {
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'Content-Type': 'application/json'
-        }
+      temperature: model.temperature,
+      top_p: model.topP,
+      max_tokens: options.maxTokens || 4000
+    },
+    {
+      headers: {
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json'
       }
-    );
-    
-    // Extract the content from Anthropic's response format
-    const responseContent = response.data.content[0].text;
-    
-    try {
-      const parsedResponse = JSON.parse(responseContent);
-      console.log('Successfully parsed Anthropic Claude response.');
-      return validateAndFormatResponse(parsedResponse);
-    } catch (e) {
-      console.error('Error parsing Anthropic response:', e);
-      throw new Error('Failed to parse Anthropic response as JSON');
     }
-    
-  } catch (error: any) {
-    console.error('Error calling Anthropic Claude:', error.response?.data || error.message);
-    throw new Error(`Anthropic Claude call failed: ${error.message}`);
-  }
+  );
+
+  return parseAIResponse(response.data);
 }
 
 /**
- * Call OpenAI with given prompt
+ * Call OpenAI API
  */
 async function callOpenAI(
   prompt: string,
@@ -438,71 +409,33 @@ async function callOpenAI(
     maxTokens?: number;
   } = {}
 ): Promise<BiasBusterResponse> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('OPENAI_API_KEY environment variable not set');
-  }
-
-  try {
-    console.log('Calling OpenAI with enhanced prompt...');
-    
-    // Enhance the prompt with additional instructions
-    const enhancedPrompt = enhancePrompt(prompt, options);
-    
-    // Split prompt into system part and user part
-    const parts = enhancedPrompt.split('[Insert article text here]');
-    const systemContent = parts[0].trim();
-    const userContent = parts.length > 1 ? parts[1].trim() : '';
-
-    const requestBody = {
+  const response = await axios.post(
+    model.apiEndpoint,
+    {
       model: model.name,
       messages: [
-        {
-          role: 'system',
-          content: systemContent
-        },
-        {
-          role: 'user',
-          content: `Please analyze the following article based on the instructions you have been given:\n\n${userContent}`
-        }
+        { role: 'system', content: 'You are an expert bias detection AI.' },
+        { role: 'user', content: prompt }
       ],
-      temperature: 0.2,
-      max_tokens: options.maxTokens || 4000,
-      response_format: { type: "json_object" }
-    };
-
-    const response = await axios.post(
-      model.apiEndpoint,
-      requestBody,
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
+      temperature: model.temperature,
+      top_p: model.topP,
+      frequency_penalty: model.frequencyPenalty,
+      presence_penalty: model.presencePenalty,
+      max_tokens: options.maxTokens || 2000
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
       }
-    );
-    
-    // Extract the JSON from the response
-    const responseContent = response.data.choices[0].message.content;
-    
-    try {
-      const parsedResponse = JSON.parse(responseContent);
-      console.log('Successfully parsed OpenAI response.');
-      return validateAndFormatResponse(parsedResponse);
-    } catch (e) {
-      console.error('Error parsing OpenAI response:', e);
-      throw new Error('Failed to parse OpenAI response as JSON');
     }
-    
-  } catch (error: any) {
-    console.error('Error calling OpenAI:', error.response?.data || error.message);
-    throw new Error(`OpenAI call failed: ${error.message}`);
-  }
+  );
+
+  return parseAIResponse(response.data);
 }
 
 /**
- * Call Google AI with given prompt - implementation stub
+ * Call Google AI API (placeholder)
  */
 async function callGoogleAI(
   _prompt: string,
@@ -512,11 +445,12 @@ async function callGoogleAI(
     includeCredibility?: boolean;
   } = {}
 ): Promise<BiasBusterResponse> {
-  throw new Error('Google AI integration not implemented yet');
+  // TODO: Implement Google AI API call
+  throw new Error('Google AI API not implemented yet');
 }
 
 /**
- * Provide a mock AI response for testing with enhanced features
+ * Call mock AI for testing
  */
 async function callMockAI(
   prompt: string,
@@ -526,130 +460,92 @@ async function callMockAI(
     includeCredibility?: boolean;
   } = {}
 ): Promise<BiasBusterResponse> {
-  console.log('Using mock AI service for testing');
-  
-  // Extract a sample sentence from the prompt for mock analysis
-  const sampleText = prompt.split('\n').filter(line => line.length > 50)[0] || 
-                    'This is a sample sentence for mock analysis.';
-  
-  // Get some mock bias instances by picking text from the prompt
-  const mockBiasInstances = [];
-  const lines = prompt.split('\n');
-  let contentStarted = false;
-  
-  for (const line of lines) {
-    if (line.includes('ARTICLE TO ANALYZE:')) {
-      contentStarted = true;
-      continue;
-    }
-    
-    if (contentStarted && line.length > 30) {
-      // Add some random instances
-      if (Math.random() > 0.8) {
-        mockBiasInstances.push({
-          Sentence: line.substring(0, Math.min(line.length, 100)),
-          BiasType: ['Framing Bias', 'Cognitive Bias', 'Sentiment Bias', 'Selection Bias'][Math.floor(Math.random() * 4)],
-          Explanation: "This is a mock explanation of potential bias in the text.",
-          Severity: String(Math.floor(Math.random() * 3)),
-          Justification: "Mock justification for the severity rating.",
-          Mitigation: "This is a mock suggestion for a more balanced phrasing."
-        });
-      }
-    }
-  }
-  
-  // Ensure we have at least one instance
-  if (mockBiasInstances.length === 0) {
-    mockBiasInstances.push({
-      Sentence: sampleText,
-      BiasType: "Mock Bias Type",
-      Explanation: "This is a mock explanation of bias.",
-      Severity: "1",
-      Justification: "Mock severity justification",
-      Mitigation: "This is a mock unbiased rewrite suggestion."
-    });
-  }
-  
-  // Add advanced features if requested
-  let sentimentAnalysis;
-  if (options.includeSentiment) {
-    sentimentAnalysis = {
-      Overall: ["positive", "negative", "neutral"][Math.floor(Math.random() * 3)],
-      Score: parseFloat((Math.random() * 2 - 1).toFixed(2)), // Convert to number with parseFloat
-      EmotionalTone: ["informative", "objective", "concerned", "alarming"].slice(0, Math.floor(Math.random() * 3) + 1)
-    };
-  }
-  
-  let sourceCredibility;
-  if (options.includeCredibility) {
-    sourceCredibility = {
-      Score: Math.floor(Math.random() * 100),
-      Factors: [
-        "Limited citation of sources",
-        "Some unsupported claims",
-        "Presents multiple viewpoints"
-      ],
-      Recommendations: [
-        "Include more specific citations",
-        "Clearly separate opinion from fact"
-      ]
-    };
-  }
-  
-  // Mock response with the sample text
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // Return mock response
   return {
     MainTopic: 'Mock Analysis',
-    BiasDetected: mockBiasInstances.length > 0 ? 'yes' : 'no',
-    BiasInstances: mockBiasInstances,
-    BiasSummary: 'Mock bias summary.',
-    TrustedSources: [
-      'https://example.com/reliable-source-1', 
-      'https://example.com/reliable-source-2'
-    ],
-    EducationalContent: 'This is mock educational content about bias in media.',
-    SentimentAnalysis: sentimentAnalysis,
-    SourceCredibility: sourceCredibility,
-    LanguageDetected: options.language || "en"
+    BiasDetected: 'no',
+    BiasInstances: [],
+    BiasSummary: 'This is a mock response for testing purposes.',
+    TrustedSources: [],
+    EducationalContent: 'Mock educational content.',
+    SentimentAnalysis: options.includeSentiment ? {
+      Overall: 'neutral',
+      Score: 0,
+      EmotionalTone: ['neutral']
+    } : undefined,
+    SourceCredibility: options.includeCredibility ? {
+      Score: 50,
+      Factors: ['Mock factor 1', 'Mock factor 2'],
+      Recommendations: ['Mock recommendation 1', 'Mock recommendation 2']
+    } : undefined,
+    LanguageDetected: options.language || 'en'
   };
 }
 
 /**
- * Validate and format the AI response to ensure it matches the expected structure
+ * Parse and validate AI response
+ */
+function parseAIResponse(response: any): BiasBusterResponse {
+  try {
+    // Extract the content from the response based on the provider
+    let content: string;
+    if (response.choices?.[0]?.message?.content) {
+      content = response.choices[0].message.content;
+    } else if (response.content) {
+      content = response.content;
+    } else {
+      throw new Error('Invalid response format');
+    }
+
+    // Parse the JSON content
+    const parsed = JSON.parse(content);
+
+    // Validate required fields
+    if (!parsed.MainTopic || !parsed.BiasDetected || !parsed.BiasInstances || !parsed.BiasSummary) {
+      throw new Error('Missing required fields in response');
+    }
+
+    return parsed;
+  } catch (error) {
+    console.error('Error parsing AI response:', error);
+    throw new Error('Failed to parse AI response');
+  }
+}
+
+/**
+ * Validate and format the response
  */
 function validateAndFormatResponse(response: any): BiasBusterResponse {
-  // Ensure the response has all required fields
-  const validatedResponse: BiasBusterResponse = {
+  // Ensure all required fields are present
+  const validated: BiasBusterResponse = {
     MainTopic: response.MainTopic || 'Unknown Topic',
-    BiasDetected: response.BiasDetected === 'yes' ? 'yes' : 'no',
+    BiasDetected: response.BiasDetected || 'no',
     BiasInstances: Array.isArray(response.BiasInstances) ? response.BiasInstances : [],
-    BiasSummary: response.BiasSummary || 'No summary provided.',
+    BiasSummary: response.BiasSummary || 'No bias analysis available.',
     TrustedSources: Array.isArray(response.TrustedSources) ? response.TrustedSources : [],
-    EducationalContent: response.EducationalContent || 'No educational content provided.'
+    EducationalContent: response.EducationalContent || 'No educational content available.',
+    LanguageDetected: response.LanguageDetected || 'en'
   };
-  
-  // Add advanced features if present
+
+  // Add optional fields if present
   if (response.SentimentAnalysis) {
-    validatedResponse.SentimentAnalysis = {
+    validated.SentimentAnalysis = {
       Overall: response.SentimentAnalysis.Overall || 'neutral',
-      Score: parseFloat(response.SentimentAnalysis.Score) || 0,
-      EmotionalTone: Array.isArray(response.SentimentAnalysis.EmotionalTone) ? 
-        response.SentimentAnalysis.EmotionalTone : []
+      Score: typeof response.SentimentAnalysis.Score === 'number' ? response.SentimentAnalysis.Score : 0,
+      EmotionalTone: Array.isArray(response.SentimentAnalysis.EmotionalTone) ? response.SentimentAnalysis.EmotionalTone : []
     };
   }
-  
+
   if (response.SourceCredibility) {
-    validatedResponse.SourceCredibility = {
-      Score: parseInt(response.SourceCredibility.Score) || 50,
-      Factors: Array.isArray(response.SourceCredibility.Factors) ? 
-        response.SourceCredibility.Factors : [],
-      Recommendations: Array.isArray(response.SourceCredibility.Recommendations) ? 
-        response.SourceCredibility.Recommendations : []
+    validated.SourceCredibility = {
+      Score: typeof response.SourceCredibility.Score === 'number' ? response.SourceCredibility.Score : 0,
+      Factors: Array.isArray(response.SourceCredibility.Factors) ? response.SourceCredibility.Factors : [],
+      Recommendations: Array.isArray(response.SourceCredibility.Recommendations) ? response.SourceCredibility.Recommendations : []
     };
   }
-  
-  if (response.LanguageDetected) {
-    validatedResponse.LanguageDetected = response.LanguageDetected;
-  }
-  
-  return validatedResponse;
+
+  return validated;
 } 

@@ -39,13 +39,33 @@ module.exports = {
       transformIgnorePatterns: [
         'node_modules/(?!(uuid)/)'
       ]
+    },
+    {
+      displayName: 'chrome-extension',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '**/src/extensions/chrome/__tests__/**/*.test.(ts|tsx|js|jsx)'
+      ],
+      setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+      transform: {
+        '^.+\\.(ts|tsx)$': ['ts-jest', {
+          tsconfig: 'tsconfig.json'
+        }]
+      },
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+        '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
+      }
     }
   ],
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx,js,jsx}',
     '!src/**/*.d.ts',
-    '!src/types/**/*'
+    '!src/types/**/*',
+    '!src/extensions/chrome/node_modules/**/*'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'clover'],

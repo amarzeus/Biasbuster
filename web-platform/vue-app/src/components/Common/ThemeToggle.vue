@@ -1,50 +1,36 @@
 <template>
   <button
+    type="button"
     @click="toggleTheme"
-    class="relative inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-trust-blue dark:focus:ring-trust-teal transition-colors duration-200"
-    :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+    class="p-2 rounded-full text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    :aria-label="isDark ? 'Toggle light mode' : 'Toggle dark mode'"
+    data-test="theme-toggle"
   >
-    <transition
-      name="theme-icon"
-      mode="out-in"
-    >
+    <div data-test="theme-icon">
       <SunIcon
-        v-if="isDark"
-        key="sun"
-        class="h-5 w-5"
-        aria-hidden="true"
+        v-if="!isDark"
+        class="h-6 w-6"
+        data-test="theme-icon-light"
       />
       <MoonIcon
         v-else
-        key="moon"
-        class="h-5 w-5"
-        aria-hidden="true"
+        class="h-6 w-6"
+        data-test="theme-icon-dark"
       />
-    </transition>
+    </div>
   </button>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useTheme } from '../../composables/useTheme'
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline'
-import { useTheme } from '@/composables/useTheme'
 
 const { isDark, toggleTheme } = useTheme()
 </script>
 
 <style scoped>
-.theme-icon-enter-active,
-.theme-icon-leave-active {
-  transition: all 0.2s ease;
-}
-
-.theme-icon-enter-from {
-  opacity: 0;
-  transform: rotate(-90deg) scale(0.8);
-}
-
-.theme-icon-leave-to {
-  opacity: 0;
-  transform: rotate(90deg) scale(0.8);
+.theme-icon {
+  transition: transform 0.2s ease-in-out;
 }
 </style>

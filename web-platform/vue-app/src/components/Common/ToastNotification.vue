@@ -1,110 +1,82 @@
 <template>
-  <TransitionRoot
-    appear
-    :show="isVisible"
-    as="template"
-    enter="transform ease-out duration-300 transition"
-    enter-from="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-    enter-to="translate-y-0 opacity-100 sm:translate-x-0"
-    leave="transition ease-in duration-100"
-    leave-from="opacity-100"
-    leave-to="opacity-0"
-  >
-    <div class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end z-50">
-      <div class="max-w-sm w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
-        <div class="p-4">
-          <div class="flex items-start">
-            <div class="flex-shrink-0">
-              <CheckCircleIcon
-                v-if="type === 'success'"
-                class="h-6 w-6 text-green-400"
-                aria-hidden="true"
-              />
-              <ExclamationTriangleIcon
-                v-else-if="type === 'warning'"
-                class="h-6 w-6 text-yellow-400"
-                aria-hidden="true"
-              />
-              <XCircleIcon
-                v-else-if="type === 'error'"
-                class="h-6 w-6 text-red-400"
-                aria-hidden="true"
-              />
-              <InformationCircleIcon
-                v-else
-                class="h-6 w-6 text-blue-400"
-                aria-hidden="true"
-              />
-            </div>
-            <div class="ml-3 w-0 flex-1 pt-0.5">
-              <p class="text-sm font-medium text-gray-900 dark:text-white">
-                {{ title }}
-              </p>
-              <p v-if="message" class="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                {{ message }}
-              </p>
-            </div>
-            <div class="ml-4 flex-shrink-0 flex">
-              <button
-                @click="hide"
-                class="bg-white dark:bg-gray-800 rounded-md inline-flex text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-trust-blue dark:focus:ring-trust-teal"
-              >
-                <span class="sr-only">Close</span>
-                <XMarkIcon class="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div v-if="isVisible" data-test="toast" :class="['fixed top-4 right-4 p-4 rounded-lg shadow-lg flex items-start gap-3', typeClasses]" role="alert">
+    <div class="flex-shrink-0">
+      <CheckCircleIcon v-if="type.value === 'success'" data-test="success-icon" class="h-6 w-6 text-white" />
+      <ExclamationCircleIcon v-else-if="type.value === 'error'" data-test="error-icon" class="h-6 w-6 text-white" />
+      <ExclamationTriangleIcon v-else-if="type.value === 'warning'" data-test="warning-icon" class="h-6 w-6 text-white" />
     </div>
-  </TransitionRoot>
+    <div class="flex-1">
+      <h3 class="text-sm font-medium text-white">{{ title }}</h3>
+      <p class="mt-1 text-sm text-white">{{ message }}</p>
+    </div>
+    <button
+      data-test="close-button"
+      class="flex-shrink-0 text-white hover:text-gray-200 focus:outline-none"
+      @click="hideToast"
+      aria-label="Close notification"
+    >
+      <XMarkIcon class="h-5 w-5" />
+    </button>
+  </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { TransitionRoot } from '@headlessui/vue'
-import {
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  XCircleIcon,
-  InformationCircleIcon,
-  XMarkIcon,
-} from '@heroicons/vue/24/outline'
-import { useToast } from '@/composables/useToast'
+import { computed } from 'vue'
+import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { useToast } from '../../composables/useToast'
 
-const { toastState, hideToast } = useToast()
+const toast = useToast()
 
-const isVisible = ref(false)
-const title = ref('')
-const message = ref('')
-const type = ref('info')
+const isVisible = computed(() => {
+  if (toast.toastState) return toast.toastState.value.show
+  return toast.isVisible
+})
+const type = computed(() => {
+  if (toast.toastState) return toast.toastState.value.type
+  return toast.type
+})
+const message = computed(() => {
+  if (toast.toastState) return toast.toastState.value.message
+  return toast.message
+})
+const hideToast = toast.hideToast
 
-watch(
-  () => toastState.value,
-  (newState) => {
-    if (newState.show) {
-      title.value = newState.title
-      message.value = newState.message
-      type.value = newState.type
-      isVisible.value = true
+const title = computed(() => {
+  switch (type.value) {
+    case 'success':
+      return 'Success'
+    case 'error':
+      return 'Error'
+    case 'warning':
+      return 'Warning'
+    default:
+      return 'Notification'
+  }
+})
 
-      // Auto-hide after duration
-      if (newState.duration > 0) {
-        setTimeout(() => {
-          hide()
-        }, newState.duration)
-      }
-    } else {
-      isVisible.value = false
-    }
-  },
-  { immediate: true }
-)
-
-const hide = () => {
-  isVisible.value = false
-  setTimeout(() => {
-    hideToast()
-  }, 300) // Wait for transition to complete
-}
+const typeClasses = computed(() => {
+  switch (type.value) {
+    case 'success':
+      return 'bg-green-500'
+    case 'error':
+      return 'bg-red-500'
+    case 'warning':
+      return 'bg-yellow-500'
+    default:
+      return 'bg-gray-500'
+  }
+})
 </script>
+
+<style scoped>
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-1rem);
+}
+</style>

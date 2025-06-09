@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">
+  <!-- Award Background -->
+  <circle cx="60" cy="60" r="55" fill="#ef476f" opacity="0.1"/>
+  <circle cx="60" cy="60" r="50" stroke="#ef476f" stroke-width="2" stroke-dasharray="4 2"/>
+  
+  <!-- Medal -->
+  <circle cx="60" cy="50" r="25" fill="none" stroke="#ef476f" stroke-width="3"/>
+  <circle cx="60" cy="50" r="20" fill="none" stroke="#ef476f" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <path d="M60 75 L55 95 L60 90 L65 95 L60 75" fill="#ef476f"/>
+  
+  <!-- Media Symbols -->
+  <rect x="47" y="40" width="6" height="20" rx="1" fill="#ef476f"/>
+  <rect x="57" y="35" width="6" height="25" rx="1" fill="#ef476f"/>
+  <rect x="67" y="45" width="6" height="15" rx="1" fill="#ef476f"/>
+  
+  <!-- Innovation Sparkles -->
+  <path d="M35 45 L40 45 M37.5 42.5 L37.5 47.5" stroke="#ffb703" stroke-width="2" stroke-linecap="round"/>
+  <path d="M83 35 L88 35 M85.5 32.5 L85.5 37.5" stroke="#ffb703" stroke-width="2" stroke-linecap="round"/>
+  <path d="M80 60 L85 60 M82.5 57.5 L82.5 62.5" stroke="#ffb703" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="45" cy="60" r="3" fill="#ffb703"/>
+  <circle cx="85" cy="45" r="2" fill="#ffb703"/>
+</svg> 

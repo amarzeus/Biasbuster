@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="400" cy="300" r="200" 
+          fill="#2EC4B6" 
+          opacity="0.1"/>
+  
+  <!-- Unprocessable Entity Message -->
+  <g transform="translate(400, 300)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="48" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#1A1A1A">
+      Unprocessable Entity
+    </text>
+    
+    <text x="0" y="60" 
+          font-family="Arial, sans-serif" 
+          font-size="24" 
+          text-anchor="middle" 
+          fill="#666666">
+      The request entity cannot be processed
+    </text>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <g transform="translate(400, 300)">
+    <!-- Document Icon -->
+    <g transform="translate(-100, -100)">
+      <rect x="-30" y="-40" width="60" height="80" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+      <path d="M-20,-20 L20,-20 M-20,0 L20,0 M-20,20 L20,20" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+    </g>
+    
+    <!-- Warning Icon -->
+    <g transform="translate(100, -100)">
+      <path d="M0,-40 L-30,20 L30,20 Z" 
+            fill="none" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+      <text x="0" y="0" 
+            font-family="Arial, sans-serif" 
+            font-size="24" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            fill="#2EC4B6">
+        !
+      </text>
+    </g>
+  </g>
+  
+  <!-- Status -->
+  <g transform="translate(400, 400)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="18" 
+          text-anchor="middle" 
+          fill="#666666">
+      Please check the entity
+    </text>
+    
+    <text x="0" y="40" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      or contact support for assistance
+    </text>
+  </g>
+  
+  <!-- Navigation -->
+  <g transform="translate(400, 500)">
+    <text x="0" y="0" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      Return to
+    </text>
+    
+    <text x="0" y="30" 
+          font-family="Arial, sans-serif" 
+          font-size="18" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#2EC4B6">
+      Homepage
+    </text>
+  </g>
+</svg> 

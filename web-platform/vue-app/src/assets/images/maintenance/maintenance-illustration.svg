@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="400" cy="300" r="200" 
+          fill="#2EC4B6" 
+          opacity="0.1"/>
+  
+  <!-- Maintenance Icon -->
+  <g transform="translate(400, 300)">
+    <!-- Gear -->
+    <g transform="translate(-100, 0)">
+      <circle cx="0" cy="0" r="50" 
+              fill="none" 
+              stroke="#2EC4B6" 
+              stroke-width="4"/>
+      <circle cx="0" cy="0" r="20" 
+              fill="none" 
+              stroke="#2EC4B6" 
+              stroke-width="4"/>
+      <path d="M0,-50 L0,-40 M0,40 L0,50 M-50,0 L-40,0 M40,0 L50,0" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+    </g>
+    
+    <!-- Wrench -->
+    <g transform="translate(100, 0)">
+      <path d="M-30,-30 L30,30 M-30,30 L30,-30" 
+            stroke="#2EC4B6" 
+            stroke-width="4"/>
+      <circle cx="0" cy="0" r="10" 
+              fill="none" 
+              stroke="#2EC4B6" 
+              stroke-width="4"/>
+    </g>
+  </g>
+  
+  <!-- Maintenance Message -->
+  <g transform="translate(400, 300)">
+    <text x="0" y="100" 
+          font-family="Arial, sans-serif" 
+          font-size="32" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="#1A1A1A">
+      Under Maintenance
+    </text>
+    
+    <text x="0" y="140" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      We're currently performing scheduled maintenance
+    </text>
+    
+    <text x="0" y="170" 
+          font-family="Arial, sans-serif" 
+          font-size="16" 
+          text-anchor="middle" 
+          fill="#666666">
+      Please check back soon
+    </text>
+  </g>
+  
+  <!-- Progress Bar -->
+  <g transform="translate(400, 500)">
+    <rect x="-150" y="-10" width="300" height="20" 
+          fill="#FFFFFF" 
+          stroke="#2EC4B6" 
+          stroke-width="2" 
+          rx="10"/>
+    
+    <rect x="-140" y="-5" width="280" height="10" 
+          fill="#2EC4B6" 
+          opacity="0.5" 
+          rx="5"/>
+    
+    <text x="0" y="40" 
+          font-family="Arial, sans-serif" 
+          font-size="14" 
+          text-anchor="middle" 
+          fill="#666666">
+      Estimated time remaining: 30 minutes
+    </text>
+  </g>
+</svg> 
