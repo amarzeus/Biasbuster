@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XIcon, CheckCircleIcon, XCircleIcon, TrophyIcon, GraduationCapIcon } from './icons/Icons';
-import { quizQuestions, QuizQuestion } from '../data/quizData';
+import { quizQuestions } from '../data/quizData';
 
 interface QuizModalProps {
     isOpen: boolean;

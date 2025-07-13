@@ -11,7 +11,7 @@ const PRESET_QUESTIONS = [
 
 const FormattedAnswer = ({ text }: { text: string }) => {
     const lines = text.split('\n');
-    const elements = [];
+    const elements: JSX.Element[] = [];
     let listItems: string[] = [];
 
     const flushList = () => {
@@ -50,7 +50,7 @@ const KnowledgeBase: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const geminiService = useMemo(() => {
-        const apiKey = process.env.API_KEY;
+        const apiKey = (process as any)?.env?.API_KEY;
         if (!apiKey) {
           setError("API_KEY is not configured. This feature cannot function without it.");
           return null;

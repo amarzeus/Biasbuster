@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { GeminiService } from '../services/geminiService';
-import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState, HistoryItem } from '../types';
+import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState } from '../types';
 import InputPanel from './InputPanel';
 import AnalysisPanel from './AnalysisPanel';
 import StreamingResponse from './StreamingResponse';
@@ -29,7 +29,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
   const [currentHistoryId, setCurrentHistoryId] = useState<number | null>(null);
 
   const geminiService = useMemo(() => {
-    const apiKey = process.env.API_KEY;
+    const apiKey = (process as any)?.env?.API_KEY;
     if (!apiKey) {
       setError("API_KEY is not configured. This feature cannot function without it.");
       setAnalysisState('error');
