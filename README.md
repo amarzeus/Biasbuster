@@ -2,7 +2,7 @@
 
 # 🛡️ Biasbuster
 
-<img src="https://github.com/amarzeus/Biasbuster/raw/main/public/favicon.svg" alt="Biasbuster Logo" width="120" height="120">
+<img src="https://img.shields.io/badge/🛡️-Biasbuster-blue?style=for-the-badge&logoColor=white" alt="Biasbuster Logo" width="200" height="60">
 
 ### 🚀 *Gold-Standard AI-Powered Bias Detection Platform* 🚀
 
