@@ -44,7 +44,7 @@ When answering, be clear, concise, and friendly. Use simple markdown for formatt
 export class GeminiService {
   private ai: GoogleGenAI;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string | undefined) {
     if (!apiKey || apiKey.trim() === '') {
       throw new Error("API_KEY is required to initialize GeminiService.");
     }

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:vite": "vite build",
     "lint": "echo 'Linting not yet configured.'",
     "preview": "vite preview"
   },

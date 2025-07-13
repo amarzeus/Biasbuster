@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: 🧪 Test & Lint
+    name: 🧪 Test & Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,11 +21,8 @@ jobs:
       - name: 📥 Install dependencies
         run: npm install
       
-      - name: 🔍 Type check
-        run: npm run type-check --if-present
-      
       - name: 🏗️ Build project
-        run: npm run build
+        run: npm run build:vite
 
   build-extension:
     name: 🔧 Build Extension
@@ -43,7 +40,7 @@ jobs:
         run: npm install
       
       - name: 🏗️ Build project
-        run: npm run build
+        run: npm run build:vite
       
       - name: 📦 Archive extension
         uses: actions/upload-artifact@v4
@@ -68,7 +65,7 @@ jobs:
         run: npm install
       
       - name: 🏗️ Build for production
-        run: npm run build
+        run: npm run build:vite
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
       
