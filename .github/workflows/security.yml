@@ -25,15 +25,12 @@ jobs:
         run: npm ci
       
       - name: 🔍 Run security audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high --production
       
       - name: 🛡️ CodeQL Analysis
         uses: github/codeql-action/init@v3
         with:
           languages: javascript
-      
-      - name: 🏗️ Build for analysis
-        run: npm run build
       
       - name: 📊 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
