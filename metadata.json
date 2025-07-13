@@ -1,0 +1,6 @@
+{
+  "name": "Biasbuster",
+  "description": "Biasbuster is an AI-powered platform for real-time, explainable bias detection and education. It empowers users to spot, understand, and mitigate bias in news and AI-generated content.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

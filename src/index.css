@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-margin-top: 80px; /* Adjust this value based on your sticky header's height */
+}
+
+html.text-size-sm { font-size: 14px; }
+html.text-size-md { font-size: 16px; }
+html.text-size-lg { font-size: 18px; }
+
+/* High Contrast Mode Styles */
+html.high-contrast {
+  --hc-bg: #000;
+  --hc-text: #fff;
+  --hc-accent: #ff0;
+  --hc-border: #ff0;
+  --hc-button-bg: #000;
+  --hc-button-text: #ff0;
+}
+html.high-contrast body,
+html.high-contrast .bg-neutral-100,
+html.high-contrast .bg-white,
+html.high-contrast .bg-neutral-50,
+html.high-contrast .bg-neutral-200,
+html.high-contrast .dark\:bg-neutral-800,
+html.high-contrast .dark\:bg-neutral-900,
+html.high-contrast .dark\:bg-neutral-800\/50 {
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+}
+html.high-contrast * {
+  color: var(--hc-text) !important;
+}
+html.high-contrast h1, html.high-contrast h2, html.high-contrast h3, html.high-contrast h4, html.high-contrast h5, html.high-contrast h6,
+html.high-contrast .font-bold, html.high-contrast .font-semibold {
+  color: var(--hc-accent) !important;
+}
+html.high-contrast button, html.high-contrast a {
+  border: 2px solid var(--hc-border) !important;
+  background-color: var(--hc-button-bg) !important;
+  color: var(--hc-button-text) !important;
+}
+ html.high-contrast button:hover, html.high-contrast a:hover {
+  background-color: var(--hc-accent) !important;
+  color: var(--hc-bg) !important;
+ }
+html.high-contrast div, html.high-contrast header, html.high-contrast footer, html.high-contrast section {
+  border-color: var(--hc-border) !important;
+}
+ html.high-contrast textarea, html.high-contrast input {
+   background-color: var(--hc-bg) !important;
+   color: var(--hc-text) !important;
+   border: 2px solid var(--hc-border) !important;
+ }
+ html.high-contrast .ring-2, html.high-contrast .ring-4 {
+   outline: 2px solid var(--hc-accent) !important;
+ }
