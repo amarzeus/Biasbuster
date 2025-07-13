@@ -1,4 +1,4 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { BiasAnalysisResult, GroundingChunk } from '../types';
 
 const SYSTEM_INSTRUCTION = `
@@ -45,7 +45,7 @@ export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor(apiKey: string) {
-    if (!apiKey) {
+    if (!apiKey || apiKey.trim() === '') {
       throw new Error("API_KEY is required to initialize GeminiService.");
     }
     this.ai = new GoogleGenAI({ apiKey });

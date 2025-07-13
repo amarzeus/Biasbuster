@@ -69,6 +69,8 @@ jobs:
       
       - name: 🏗️ Build for production
         run: npm run build
+        env:
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
       
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

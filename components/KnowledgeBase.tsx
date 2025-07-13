@@ -50,7 +50,7 @@ const KnowledgeBase: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const geminiService = useMemo(() => {
-        const apiKey = (process as any)?.env?.API_KEY;
+        const apiKey = import.meta.env.VITE_API_KEY;
         if (!apiKey) {
           setError("API_KEY is not configured. This feature cannot function without it.");
           return null;

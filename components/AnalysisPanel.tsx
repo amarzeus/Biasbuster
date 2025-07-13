@@ -284,7 +284,7 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ originalText, analysisRes
                 </div>
                 <div className="min-h-[200px] flex flex-col justify-center">
                     <FindingDetails 
-                        finding={selectedFinding}
+                        finding={selectedFinding || null}
                         index={selectedFindingIndex}
                         feedbackState={selectedFindingIndex !== -1 ? feedback[selectedFindingIndex] : undefined}
                         onFeedback={onFeedback}

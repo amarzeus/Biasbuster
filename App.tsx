@@ -38,7 +38,7 @@ function App() {
 
     // This is for the Chrome extension to receive the API key.
     // It checks for the key and sends it to the content script if the extension is installed.
-    const apiKey = (process as any)?.env?.API_KEY;
+    const apiKey = import.meta.env.VITE_API_KEY;
     if (apiKey) {
         window.postMessage({
             type: "BIASBUSTER_API_KEY",
