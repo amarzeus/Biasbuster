@@ -1,119 +1,238 @@
-# Biasbuster
+<div align="center">
 
-![Biasbuster](./public/favicon.svg)
+# 🛡️ Biasbuster
 
-Biasbuster is a gold-standard, AI-powered platform and Chrome extension for real-time, explainable bias detection and education. With a stunning, accessible website and seamless extension integration, Biasbuster empowers users to spot, understand, and mitigate bias in news and AI-generated content.
+<img src="./public/favicon.svg" alt="Biasbuster Logo" width="120" height="120">
+
+### 🚀 *Gold-Standard AI-Powered Bias Detection Platform* 🚀
+
+<p align="center">
+  <img src="https://img.shields.io/badge/AI-Powered-blue?style=for-the-badge&logo=openai" alt="AI Powered">
+  <img src="https://img.shields.io/badge/Chrome-Extension-green?style=for-the-badge&logo=googlechrome" alt="Chrome Extension">
+  <img src="https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-purple?style=for-the-badge" alt="Accessibility">
+</p>
+
+**🎯 Empowering users to spot, understand, and mitigate bias in news and AI-generated content with real-time, explainable insights**
+
+<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="900">
+
+</div>
 
 ---
 
 ## ✨ Key Features
 
--   **🤖 AI-Powered Analysis**: Uses the Google Gemini API to detect 6 types of bias (Framing, Omission, Spin, etc.).
--   **📝 Explainable Insights**: Provides clear explanations and unbiased suggestions for each finding.
--   **🌐 Chrome Extension**: Analyze text on any webpage with a seamless, integrated popup UI.
--   **🎨 Customizable Experience**: Users can set custom keywords and highlight colors.
--   **📊 Analytics Dashboard**: Personalized, locally-stored stats on your analysis history.
--   **🎓 Education Hub**: Learn about bias types and test your knowledge with an interactive quiz.
--   **♿ Accessibility First**: WCAG 2.1 AA compliant, with features like high-contrast mode, resizable text, and full keyboard navigation.
--   ** TRANSPARENT**: Public-facing dashboards on model fairness and performance.
+<table>
+<tr>
+<td width="50%">
+
+### 🤖 **AI-Powered Analysis**
+Leverages Google Gemini API to detect **6 types of bias**:
+- 🎭 Framing Bias
+- 🕳️ Omission Bias  
+- 🌪️ Spin Bias
+- 📊 Statistical Bias
+- 🎯 Selection Bias
+- ⚖️ Confirmation Bias
+
+### 📝 **Explainable Insights**
+✅ Clear explanations for each finding  
+✅ Unbiased suggestions and alternatives  
+✅ Confidence scores and reasoning
+
+### 🌐 **Chrome Extension**
+🔍 Analyze text on any webpage  
+⚡ Seamless popup UI integration  
+🎨 Real-time highlighting
+
+</td>
+<td width="50%">
+
+### 🎨 **Customizable Experience**
+🏷️ Set custom bias keywords  
+🌈 Choose highlight colors  
+⚙️ Personalized settings
+
+### 📊 **Analytics Dashboard**
+📈 Track your analysis history  
+💾 Locally-stored statistics  
+🎯 Personal bias detection trends
+
+### 🎓 **Education Hub**
+📚 Learn about bias types  
+🧠 Interactive knowledge quiz  
+🏆 Track learning progress
+
+### ♿ **Accessibility First**
+✅ WCAG 2.1 AA compliant  
+🔆 High-contrast mode  
+📏 Resizable text  
+⌨️ Full keyboard navigation
+
+### 🔍 **Transparency**
+📊 Public model fairness dashboards  
+📈 Performance metrics  
+🔬 Open methodology
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 🚀 Tech Stack
 
--   **Frontend**: React, TypeScript, TailwindCSS
--   **Build Tool**: Vite
--   **AI**: Google Gemini API (`gemini-2.5-flash`)
--   **CI/CD**: GitHub Actions
+<div align="center">
+
+| Technology | Purpose | Badge |
+|------------|---------|-------|
+| **React** | Frontend Framework | ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) |
+| **TypeScript** | Type Safety | ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) |
+| **TailwindCSS** | Styling | ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) |
+| **Vite** | Build Tool | ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E) |
+| **Google Gemini** | AI Engine | ![Google](https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white) |
+| **GitHub Actions** | CI/CD | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white) |
+
+</div>
 
 ---
 
 ## 🏁 Getting Started
 
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+<img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="100">
 
-### Prerequisites
+**Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.**
 
--   Node.js (v18 or newer recommended)
--   npm (or yarn/pnpm)
--   A Google Gemini API Key
+### 📋 Prerequisites
 
-### Installation
+<div align="center">
 
-1.  **Clone the repository:**
-    ```sh
-    git clone https://github.com/your-username/biasbuster.git
-    cd biasbuster
-    ```
+| Requirement | Version | Status |
+|-------------|---------|--------|
+| **Node.js** | v18+ | ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat-square&logo=node.js&logoColor=white) |
+| **npm/yarn/pnpm** | Latest | ![npm](https://img.shields.io/badge/npm-CB3837?style=flat-square&logo=npm&logoColor=white) |
+| **Google Gemini API Key** | Active | ![API](https://img.shields.io/badge/API-Key-orange?style=flat-square) |
 
-2.  **Install dependencies:**
-    ```sh
-    npm install
-    ```
+</div>
 
-3.  **Set up your environment variables:**
-    -   Create a new file named `.env` in the root of the project by copying the example:
-        ```sh
-        cp .env.example .env
-        ```
-    -   Add your Google Gemini API key to this new `.env` file:
-        ```
-        API_KEY=YOUR_GEMINI_API_KEY_HERE
-        ```
+### 🔧 Installation
 
-### Running the Development Server
+```bash
+# 1️⃣ Clone the repository
+git clone https://github.com/amarzeus/biasbuster.git
+cd biasbuster
 
-To start the local development server with hot-reloading:
+# 2️⃣ Install dependencies
+npm install
 
-```sh
+# 3️⃣ Set up environment variables
+cp .env.example .env
+# Add your Google Gemini API key to .env:
+# API_KEY=YOUR_GEMINI_API_KEY_HERE
+```
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="400">
+</div>
+
+### 🚀 Running the Development Server
+
+```bash
+# Start development server with hot-reloading
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) (or the port shown in your terminal) to view the application in your browser.
+🌐 **Open [http://localhost:5173](http://localhost:5173)** to view the application in your browser.
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/74038190/212284136-03988914-d899-44b4-b1d9-4eeccf656e44.gif" width="200">
+</div>
 
 ---
 
 ## 🔧 Building for Production
 
-To create an optimized production build of the web application:
-
-```sh
+```bash
+# Create optimized production build
 npm run build
-```
 
-The output will be in the `dist` directory. You can preview the production build locally with:
-
-```sh
+# Preview production build locally
 npm run preview
 ```
 
-### Loading the Chrome Extension
+📁 **Output**: `dist` directory
 
-The Chrome Extension is designed to be self-contained within the `extension/` directory and does not require a separate build step in its current form. To install it for development:
+### 🌐 Loading the Chrome Extension
 
-1.  Open Google Chrome and navigate to `chrome://extensions`.
-2.  Enable "Developer mode" in the top right corner.
-3.  Click "Load unpacked".
-4.  Select the `extension` folder from this project's directory.
+<div align="center">
+
+| Step | Action | Description |
+|------|--------|-------------|
+| 1️⃣ | Navigate | Go to `chrome://extensions` |
+| 2️⃣ | Enable | Turn on "Developer mode" |
+| 3️⃣ | Load | Click "Load unpacked" |
+| 4️⃣ | Select | Choose the `extension` folder |
+
+</div>
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width="300">
+</div>
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+<div align="center">
 
-Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+**Contributions are what make the open-source community such an amazing place to learn, inspire, and create!**
+
+<img src="https://user-images.githubusercontent.com/74038190/212284145-bf2c01a8-c448-4f1a-b911-99cc33c2b69b.gif" width="300">
+
+### 🌟 **Any contributions you make are greatly appreciated** 🌟
+
+📖 Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+</div>
 
 ---
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+<div align="center">
+
+**This project is licensed under a Private License**
+
+🔒 **All rights reserved** - see the [LICENSE](LICENSE) file for details.
+
+<img src="https://img.shields.io/badge/License-Private-red?style=for-the-badge" alt="Private License">
+
+</div>
 
 ---
 
 ## 📧 Contact
 
-Amar - [@amarmahakal](https://www.linkedin.com/in/amarmahakal/) - amarmahakal92@gmail.com
+<div align="center">
 
-Project Link: [https://github.com/your-username/biasbuster](https://github.com/your-username/biasbuster)
+### 👨‍💻 **Amar Mahakal**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/amarmahakal/)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:amarmahakal92@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/amarzeus/biasbuster)
+
+<img src="https://user-images.githubusercontent.com/74038190/212284126-944e5a87-5d85-4f65-b4a4-8e8c6d32c5c6.gif" width="200">
+
+</div>
+
+---
+
+<div align="center">
+
+### Made with ❤️ by Amar
+
+<img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="100">
+
+**🚀 Empowering a bias-free digital world, one analysis at a time 🚀**
+
+</div>
