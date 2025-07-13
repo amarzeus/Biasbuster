@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: '0 0 * * 1'  # Weekly on Monday
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   security:
     name: 🛡️ Security Analysis
