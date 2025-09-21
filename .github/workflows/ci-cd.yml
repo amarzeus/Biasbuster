@@ -1,0 +1,91 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    name: 🧪 Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: 📥 Install dependencies
+        run: npm install
+      
+      - name: 🏗️ Build project
+        run: npm run build:vite
+
+  build-extension:
+    name: 🔧 Build Extension
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: 📥 Install dependencies
+        run: npm install
+      
+      - name: 🏗️ Build project
+        run: npm run build:vite
+      
+      - name: 📦 Archive extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: extension/
+
+  deploy:
+    name: 🚀 Deploy
+    runs-on: ubuntu-latest
+    needs: [test, build-extension]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: 📥 Install dependencies
+        run: npm install
+      
+      - name: 🏗️ Build for production
+        run: npm run build:vite
+        env:
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+
+      - name: 📂 List dist directory contents
+        run: ls -la ./dist
+
+      - name: 📝 Create .nojekyll file
+        run: touch ./dist/.nojekyll
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
+          publish_dir: ./dist
+          allow_empty_commit: true
+          force_orphan: true
+          cname: false
+          exclude_assets: ''
