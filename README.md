@@ -2,8 +2,6 @@
 
 # 🛡️ Biasbuster
 
-<img src="https://img.shields.io/badge/🛡️-Biasbuster-blue?style=for-the-badge&logoColor=white" alt="Biasbuster Logo" width="200" height="60">
-
 ### 🚀 *Gold-Standard AI-Powered Bias Detection Platform* 🚀
 
 <p align="center">
@@ -14,69 +12,56 @@
 
 **🎯 Empowering users to spot, understand, and mitigate bias in news and AI-generated content with real-time, explainable insights**
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="900">
-
 </div>
 
 ---
 
 ## ✨ Key Features
 
-<table>
-<tr>
-<td width="50%">
-
 ### 🤖 **AI-Powered Analysis**
 Leverages Google Gemini API to detect **6 types of bias**:
 - 🎭 Framing Bias
-- 🕳️ Omission Bias  
+- 🕳️ Omission Bias
 - 🌪️ Spin Bias
 - 📊 Statistical Bias
 - 🎯 Selection Bias
 - ⚖️ Confirmation Bias
 
 ### 📝 **Explainable Insights**
-✅ Clear explanations for each finding  
-✅ Unbiased suggestions and alternatives  
+✅ Clear explanations for each finding
+✅ Unbiased suggestions and alternatives
 ✅ Confidence scores and reasoning
 
 ### 🌐 **Chrome Extension**
-🔍 Analyze text on any webpage  
-⚡ Seamless popup UI integration  
+🔍 Analyze text on any webpage
+⚡ Seamless popup UI integration
 🎨 Real-time highlighting
 
-</td>
-<td width="50%">
-
 ### 🎨 **Customizable Experience**
-🏷️ Set custom bias keywords  
-🌈 Choose highlight colors  
+🏷️ Set custom bias keywords
+🌈 Choose highlight colors
 ⚙️ Personalized settings
 
 ### 📊 **Analytics Dashboard**
-📈 Track your analysis history  
-💾 Locally-stored statistics  
+📈 Track your analysis history
+💾 Locally-stored statistics
 🎯 Personal bias detection trends
 
 ### 🎓 **Education Hub**
-📚 Learn about bias types  
-🧠 Interactive knowledge quiz  
+📚 Learn about bias types
+🧠 Interactive knowledge quiz
 🏆 Track learning progress
 
 ### ♿ **Accessibility First**
-✅ WCAG 2.1 AA compliant  
-🔆 High-contrast mode  
-📏 Resizable text  
+✅ WCAG 2.1 AA compliant
+🔆 High-contrast mode
+📏 Resizable text
 ⌨️ Full keyboard navigation
 
 ### 🔍 **Transparency**
-📊 Public model fairness dashboards  
-📈 Performance metrics  
+📊 Public model fairness dashboards
+📈 Performance metrics
 🔬 Open methodology
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -98,8 +83,6 @@ Leverages Google Gemini API to detect **6 types of bias**:
 ---
 
 ## 🏁 Getting Started
-
-<img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="100">
 
 **Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.**
 
@@ -131,10 +114,6 @@ cp .env.example .env
 # API_KEY=YOUR_GEMINI_API_KEY_HERE
 ```
 
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="400">
-</div>
-
 ### 🚀 Running the Development Server
 
 ```bash
@@ -143,10 +122,6 @@ npm run dev
 ```
 
 🌐 **Open [http://localhost:5173](http://localhost:5173)** to view the application in your browser.
-
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284136-03988914-d899-44b4-b1d9-4eeccf656e44.gif" width="200">
-</div>
 
 ---
 
@@ -175,10 +150,6 @@ npm run preview
 
 </div>
 
-<div align="center">
-<img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width="300">
-</div>
-
 ---
 
 ## 🤝 Contributing
@@ -186,8 +157,6 @@ npm run preview
 <div align="center">
 
 **Contributions are what make the open-source community such an amazing place to learn, inspire, and create!**
-
-<img src="https://user-images.githubusercontent.com/74038190/212284145-bf2c01a8-c448-4f1a-b911-99cc33c2b69b.gif" width="300">
 
 ### 🌟 **Any contributions you make are greatly appreciated** 🌟
 
@@ -221,8 +190,6 @@ npm run preview
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:amarmahakal92@gmail.com)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/amarzeus/biasbuster)
 
-<img src="https://user-images.githubusercontent.com/74038190/212284126-944e5a87-5d85-4f65-b4a4-8e8c6d32c5c6.gif" width="200">
-
 </div>
 
 ---
@@ -231,9 +198,6 @@ npm run preview
 
 ### Made with ❤️ by Amar
 
-<img src="https://user-images.githubusercontent.com/74038190/212284158-e840e285-664b-44d7-b79b-e264b5e54825.gif" width="100">
-
 **🚀 Empowering a bias-free digital world, one analysis at a time 🚀**
 
 </div>
-# Updated Sun 21 Sep 2025 11:32:33 PM IST
