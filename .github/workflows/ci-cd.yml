@@ -76,11 +76,16 @@ jobs:
 
       - name: 📂 List dist directory contents
         run: ls -la ./dist
-      
+
+      - name: 📝 Create .nojekyll file
+        run: touch ./dist/.nojekyll
+
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
           publish_dir: ./dist
           allow_empty_commit: true
           force_orphan: true
+          cname: false
+          exclude_assets: ''
