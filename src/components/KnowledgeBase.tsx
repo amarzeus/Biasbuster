@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { GeminiService } from '../services/geminiService';
+import { GeminiService } from '../../services/geminiService';
 import { BrainCircuitIcon, AlertTriangleIcon, SpinnerIcon, InfoIcon, SparklesIcon } from './icons/Icons';
 
 const PRESET_QUESTIONS = [
@@ -12,7 +12,7 @@ const PRESET_QUESTIONS = [
 
 const FormattedAnswer = ({ text }: { text: string }) => {
     const lines = text.split('\n');
-    const elements = [];
+    const elements: React.ReactNode[] = [];
     let listItems: string[] = [];
 
     const flushList = () => {

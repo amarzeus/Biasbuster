@@ -18,7 +18,7 @@ interface AnalysisPanelProps {
 interface HighlightedPart {
   text: string;
   isBias: boolean;
-  finding?: BiasFinding;
+  finding: BiasFinding | null;
 }
 
 const renderAnalysis = (originalText: string, analysisResult: BiasAnalysisResult): HighlightedPart[] => {
@@ -34,14 +34,14 @@ const renderAnalysis = (originalText: string, analysisResult: BiasAnalysisResult
     if (index === -1) return;
 
     if (index > lastIndex) {
-      parts.push({ text: originalText.substring(lastIndex, index), isBias: false });
+      parts.push({ text: originalText.substring(lastIndex, index), isBias: false, finding: null });
     }
     parts.push({ text: finding.biasedPhrase, isBias: true, finding });
     lastIndex = index + finding.biasedPhrase.length;
   });
 
   if (lastIndex < originalText.length) {
-    parts.push({ text: originalText.substring(lastIndex), isBias: false });
+    parts.push({ text: originalText.substring(lastIndex), isBias: false, finding: null });
   }
 
   return parts;

@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BiasAnalyser from '../components/BiasAnalyser';
 import HowItWorks from '../components/HowItWorks';
-import Education from '../components/Education';
+import Education from './components/Education';
 import About from '../components/About';
 import Testimonials from '../components/Testimonials';
 import Modal from '../components/Modal';

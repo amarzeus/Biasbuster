@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { EnhancedGeminiService } from '../services/enhancedGeminiService';
+import { GeminiService } from '../services/geminiService';
 import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState, MediaAnalysis } from '../types';
 import InputPanel from './InputPanel';
 import AnalysisPanel from './AnalysisPanel';
@@ -40,7 +40,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
       setAnalysisState('error');
       return null;
     }
-    return new EnhancedGeminiService(apiKey);
+    return new GeminiService(apiKey);
   }, []);
 
   const resetAnalysis = useCallback(() => {
@@ -66,12 +66,14 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     setAnalysisState('streaming');
     
     try {
-      const { analysis, sources: fetchedSources } = await geminiService.analyzeWithContext(textToAnalyze, { customKeywords: keywords });
+      const { analysis, sources } = await geminiService.streamAnalysisForBias(textToAnalyze, keywords, (chunk) => {
+        setStreamingResponseText(chunk);
+      });
       setAnalysisResult(analysis);
-      setSources(fetchedSources);
+      setSources(sources);
       setAnalysisState('done');
       if (analysis) {
-        const newId = addHistoryItem({ sourceText: textToAnalyze, result: analysis, sources: fetchedSources });
+        const newId = addHistoryItem({ sourceText: textToAnalyze, result: analysis, sources });
         setCurrentHistoryId(newId);
       }
     } catch (e) {
@@ -86,25 +88,26 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     setAnalysisState('streaming');
 
     try {
+      setError(null);
+      setStreamingResponseText('');
       let result;
       if (media.type === 'image') {
-        result = await geminiService.analyzeImage(media.content as File);
+        // No direct support in GeminiService for media analysis, so fallback or error
+        setError('Image analysis is not supported with the current GeminiService.');
+        setAnalysisState('error');
+        return;
       } else if (media.type === 'video') {
-        result = await geminiService.analyzeVideo(media.content as File);
+        setError('Video analysis is not supported with the current GeminiService.');
+        setAnalysisState('error');
+        return;
       } else if (media.type === 'audio') {
-        result = await geminiService.analyzeAudio(media.content as File);
+        setError('Audio analysis is not supported with the current GeminiService.');
+        setAnalysisState('error');
+        return;
       } else {
         setError('Unsupported media type for analysis.');
         setAnalysisState('error');
         return;
-      }
-      setAnalysisResult(result.analysis);
-      setSources(result.sources);
-      setMediaAnalysis(media);
-      setAnalysisState('done');
-      if (result.analysis) {
-        const newId = addHistoryItem({ sourceText: media.content instanceof File ? media.content.name : '', result: result.analysis, sources: result.sources });
-        setCurrentHistoryId(newId);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred.');
@@ -163,7 +166,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
   const handleFeedback = useCallback(async (findingIndex: number, vote: FeedbackVote) => {
     setFeedback(prev => ({ ...prev, [findingIndex]: { status: 'pending', vote } }));
 
-    if (currentHistoryId) {
+    if (currentHistoryId !== null) {
       updateFeedbackForHistoryItem(currentHistoryId, findingIndex, vote);
     }
 

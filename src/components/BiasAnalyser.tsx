@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { GeminiService } from '../services/geminiService';
+import { GeminiService } from '../../services/geminiService';
 import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState, HistoryItem } from '../types';
 import InputPanel from './InputPanel';
 import AnalysisPanel from './AnalysisPanel';
@@ -64,7 +64,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
       const { analysis, sources: fetchedSources } = await geminiService.streamAnalysisForBias(
         textToAnalyze, 
         keywords,
-        (chunk) => setStreamingResponseText(chunk)
+        (chunk: string) => setStreamingResponseText(chunk)
       );
       setAnalysisResult(analysis);
       setSources(fetchedSources);
@@ -177,20 +177,14 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <InputPanel
-              inputText={inputText}
-              setInputText={setInputText}
-              onAnalyze={handleAnalyze}
-              onClear={handleClear}
-              onExample={handleExample}
-              onFileUpload={handleFileUpload}
+              onSubmit={(text) => {
+                setInputText(text);
+                performAnalysis(text, customKeywords);
+              }}
               isLoading={isLoading}
-              highlightColor={highlightColor}
-              setHighlightColor={setHighlightColor}
-              customKeywords={customKeywords}
-              setCustomKeywords={setCustomKeywords}
               />
               <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-6 min-h-[400px] flex flex-col">
-              {analysisState === 'streaming' && <StreamingResponse responseText={streamingResponseText} />}
+              {analysisState === 'streaming' && <StreamingResponse text={streamingResponseText} isLoading={isLoading} />}
               
               {analysisState === 'error' && (
                   <div className="m-auto text-center text-red-500">

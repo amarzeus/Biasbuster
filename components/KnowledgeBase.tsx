@@ -11,7 +11,7 @@ const PRESET_QUESTIONS = [
 
 const FormattedAnswer = ({ text }: { text: string }) => {
     const lines = text.split('\n');
-    const elements: JSX.Element[] = [];
+    const elements: React.ReactNode[] = [];
     let listItems: string[] = [];
 
     const flushList = () => {
