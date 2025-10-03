@@ -12,18 +12,18 @@ import PrivacyPolicyContent from '../components/content/PrivacyPolicyContent';
 import TermsContent from '../components/content/TermsContent';
 import AccessibilityContent from '../components/content/AccessibilityContent';
 import QuizModal from '../components/QuizModal';
-import Dashboard from '../components/Dashboard';
+import EnhancedDashboard from '../components/EnhancedDashboard';
 import AccessibilityToolbar from '../components/AccessibilityToolbar';
 import KnowledgeBase from '../components/KnowledgeBase';
 import Transparency from '../components/Transparency';
 import Blog from '../components/Blog';
 import BlogPostModal from '../components/BlogPostModal';
-import { HistoryItem, FeedbackVote, BiasAnalysisResult, GroundingChunk, BlogPost, QuizProgress, Badge } from '../types';
+import { HistoryItem, FeedbackVote, BiasAnalysisResult, GroundingChunk, BlogPost, QuizProgress, Badge, User } from '../types';
 import ExtensionCTA from '../components/ExtensionCTA';
-import JudgesCorner from '../components/JudgesCorner';
-import Hero from '../components/Hero';
-import { allBadges } from '../data/badgesData';
-import HistoryDetailModal from '../components/HistoryDetailModal';
+import JudgesCorner from './components/JudgesCorner';
+import Hero from './components/Hero';
+import { allBadges } from './data/badgesData';
+import HistoryDetailModal from './components/HistoryDetailModal';
 
 type ModalType = 'privacy' | 'terms' | 'accessibility';
 export type FontSize = 'sm' | 'md' | 'lg';
@@ -41,6 +41,13 @@ function App() {
   const [unlockedBadges, setUnlockedBadges] = useState<Set<string>>(new Set());
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryItem | null>(null);
   const [isHistoryDetailOpen, setIsHistoryDetailOpen] = useState(false);
+
+  // Mock current user - in real app this would come from auth
+  const currentUser: User = {
+    id: 'user-1',
+    name: 'Demo User',
+    email: 'demo@biasbuster.com',
+  };
 
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -215,11 +222,8 @@ function App() {
         </section>
 
         <section id="dashboard" className="bg-white dark:bg-neutral-900 py-16">
-          <Dashboard 
-            history={history}
-            unlockedBadges={unlockedBadges}
-            allBadges={allBadges}
-            onViewHistoryItem={handleViewHistoryItem}
+          <EnhancedDashboard
+            currentUser={currentUser}
           />
         </section>
 
@@ -258,7 +262,7 @@ function App() {
         {modalContent.content}
       </Modal>
 
-      <QuizModal isOpen={isQuizOpen} onClose={closeQuiz} onQuizComplete={handleQuizComplete} />
+      <QuizModal isOpen={isQuizOpen} onClose={closeQuiz} />
 
       <BlogPostModal isOpen={selectedPost !== null} onClose={closePost} post={selectedPost} />
 

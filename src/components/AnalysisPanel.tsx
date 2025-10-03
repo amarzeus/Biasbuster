@@ -153,13 +153,13 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
             <div className="prose prose-neutral dark:prose-invert max-w-none flex-grow overflow-y-auto pr-4 text-left leading-relaxed">
                 {analyzedParts.map((part, index) => 
                     part.isBias && part.finding ? (
-                        <span 
+                        <span
                             key={index}
-                            onClick={() => setSelectedFinding(part.finding === selectedFinding ? null : part.finding)}
-                            onMouseEnter={() => setHoveredFinding(part.finding ?? null)}
+                            onClick={() => setSelectedFinding(part.finding === selectedFinding ? null : (part.finding || null))}
+                            onMouseEnter={() => setHoveredFinding(part.finding || null)}
                             onMouseLeave={() => setHoveredFinding(null)}
-                            style={{ 
-                                backgroundColor: highlightColor, 
+                            style={{
+                                backgroundColor: highlightColor,
                                 color: '#1f2937'
                             }}
                             className={`rounded px-1 py-0.5 cursor-pointer transition-all duration-200 ${selectedFinding === part.finding ? 'ring-2 ring-offset-2 dark:ring-offset-neutral-800 ring-trust-blue dark:ring-ai-teal' : ''}`}

@@ -1,0 +1,22 @@
+{
+  "name": "Biasbuster - AI-Powered Bias Detection",
+  "short_name": "Biasbuster",
+  "description": "Advanced AI-powered platform for detecting and mitigating bias in text, images, videos, and audio content",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "education", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

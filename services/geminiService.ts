@@ -60,7 +60,7 @@ export class GeminiService {
               systemInstruction: KB_SYSTEM_INSTRUCTION,
             },
         });
-        return response.text;
+        return response.text ?? '';
     } catch (error) {
         console.error("Error getting knowledge base answer:", error);
         if (error instanceof Error) {

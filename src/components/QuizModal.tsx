@@ -11,7 +11,7 @@ interface QuizModalProps {
 
 const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, onQuizComplete }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+    const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [score, setScore] = useState(0);
     const [showResults, setShowResults] = useState(false);
     const [finalScore, setFinalScore] = useState(0);
@@ -44,11 +44,11 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, onQuizComplete }
         setTimeout(resetQuiz, 300);
     };
 
-    const handleAnswerSelect = (answer: string) => {
-        if (selectedAnswer) return;
+    const handleAnswerSelect = (answerIndex: number) => {
+        if (selectedAnswer !== null) return;
 
-        setSelectedAnswer(answer);
-        if (answer === quizQuestions[currentQuestionIndex].correctAnswer) {
+        setSelectedAnswer(answerIndex);
+        if (answerIndex === quizQuestions[currentQuestionIndex].correctAnswer) {
             setScore(prev => prev + 1);
         }
     };
@@ -76,14 +76,14 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, onQuizComplete }
 
     const currentQuestion = quizQuestions[currentQuestionIndex];
 
-    const getButtonClass = (option: string) => {
-        if (!selectedAnswer) {
+    const getButtonClass = (optionIndex: number) => {
+        if (selectedAnswer === null) {
             return 'bg-white dark:bg-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-600';
         }
-        if (option === currentQuestion.correctAnswer) {
+        if (optionIndex === currentQuestion.correctAnswer) {
             return 'bg-green-100 dark:bg-green-900/50 border-green-500 text-green-800 dark:text-green-300 ring-2 ring-green-500';
         }
-        if (option === selectedAnswer) {
+        if (optionIndex === selectedAnswer) {
             return 'bg-red-100 dark:bg-red-900/50 border-red-500 text-red-800 dark:text-red-300';
         }
         return 'bg-white dark:bg-neutral-700 opacity-60';
@@ -120,16 +120,16 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, onQuizComplete }
                             </div>
 
                             <div className="space-y-4">
-                                {currentQuestion.options.map((option) => (
+                                {currentQuestion.options.map((option, index) => (
                                     <button
                                         key={option}
-                                        onClick={() => handleAnswerSelect(option)}
-                                        disabled={!!selectedAnswer}
-                                        className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 flex items-center justify-between ${getButtonClass(option)}`}
+                                        onClick={() => handleAnswerSelect(index)}
+                                        disabled={selectedAnswer !== null}
+                                        className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 flex items-center justify-between ${getButtonClass(index)}`}
                                     >
                                         <span className="font-medium">{option}</span>
-                                        {selectedAnswer && option === currentQuestion.correctAnswer && <CheckCircleIcon className="h-6 w-6 text-green-600" />}
-                                        {selectedAnswer && option !== currentQuestion.correctAnswer && option === selectedAnswer && <XCircleIcon className="h-6 w-6 text-red-600" />}
+                                        {selectedAnswer !== null && index === currentQuestion.correctAnswer && <CheckCircleIcon className="h-6 w-6 text-green-600" />}
+                                        {selectedAnswer !== null && index !== currentQuestion.correctAnswer && index === selectedAnswer && <XCircleIcon className="h-6 w-6 text-red-600" />}
                                     </button>
                                 ))}
                             </div>

@@ -100,6 +100,64 @@ export interface PerformanceMetrics {
   userSatisfaction: number;
 }
 
+// Collaborative features
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  description?: string;
+  members: User[];
+  settings: WorkspaceSettings;
+  analyses: SharedAnalysis[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WorkspaceSettings {
+  isPublic: boolean;
+  allowGuestComments: boolean;
+  requireApproval: boolean;
+}
+
+export interface SharedAnalysis {
+  id: string;
+  originalAnalysis: BiasAnalysisResult;
+  title: string;
+  description?: string;
+  author: User;
+  workspaceId: string;
+  comments: AnalysisComment[];
+  votes: AnalysisVote[];
+  status: 'open' | 'resolved' | 'archived';
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AnalysisComment {
+  id: string;
+  content: string;
+  author: User;
+  analysisId: string;
+  parentId?: string; // For threaded comments
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface AnalysisVote {
+  id: string;
+  userId: string;
+  analysisId: string;
+  vote: 'up' | 'down';
+  createdAt: Date;
+}
+
 export interface BlogPost {
   id: number;
   title: string;
@@ -109,6 +167,20 @@ export interface BlogPost {
   content: string; // This would likely be markdown or HTML
   image: string;
   tags: string[];
+}
+
+export interface QuizProgress {
+  highScore: number;
+  attempts: number;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlockedAt?: Date;
+  category: 'analysis' | 'collaboration' | 'learning' | 'achievement';
 }
 
 // Enhanced types for better type safety
