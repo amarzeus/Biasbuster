@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { BiasAnalysisResult, GroundingChunk, APIError, MediaAnalysis, EnhancedBiasFinding, AnalysisOptions, BiasSeverity } from '../types';
+import { cacheService } from './cacheService';
 
 const SYSTEM_INSTRUCTION = `
 Analyze the provided input for any form of bias (Framing, Omission, Spin, Unsubstantiated Claim, Stereotyping, Loaded Language, Confirmation Bias, Selection Bias, Statistical Bias).
@@ -187,8 +188,18 @@ export class EnhancedGeminiService {
 
     for (const text of texts) {
       try {
+        const cachedResult = cacheService.get(text);
+        if (cachedResult) {
+          results.push(cachedResult);
+          continue;
+        }
         const { analysis } = await this.analyzeWithContext(text, {});
-        results.push(analysis || { findings: [] });
+        if (analysis) {
+          cacheService.set(text, analysis);
+          results.push(analysis);
+        } else {
+          results.push({ findings: [] });
+        }
       } catch (error) {
         console.error(`Error analyzing text in batch: ${text.substring(0, 50)}...`, error);
         results.push({ findings: [] });
