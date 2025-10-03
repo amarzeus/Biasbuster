@@ -225,7 +225,19 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
               <div className="m-auto text-center text-neutral-500 dark:text-neutral-400">
                 <InfoIcon className="h-12 w-12 mx-auto mb-4 text-trust-blue" />
                 <h3 className="text-lg font-semibold">Your Analysis Awaits</h3>
-                <p>Paste text, upload a file, or <button onClick={handleExample} disabled={isLoading || !geminiService} className="text-trust-blue dark:text-ai-teal font-semibold hover:underline disabled:opacity-50 disabled:cursor-not-allowed">try an example</button>, to get started.</p>
+                <p>
+                  {mediaAnalysis ? (
+                    <>
+                      Media uploaded: {mediaAnalysis.content instanceof File ? mediaAnalysis.content.name : 'Unknown'}
+                      <br />
+                      <button onClick={handleAnalyze} disabled={isLoading || !geminiService} className="mt-2 px-4 py-2 bg-trust-blue text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Analyze Media
+                      </button>
+                    </>
+                  ) : (
+                    <>Paste text, upload a file, or <button onClick={handleExample} disabled={isLoading || !geminiService} className="text-trust-blue dark:text-ai-teal font-semibold hover:underline disabled:opacity-50 disabled:cursor-not-allowed">try an example</button>, to get started.</>
+                  )}
+                </p>
               </div>
             )}
 

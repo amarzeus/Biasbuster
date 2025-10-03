@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { BiasAnalysisResult, GroundingChunk, BiasFinding, FeedbackVote, FeedbackState } from '../types';
 import AnalysisPanel from './AnalysisPanel';
 
@@ -25,9 +25,9 @@ const AudioAnalyzer: React.FC<AudioAnalyzerProps> = ({
   onFeedback,
   onApplySuggestion,
 }) => {
-  const audioUrl = React.useMemo(() => URL.createObjectURL(audioFile), [audioFile]);
+  const audioUrl = useMemo(() => URL.createObjectURL(audioFile), [audioFile]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => URL.revokeObjectURL(audioUrl);
   }, [audioUrl]);
 
@@ -39,6 +39,7 @@ const AudioAnalyzer: React.FC<AudioAnalyzerProps> = ({
           src={audioUrl}
           controls
           className="w-full"
+          data-testid="audio-element"
         />
       </div>
       <AnalysisPanel

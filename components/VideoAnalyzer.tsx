@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { BiasAnalysisResult, GroundingChunk, BiasFinding, FeedbackVote, FeedbackState } from '../types';
 import AnalysisPanel from './AnalysisPanel';
 
@@ -25,9 +25,9 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
   onFeedback,
   onApplySuggestion,
 }) => {
-  const videoUrl = React.useMemo(() => URL.createObjectURL(videoFile), [videoFile]);
+  const videoUrl = useMemo(() => URL.createObjectURL(videoFile), [videoFile]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => URL.revokeObjectURL(videoUrl);
   }, [videoUrl]);
 
@@ -39,6 +39,7 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
           src={videoUrl}
           controls
           className="max-w-full max-h-64 rounded-md border"
+          data-testid="video-element"
         />
       </div>
       <AnalysisPanel

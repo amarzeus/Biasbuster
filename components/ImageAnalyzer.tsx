@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { BiasAnalysisResult, GroundingChunk, BiasFinding, FeedbackVote, FeedbackState } from '../types';
 import AnalysisPanel from './AnalysisPanel';
 
@@ -25,9 +25,9 @@ const ImageAnalyzer: React.FC<ImageAnalyzerProps> = ({
   onFeedback,
   onApplySuggestion,
 }) => {
-  const imageUrl = React.useMemo(() => URL.createObjectURL(imageFile), [imageFile]);
+  const imageUrl = useMemo(() => URL.createObjectURL(imageFile), [imageFile]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => URL.revokeObjectURL(imageUrl);
   }, [imageUrl]);
 
