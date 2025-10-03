@@ -1,9 +1,13 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { GeminiService } from '../services/geminiService';
-import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState } from '../types';
+import { EnhancedGeminiService } from '../services/enhancedGeminiService';
+import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState, MediaAnalysis } from '../types';
 import InputPanel from './InputPanel';
 import AnalysisPanel from './AnalysisPanel';
 import StreamingResponse from './StreamingResponse';
+import MediaUploader from './MediaUploader';
+import ImageAnalyzer from './ImageAnalyzer';
+import VideoAnalyzer from './VideoAnalyzer';
+import AudioAnalyzer from './AudioAnalyzer';
 import { InfoIcon, AlertTriangleIcon } from './icons/Icons';
 
 const DEFAULT_HIGHLIGHT_COLOR = '#fef08a'; // yellow-200
@@ -27,15 +31,16 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
   const [customKeywords, setCustomKeywords] = useState<string>('');
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({});
   const [currentHistoryId, setCurrentHistoryId] = useState<number | null>(null);
+  const [mediaAnalysis, setMediaAnalysis] = useState<MediaAnalysis | null>(null);
 
   const geminiService = useMemo(() => {
-    const apiKey = import.meta.env.VITE_API_KEY;
+    const apiKey = (globalThis as any).import?.meta?.env?.VITE_API_KEY || process.env.VITE_API_KEY;
     if (!apiKey) {
       setError("API_KEY is not configured. This feature cannot function without it.");
       setAnalysisState('error');
       return null;
     }
-    return new GeminiService(apiKey);
+    return new EnhancedGeminiService(apiKey);
   }, []);
 
   const resetAnalysis = useCallback(() => {
@@ -47,9 +52,10 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     setFeedback({});
     setStreamingResponseText('');
     setCurrentHistoryId(null);
+    setMediaAnalysis(null);
   }, []);
 
-  const performAnalysis = useCallback(async (textToAnalyze: string, keywords: string) => {
+  const performTextAnalysis = useCallback(async (textToAnalyze: string, keywords: string) => {
     if (!geminiService) return;
     if (!textToAnalyze.trim()) {
       setError("Please enter some text to analyze.");
@@ -60,11 +66,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     setAnalysisState('streaming');
     
     try {
-      const { analysis, sources: fetchedSources } = await geminiService.streamAnalysisForBias(
-        textToAnalyze, 
-        keywords,
-        (chunk) => setStreamingResponseText(chunk)
-      );
+      const { analysis, sources: fetchedSources } = await geminiService.analyzeWithContext(textToAnalyze, { customKeywords: keywords });
       setAnalysisResult(analysis);
       setSources(fetchedSources);
       setAnalysisState('done');
@@ -78,14 +80,51 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     }
   }, [geminiService, addHistoryItem, resetAnalysis]);
 
+  const performMediaAnalysis = useCallback(async (media: MediaAnalysis) => {
+    if (!geminiService) return;
+    resetAnalysis();
+    setAnalysisState('streaming');
+
+    try {
+      let result;
+      if (media.type === 'image') {
+        result = await geminiService.analyzeImage(media.content as File);
+      } else if (media.type === 'video') {
+        result = await geminiService.analyzeVideo(media.content as File);
+      } else if (media.type === 'audio') {
+        result = await geminiService.analyzeAudio(media.content as File);
+      } else {
+        setError('Unsupported media type for analysis.');
+        setAnalysisState('error');
+        return;
+      }
+      setAnalysisResult(result.analysis);
+      setSources(result.sources);
+      setMediaAnalysis(media);
+      setAnalysisState('done');
+      if (result.analysis) {
+        const newId = addHistoryItem({ sourceText: media.content instanceof File ? media.content.name : '', result: result.analysis, sources: result.sources });
+        setCurrentHistoryId(newId);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'An unknown error occurred.');
+      setAnalysisState('error');
+    }
+  }, [geminiService, addHistoryItem, resetAnalysis]);
+
   const handleAnalyze = useCallback(() => {
-    performAnalysis(inputText, customKeywords);
-  }, [inputText, customKeywords, performAnalysis]);
-  
+    if (mediaAnalysis) {
+      performMediaAnalysis(mediaAnalysis);
+    } else {
+      performTextAnalysis(inputText, customKeywords);
+    }
+  }, [inputText, customKeywords, mediaAnalysis, performTextAnalysis, performMediaAnalysis]);
+
   const handleExample = useCallback(() => {
-      setInputText(EXAMPLE_TEXT);
-      performAnalysis(EXAMPLE_TEXT, '');
-  }, [performAnalysis]);
+    setInputText(EXAMPLE_TEXT);
+    setMediaAnalysis(null);
+    performTextAnalysis(EXAMPLE_TEXT, '');
+  }, [performTextAnalysis]);
 
   const handleClear = useCallback(() => {
     setInputText('');
@@ -95,33 +134,42 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
 
   const handleFileUpload = useCallback((file: File) => {
     if (!file) return;
-    
+
     // Reset state before processing new file
     handleClear();
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
+    if (file.type.startsWith('text/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
         const text = e.target?.result as string;
         setInputText(text);
-    };
-    reader.onerror = (e) => {
+        setMediaAnalysis(null);
+      };
+      reader.onerror = (e) => {
         console.error("File reading error:", e);
         setError("Failed to read the selected file. Please ensure it's a valid text file.");
         setAnalysisState('error');
-    };
-    reader.readAsText(file);
+      };
+      reader.readAsText(file);
+    } else if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+      setMediaAnalysis({ type: file.type.split('/')[0] as 'image' | 'video' | 'audio', content: file, metadata: { size: file.size, format: file.type } });
+      setInputText('');
+    } else {
+      setError('Unsupported file type. Please upload text, image, video, or audio files.');
+      setAnalysisState('error');
+    }
   }, [handleClear]);
 
   const handleFeedback = useCallback(async (findingIndex: number, vote: FeedbackVote) => {
     setFeedback(prev => ({ ...prev, [findingIndex]: { status: 'pending', vote } }));
-    
+
     if (currentHistoryId) {
       updateFeedbackForHistoryItem(currentHistoryId, findingIndex, vote);
     }
-    
+
     // Simulate API call for instant UX feedback
-    await new Promise(resolve => setTimeout(resolve, 750)); 
-    
+    await new Promise(resolve => setTimeout(resolve, 750));
+
     setFeedback(prev => ({ ...prev, [findingIndex]: { status: 'rated', vote } }));
   }, [currentHistoryId, updateFeedbackForHistoryItem]);
 
@@ -134,63 +182,112 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
 
   return (
     <div className="container mx-auto px-4">
-        <div className="flex flex-col space-y-6">
+      <div className="flex flex-col space-y-6">
         <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-neutral-800 dark:text-white md:text-4xl">Spot, Understand, and Mitigate Bias</h2>
-            <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-neutral-800 dark:text-white md:text-4xl">Spot, Understand, and Mitigate Bias</h2>
+          <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
             Paste your text below to get an instant, explainable analysis powered by AI. Customize the highlight color and add keywords to refine the analysis.
-            </p>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <InputPanel
-            inputText={inputText}
-            setInputText={setInputText}
-            onAnalyze={handleAnalyze}
-            onClear={handleClear}
-            onExample={handleExample}
-            onFileUpload={handleFileUpload}
-            isLoading={isLoading}
-            highlightColor={highlightColor}
-            setHighlightColor={setHighlightColor}
-            customKeywords={customKeywords}
-            setCustomKeywords={setCustomKeywords}
-            />
-            <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-6 min-h-[400px] flex flex-col">
+          {!mediaAnalysis && (
+            <>
+              <InputPanel
+                inputText={inputText}
+                setInputText={setInputText}
+                onAnalyze={handleAnalyze}
+                onClear={handleClear}
+                onExample={handleExample}
+                onFileUpload={handleFileUpload}
+                isLoading={isLoading}
+                highlightColor={highlightColor}
+                setHighlightColor={setHighlightColor}
+                customKeywords={customKeywords}
+                setCustomKeywords={setCustomKeywords}
+              />
+              <MediaUploader onMediaSelected={handleFileUpload} />
+            </>
+          )}
+
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-6 min-h-[400px] flex flex-col">
             {analysisState === 'streaming' && <StreamingResponse responseText={streamingResponseText} />}
-            
+
             {analysisState === 'error' && (
-                <div className="m-auto text-center text-red-500">
+              <div className="m-auto text-center text-red-500">
                 <AlertTriangleIcon className="h-12 w-12 mx-auto mb-4" />
                 <p className="font-semibold">Analysis Failed</p>
                 <p>{error}</p>
-                </div>
+              </div>
             )}
 
             {analysisState === 'idle' && (
-                <div className="m-auto text-center text-neutral-500 dark:text-neutral-400">
-                    <InfoIcon className="h-12 w-12 mx-auto mb-4 text-trust-blue" />
-                    <h3 className="text-lg font-semibold">Your Analysis Awaits</h3>
-                    <p>Paste text, upload a file, or <button onClick={handleExample} disabled={isLoading || !geminiService} className="text-trust-blue dark:text-ai-teal font-semibold hover:underline disabled:opacity-50 disabled:cursor-not-allowed">try an example</button>, to get started.</p>
-                </div>
+              <div className="m-auto text-center text-neutral-500 dark:text-neutral-400">
+                <InfoIcon className="h-12 w-12 mx-auto mb-4 text-trust-blue" />
+                <h3 className="text-lg font-semibold">Your Analysis Awaits</h3>
+                <p>Paste text, upload a file, or <button onClick={handleExample} disabled={isLoading || !geminiService} className="text-trust-blue dark:text-ai-teal font-semibold hover:underline disabled:opacity-50 disabled:cursor-not-allowed">try an example</button>, to get started.</p>
+              </div>
             )}
 
             {analysisState === 'done' && analysisResult && (
-                <AnalysisPanel 
-                    originalText={inputText} 
-                    analysisResult={analysisResult} 
+              <>
+                {mediaAnalysis?.type === 'image' && (
+                  <ImageAnalyzer
+                    imageFile={mediaAnalysis.content as File}
+                    analysisResult={analysisResult}
                     sources={sources}
-                    highlightColor={highlightColor} 
+                    highlightColor={highlightColor}
                     selectedFinding={selectedFinding}
                     setSelectedFinding={setSelectedFinding}
                     feedback={feedback}
                     onFeedback={handleFeedback}
                     onApplySuggestion={handleApplySuggestion}
-                />
+                  />
+                )}
+                {mediaAnalysis?.type === 'video' && (
+                  <VideoAnalyzer
+                    videoFile={mediaAnalysis.content as File}
+                    analysisResult={analysisResult}
+                    sources={sources}
+                    highlightColor={highlightColor}
+                    selectedFinding={selectedFinding}
+                    setSelectedFinding={setSelectedFinding}
+                    feedback={feedback}
+                    onFeedback={handleFeedback}
+                    onApplySuggestion={handleApplySuggestion}
+                  />
+                )}
+                {mediaAnalysis?.type === 'audio' && (
+                  <AudioAnalyzer
+                    audioFile={mediaAnalysis.content as File}
+                    analysisResult={analysisResult}
+                    sources={sources}
+                    highlightColor={highlightColor}
+                    selectedFinding={selectedFinding}
+                    setSelectedFinding={setSelectedFinding}
+                    feedback={feedback}
+                    onFeedback={handleFeedback}
+                    onApplySuggestion={handleApplySuggestion}
+                  />
+                )}
+                {!mediaAnalysis && (
+                  <AnalysisPanel
+                    originalText={inputText}
+                    analysisResult={analysisResult}
+                    sources={sources}
+                    highlightColor={highlightColor}
+                    selectedFinding={selectedFinding}
+                    setSelectedFinding={setSelectedFinding}
+                    feedback={feedback}
+                    onFeedback={handleFeedback}
+                    onApplySuggestion={handleApplySuggestion}
+                  />
+                )}
+              </>
             )}
-            </div>
+          </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 };

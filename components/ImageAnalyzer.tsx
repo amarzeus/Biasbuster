@@ -1,0 +1,59 @@
+import React from 'react';
+import { BiasAnalysisResult, GroundingChunk, BiasFinding, FeedbackVote, FeedbackState } from '../types';
+import AnalysisPanel from './AnalysisPanel';
+
+interface ImageAnalyzerProps {
+  imageFile: File;
+  analysisResult: BiasAnalysisResult;
+  sources: GroundingChunk[];
+  highlightColor: string;
+  selectedFinding: BiasFinding | null;
+  setSelectedFinding: (finding: BiasFinding | null) => void;
+  feedback: Record<number, FeedbackState>;
+  onFeedback: (findingIndex: number, vote: FeedbackVote) => void;
+  onApplySuggestion: (biasedPhrase: string, suggestion: string) => void;
+}
+
+const ImageAnalyzer: React.FC<ImageAnalyzerProps> = ({
+  imageFile,
+  analysisResult,
+  sources,
+  highlightColor,
+  selectedFinding,
+  setSelectedFinding,
+  feedback,
+  onFeedback,
+  onApplySuggestion,
+}) => {
+  const imageUrl = React.useMemo(() => URL.createObjectURL(imageFile), [imageFile]);
+
+  React.useEffect(() => {
+    return () => URL.revokeObjectURL(imageUrl);
+  }, [imageUrl]);
+
+  return (
+    <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-6 min-h-[400px] flex flex-col">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-2">Image Analysis</h3>
+        <img
+          src={imageUrl}
+          alt="Uploaded for analysis"
+          className="max-w-full max-h-64 object-contain rounded-md border"
+        />
+      </div>
+      <AnalysisPanel
+        originalText="" // No text to highlight for images
+        analysisResult={analysisResult}
+        sources={sources}
+        highlightColor={highlightColor}
+        selectedFinding={selectedFinding}
+        setSelectedFinding={setSelectedFinding}
+        feedback={feedback}
+        onFeedback={onFeedback}
+        onApplySuggestion={onApplySuggestion}
+      />
+    </div>
+  );
+};
+
+export default ImageAnalyzer;
