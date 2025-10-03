@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { BiasAnalysisResult, GroundingChunk } from '../types';
+import { BiasAnalysisResult, GroundingChunk, APIError, GeminiAPIResponse, AnalysisOptions } from '../types';
 
 const SYSTEM_INSTRUCTION = `
 Analyze the provided text for any form of bias (Framing, Omission, Spin, Unsubstantiated Claim, Stereotyping, Loaded Language).
@@ -44,8 +44,8 @@ When answering, be clear, concise, and friendly. Use simple markdown for formatt
 export class GeminiService {
   private ai: GoogleGenAI;
 
-  constructor(apiKey: string | undefined) {
-    if (!apiKey || apiKey.trim() === '') {
+  constructor(apiKey: string) {
+    if (!apiKey.trim()) {
       throw new Error("API_KEY is required to initialize GeminiService.");
     }
     this.ai = new GoogleGenAI({ apiKey });
@@ -76,6 +76,9 @@ export class GeminiService {
     onStream: (chunk: string) => void
   ): Promise<{ analysis: BiasAnalysisResult | null, sources: GroundingChunk[] }> {
     try {
+      if (!text) {
+        throw new Error("Text to analyze must be a non-empty string.");
+      }
       let userPrompt = `Text to analyze:\n"${text}"`;
 
       if (customKeywords && customKeywords.trim().length > 0) {
@@ -146,4 +149,5 @@ export class GeminiService {
       throw new Error("Failed to analyze text due to an unknown error.");
     }
   }
+      // Regex to find JSON within a markdown code block
 }

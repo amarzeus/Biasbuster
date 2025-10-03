@@ -8,21 +8,35 @@
     "build": "tsc && vite build",
     "build:vite": "vite build",
     "lint": "echo 'Linting not yet configured.'",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@google/genai": "^1.9.0",
+    "@tensorflow/tfjs": "^4.15.0",
+    "gsap": "^3.13.0",
+    "ml-matrix": "^6.10.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-dropzone": "^14.2.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.8",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.2.2",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.5.2",
     "vite": "^5.3.1"
   }
 }
