@@ -9,5 +9,13 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env.API_KEY': JSON.stringify(env.API_KEY),
     },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+        },
+      },
+    },
   }
 });

@@ -45,3 +45,35 @@ export interface BlogPost {
     image: string;
     tags: string[];
 }
+
+// New API types
+export interface User {
+  id: string;
+  email: string;
+  is_active: boolean;
+  role: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface AnalysisRecord {
+  id: string;
+  user_id: string;
+  source_text: string;
+  result: BiasAnalysisResult;
+  sources: GroundingChunk[];
+  created_at: string;
+}
+
+export interface FeedbackRecord {
+  id: string;
+  analysis_id: string;
+  user_id: string;
+  vote: string;
+  created_at: string;
+}

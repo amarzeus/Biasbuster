@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://biasbuster_user:biasbuster_pass@postgres/biasbuster_db
+      - SECRET_KEY=your-secret-key-here-change-in-production
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+    depends_on:
+      - postgres
+    volumes:
+      - ./alembic:/app/alembic
+      - ./app:/app/app
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=biasbuster_db
+      - POSTGRES_USER=biasbuster_user
+      - POSTGRES_PASSWORD=biasbuster_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

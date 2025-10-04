@@ -181,6 +181,82 @@ npm run preview
 
 ---
 
+## 🔧 Backend Setup
+
+### 📋 Prerequisites
+
+<div align="center">
+
+| Requirement | Version | Status |
+|-------------|---------|--------|
+| **Python** | 3.11+ | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) |
+| **PostgreSQL** | 15+ | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white) |
+| **Docker** | Latest (optional) | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) |
+
+</div>
+
+### 🔧 Installation
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### ⚙️ Environment Variables
+
+Create a `.env` file in the `backend` directory:
+
+```env
+DATABASE_URL=postgresql://username:password@localhost/biasbuster_db
+SECRET_KEY=your-super-secret-key-change-this-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+### 🗄️ Database Setup
+
+```bash
+# Run database migrations
+alembic upgrade head
+```
+
+### 🚀 Running the Backend Server
+
+```bash
+# Start the FastAPI server
+uvicorn app.main:app --reload
+
+# Server will be available at http://localhost:8000
+# API documentation at http://localhost:8000/docs
+```
+
+### 🐳 Docker Deployment (Production)
+
+```bash
+# Build and run with Docker Compose
+docker-compose up --build
+```
+
+This will start:
+- Backend API on port 8000
+- PostgreSQL database on port 5432
+
+### 📚 API Documentation
+
+Once the backend is running, visit:
+- **Interactive API Docs**: http://localhost:8000/docs
+- **Alternative Docs**: http://localhost:8000/redoc
+- **OpenAPI Schema**: http://localhost:8000/openapi.json
+
+---
+
 ## 🤝 Contributing
 
 <div align="center">
