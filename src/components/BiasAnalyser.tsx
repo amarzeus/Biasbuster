@@ -1,10 +1,15 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { GeminiService } from '../../services/geminiService';
-import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState, HistoryItem } from '../types';
+import { EnhancedGeminiService } from '../../services/enhancedGeminiService';
+import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote, AnalysisState, HistoryItem } from '../../types';
 import InputPanel from './InputPanel';
 import AnalysisPanel from './AnalysisPanel';
 import StreamingResponse from './StreamingResponse';
+import ImageAnalyzer from '../../components/ImageAnalyzer';
+import VideoAnalyzer from '../../components/VideoAnalyzer';
+import AudioAnalyzer from '../../components/AudioAnalyzer';
+import MediaUploader from '../../components/MediaUploader';
 import { InfoIcon, AlertTriangleIcon, MagnifyingGlassIcon, LightbulbIcon, ShieldCheckIcon } from './icons/Icons';
 
 const DEFAULT_HIGHLIGHT_COLOR = '#fef08a'; // yellow-200
@@ -19,7 +24,7 @@ interface BiasAnalyserProps {
 const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedbackForHistoryItem }) => {
   const [inputText, setInputText] = useState<string>('');
   const [analysisResult, setAnalysisResult] = useState<BiasAnalysisResult | null>(null);
-  const [selectedFinding, setSelectedFinding] = useState<BiasFinding | null>(null);
+  const [selectedFinding, setSelectedFinding] = useState<import('../../types').BiasFinding | null>(null);
   const [sources, setSources] = useState<GroundingChunk[]>([]);
   const [analysisState, setAnalysisState] = useState<AnalysisState>('idle');
   const [streamingResponseText, setStreamingResponseText] = useState('');
@@ -28,6 +33,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
   const [customKeywords, setCustomKeywords] = useState<string>('');
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({});
   const [currentHistoryId, setCurrentHistoryId] = useState<number | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const geminiService = useMemo(() => {
     const apiKey = process.env.API_KEY;
@@ -48,6 +54,7 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     setFeedback({});
     setStreamingResponseText('');
     setCurrentHistoryId(null);
+    setUploadedFile(null);
   }, []);
 
   const performAnalysis = useCallback(async (textToAnalyze: string, keywords: string) => {
@@ -79,10 +86,56 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     }
   }, [geminiService, addHistoryItem, resetAnalysis]);
 
-  const handleAnalyze = useCallback(() => {
-    performAnalysis(inputText, customKeywords);
-  }, [inputText, customKeywords, performAnalysis]);
-  
+  const enhancedGeminiService = useMemo(() => {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      return null;
+    }
+    return new EnhancedGeminiService(apiKey);
+  }, []);
+
+  const handleAnalyze = useCallback(async () => {
+    if (!geminiService) return;
+
+    if (uploadedFile) {
+      if (!enhancedGeminiService) {
+        setError("Enhanced Gemini service is not available.");
+        setAnalysisState('error');
+        return;
+      }
+
+      resetAnalysis();
+      setAnalysisState('streaming');
+
+      try {
+        let result;
+        if (uploadedFile.type.startsWith('image/')) {
+          result = await enhancedGeminiService.analyzeImage(uploadedFile);
+        } else if (uploadedFile.type.startsWith('video/')) {
+          result = await enhancedGeminiService.analyzeVideo(uploadedFile);
+        } else if (uploadedFile.type.startsWith('audio/')) {
+          result = await enhancedGeminiService.analyzeAudio(uploadedFile);
+        } else {
+          throw new Error("Unsupported file type for analysis.");
+        }
+
+        setAnalysisResult(result.analysis);
+        setSources(result.sources);
+        setAnalysisState('done');
+
+        if (result.analysis) {
+          const newId = addHistoryItem({ sourceText: uploadedFile.name, result: result.analysis, sources: result.sources });
+          setCurrentHistoryId(newId);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'An unknown error occurred.');
+        setAnalysisState('error');
+      }
+    } else {
+      performAnalysis(inputText, customKeywords);
+    }
+  }, [uploadedFile, inputText, customKeywords, performAnalysis, geminiService, enhancedGeminiService, addHistoryItem, resetAnalysis]);
+
   const handleExample = useCallback(() => {
       setInputText(EXAMPLE_TEXT);
       performAnalysis(EXAMPLE_TEXT, '');
@@ -94,24 +147,31 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
     resetAnalysis();
   }, [resetAnalysis]);
 
-  const handleFileUpload = useCallback((file: File) => {
+  const handleFileUpload = useCallback(async (file: File) => {
     if (!file) return;
-    
-    // Reset state before processing new file
-    handleClear();
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const text = e.target?.result as string;
-        setInputText(text);
-    };
-    reader.onerror = (e) => {
-        console.error("File reading error:", e);
-        setError("Failed to read the selected file. Please ensure it's a valid text file.");
-        setAnalysisState('error');
-    };
-    reader.readAsText(file);
-  }, [handleClear]);
+    resetAnalysis();
+    setUploadedFile(file);
+
+    if (file.type.startsWith('text/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+          const text = e.target?.result as string;
+          setInputText(text);
+          // Automatically perform analysis for text files after reading
+          performAnalysis(text, customKeywords);
+      };
+      reader.onerror = (e) => {
+          console.error("File reading error:", e);
+          setError("Failed to read the selected file. Please ensure it's a valid text file.");
+          setAnalysisState('error');
+      };
+      reader.readAsText(file);
+    } else if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+      // For media files, trigger analysis immediately
+      await handleAnalyze();
+    }
+  }, [resetAnalysis, handleAnalyze, performAnalysis, customKeywords]);
 
   const handleFeedback = useCallback(async (findingIndex: number, vote: FeedbackVote) => {
     setFeedback(prev => ({ ...prev, [findingIndex]: { status: 'pending', vote } }));
@@ -132,6 +192,55 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
   }, [resetAnalysis]);
 
   const isLoading = analysisState === 'streaming';
+
+  const renderMediaAnalyzer = () => {
+    if (!uploadedFile || !analysisResult) return null;
+
+    if (uploadedFile.type.startsWith('image/')) {
+      return (
+        <ImageAnalyzer
+          imageFile={uploadedFile}
+          analysisResult={analysisResult}
+          sources={sources}
+          highlightColor={highlightColor}
+          selectedFinding={selectedFinding}
+          setSelectedFinding={setSelectedFinding}
+          feedback={feedback}
+          onFeedback={handleFeedback}
+          onApplySuggestion={handleApplySuggestion}
+        />
+      );
+    } else if (uploadedFile.type.startsWith('video/')) {
+      return (
+        <VideoAnalyzer
+          videoFile={uploadedFile}
+          analysisResult={analysisResult}
+          sources={sources}
+          highlightColor={highlightColor}
+          selectedFinding={selectedFinding}
+          setSelectedFinding={setSelectedFinding}
+          feedback={feedback}
+          onFeedback={handleFeedback}
+          onApplySuggestion={handleApplySuggestion}
+        />
+      );
+    } else if (uploadedFile.type.startsWith('audio/')) {
+      return (
+        <AudioAnalyzer
+          audioFile={uploadedFile}
+          analysisResult={analysisResult}
+          sources={sources}
+          highlightColor={highlightColor}
+          selectedFinding={selectedFinding}
+          setSelectedFinding={setSelectedFinding}
+          feedback={feedback}
+          onFeedback={handleFeedback}
+          onApplySuggestion={handleApplySuggestion}
+        />
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="container mx-auto px-4">
@@ -177,11 +286,12 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <InputPanel
-              onSubmit={(text) => {
-                setInputText(text);
-                performAnalysis(text, customKeywords);
-              }}
-              isLoading={isLoading}
+                onSubmit={(text) => {
+                  setInputText(text);
+                  performAnalysis(text, customKeywords);
+                }}
+                onFileUpload={handleFileUpload}
+                isLoading={isLoading}
               />
               <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-6 min-h-[400px] flex flex-col">
               {analysisState === 'streaming' && <StreamingResponse text={streamingResponseText} isLoading={isLoading} />}
@@ -203,19 +313,24 @@ const BiasAnalyser: React.FC<BiasAnalyserProps> = ({ addHistoryItem, updateFeedb
               )}
 
               {analysisState === 'done' && analysisResult && (
-                  <AnalysisPanel 
-                      originalText={inputText} 
-                      analysisResult={analysisResult} 
-                      sources={sources}
-                      highlightColor={highlightColor} 
-                      selectedFinding={selectedFinding}
-                      setSelectedFinding={setSelectedFinding}
-                      feedback={feedback}
-                      onFeedback={handleFeedback}
-                      onApplySuggestion={handleApplySuggestion}
-                      isReadOnly={false}
-                      historyId={currentHistoryId}
-                  />
+                  <>
+                    {!uploadedFile && (
+                      <AnalysisPanel 
+                          originalText={inputText} 
+                          analysisResult={analysisResult} 
+                          sources={sources}
+                          highlightColor={highlightColor} 
+                          selectedFinding={selectedFinding}
+                          setSelectedFinding={setSelectedFinding}
+                          feedback={feedback}
+                          onFeedback={handleFeedback}
+                          onApplySuggestion={handleApplySuggestion}
+                          isReadOnly={false}
+                          historyId={currentHistoryId}
+                      />
+                    )}
+                    {uploadedFile && renderMediaAnalyzer()}
+                  </>
               )}
               </div>
           </div>

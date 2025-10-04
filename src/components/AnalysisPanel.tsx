@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote } from '../types';
+import { BiasAnalysisResult, BiasFinding, GroundingChunk, FeedbackState, FeedbackVote } from '../../types';
 import { BookOpenIcon, DownloadIcon } from './icons/Icons';
 import AnalysisSummary from './AnalysisSummary';
 import FindingDetails from './FindingDetails';

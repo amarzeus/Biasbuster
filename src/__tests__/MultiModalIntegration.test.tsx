@@ -1,7 +1,31 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { EnhancedGeminiService } from '../../services/enhancedGeminiService';
 import BiasAnalyser from '../../components/BiasAnalyser';
+
+jest.mock('../../components/MediaUploader', () => ({
+  __esModule: true,
+  default: ({ onMediaSelected }: { onMediaSelected: (file: File) => void }) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log('Mock MediaUploader onChange triggered', event.target.files);
+      if (event.target.files) {
+        for (let i = 0; i < event.target.files.length; i++) {
+          console.log('Calling onMediaSelected with file:', event.target.files[i]);
+          onMediaSelected(event.target.files[i]);
+        }
+      }
+    };
+    return (
+      <input
+        data-testid="mock-media-uploader"
+        type="file"
+        onChange={handleChange}
+        multiple
+      />
+    );
+  },
+}));
 
 jest.mock('../../services/enhancedGeminiService', () => {
   return {
@@ -27,6 +51,10 @@ Object.defineProperty(global, 'import', {
   },
 });
 
+// Also set process.env for fallback
+process.env.VITE_API_KEY = 'mock_key';
+process.env.API_KEY = 'mock_key';
+
 // Mock URL.createObjectURL and revokeObjectURL
 global.URL.createObjectURL = jest.fn(() => 'mock-url');
 global.URL.revokeObjectURL = jest.fn();
@@ -43,20 +71,21 @@ describe('Multi-Modal Analysis Integration', () => {
   test('analyzes uploaded image file', async () => {
     render(<BiasAnalyser addHistoryItem={mockAddHistoryItem} updateFeedbackForHistoryItem={mockUpdateFeedbackForHistoryItem} />);
 
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const fileInput = screen.getByTestId('mock-media-uploader');
     const file = new File(['dummy image content'], 'test.png', { type: 'image/png' });
 
-    fireEvent.change(fileInput, { target: { files: [file] } });
+    await act(async () => {
+      await userEvent.upload(fileInput, file);
+    });
 
-  // MediaUploader should no longer be visible
-  expect(screen.queryByText('Drag & drop some files here, or click to select files (images, videos, audio, text)')).not.toBeInTheDocument();
+    // Wait for the analysis to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Your Analysis Awaits')).not.toBeInTheDocument();
+    });
 
-  // Click analyze
-  const analyzeButton = screen.getByText('Analyze Media');
-  fireEvent.click(analyzeButton);
-
-  // Wait for ImageAnalyzer to render
-    await waitFor(() => expect(screen.getByText('Image Analysis')).toBeInTheDocument());
+    // Wait for ImageAnalyzer to render (analysis happens automatically)
+    const imageAnalysisHeading = await screen.findByRole('heading', { name: /Image Analysis/i });
+    expect(imageAnalysisHeading).toBeInTheDocument();
 
     // Check that image is displayed
     const img = screen.getByAltText('Uploaded for analysis') as HTMLImageElement;
@@ -67,40 +96,48 @@ describe('Multi-Modal Analysis Integration', () => {
   test('analyzes uploaded video file', async () => {
     render(<BiasAnalyser addHistoryItem={mockAddHistoryItem} updateFeedbackForHistoryItem={mockUpdateFeedbackForHistoryItem} />);
 
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const fileInput = screen.getByTestId('mock-media-uploader');
     const file = new File(['dummy video content'], 'test.mp4', { type: 'video/mp4' });
 
-  fireEvent.change(fileInput, { target: { files: [file] } });
+    await act(async () => {
+      await userEvent.upload(fileInput, file);
+    });
 
-  // Click analyze
-  const analyzeButton = screen.getByText('Analyze Media');
-  fireEvent.click(analyzeButton);
+    // Wait for the analysis to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Your Analysis Awaits')).not.toBeInTheDocument();
+    });
 
-  // Wait for VideoAnalyzer to render
-    await waitFor(() => expect(screen.getByText('Video Analysis')).toBeInTheDocument());
+    // Wait for VideoAnalyzer to render (analysis happens automatically)
+    const videoAnalysisHeading = await screen.findByRole('heading', { name: /Video Analysis/i });
+    expect(videoAnalysisHeading).toBeInTheDocument();
 
     // Check that video is displayed
-    const video = screen.getByTestId('video-element'); // Assuming we add data-testid to video
+    const video = screen.getByTestId('video-element');
     expect(video).toBeInTheDocument();
   });
 
   test('analyzes uploaded audio file', async () => {
     render(<BiasAnalyser addHistoryItem={mockAddHistoryItem} updateFeedbackForHistoryItem={mockUpdateFeedbackForHistoryItem} />);
 
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const fileInput = screen.getByTestId('mock-media-uploader');
     const file = new File(['dummy audio content'], 'test.mp3', { type: 'audio/mp3' });
 
-  fireEvent.change(fileInput, { target: { files: [file] } });
+    await act(async () => {
+      await userEvent.upload(fileInput, file);
+    });
 
-  // Click analyze
-  const analyzeButton = screen.getByText('Analyze Media');
-  fireEvent.click(analyzeButton);
+    // Wait for the analysis to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Your Analysis Awaits')).not.toBeInTheDocument();
+    });
 
-  // Wait for AudioAnalyzer to render
-    await waitFor(() => expect(screen.getByText('Audio Analysis')).toBeInTheDocument());
+    // Wait for AudioAnalyzer to render (analysis happens automatically)
+    const audioAnalysisHeading = await screen.findByRole('heading', { name: /Audio Analysis/i });
+    expect(audioAnalysisHeading).toBeInTheDocument();
 
     // Check that audio is displayed
-    const audio = screen.getByTestId('audio-element'); // Assuming we add data-testid to audio
+    const audio = screen.getByTestId('audio-element');
     expect(audio).toBeInTheDocument();
   });
 });

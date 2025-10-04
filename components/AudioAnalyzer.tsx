@@ -36,10 +36,10 @@ const AudioAnalyzer: React.FC<AudioAnalyzerProps> = ({
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-2">Audio Analysis</h3>
         <audio
+          data-testid="audio-element"
           src={audioUrl}
           controls
-          className="w-full"
-          data-testid="audio-element"
+          className="max-w-full max-h-16 rounded-md border"
         />
       </div>
       <AnalysisPanel
